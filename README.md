@@ -1,7 +1,11 @@
 # senpai
 framework for quickly developing and deploying AI agents
 
-## Steps to run
+## Prerequisites
+
+You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Heroku](https://signup.heroku.com/) account, and you have the `yarn`, `node`, and `heroku` packages installed on your machine.
+
+## Steps to get started
 
 1. `git clone https://github.com/pemulis/senpai.git`
 2. `cd senpai`
