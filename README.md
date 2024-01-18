@@ -5,6 +5,10 @@ framework for quickly developing and deploying AI agents
 
 You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Heroku](https://signup.heroku.com/) account, and you have the `yarn`, `node`, and `heroku` packages installed on your machine.
 
+## Optional
+
+Use [GitHub](https://github.com/) to host your repository and set up CI before deploying to Heroku. There is a GitHub workflow file you can tinker with. 
+
 ## Steps to get started
 
 1. `git clone https://github.com/pemulis/senpai.git`
