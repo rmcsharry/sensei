@@ -1,4 +1,4 @@
-# senpai
+# sensei
 framework for quickly developing and deploying AI agents
 
 ## Prerequisites
@@ -11,8 +11,8 @@ Use [GitHub](https://github.com/) to host your repository and set up CI before d
 
 ## Steps to get started
 
-1. `git clone https://github.com/pemulis/senpai.git`
-2. `cd senpai`
+1. `git clone https://github.com/pemulis/sensei.git`
+2. `cd sensei`
 3. `yarn`
 4. `touch .env`
 5. add `OPENAI_API_KEY={YOUR-KEY}` to `.env`
