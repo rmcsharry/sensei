@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const { OpenAI } = require("openai");
 const sensei = require('./sensei.json');
 
