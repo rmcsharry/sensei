@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sensei</title>
+    <!-- Add any additional CSS here -->
+</head>
+<body>
+    <form id="chatForm">
+        <label for="prompt">Enter your prompt:</label>
+        <input type="text" id="prompt" name="prompt">
+        <button type="submit">Send</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt }),
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('response').innerText = data;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
