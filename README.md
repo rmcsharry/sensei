@@ -16,7 +16,23 @@ You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Hero
 7. `git push heroku main`
 8. `heroku open`
 
-## Optional: to use the command line interface
+## Config options
+
+The `sensei.json` config file allows you to set a few values: `target`, `model`, and `systemPrompt`.
+
+Example:
+
+```
+{
+  "target": "chat-completions",
+  "model": "gpt-4-1106-preview",
+  "systemPrompt": "You are a little kitty cat."
+}
+```
+
+Currently only the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) is supported as a target, but we want to add support for the Assistants API soon.
+
+## Optional: use the command line interface
 
 1. `touch .env`
 2. add `OPENAI_API_KEY={YOUR-KEY}` to `.env`
