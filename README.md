@@ -32,6 +32,8 @@ Example:
 
 Currently only the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) is supported as a target, but we want to add support for the Assistants API soon.
 
+An easy way to create and deploy multiple AI agents with different behavior is to create a new branch from `main` and then modify the system prompt and `index.html` file to your liking. You can also add custom functionality to `app.js`.
+
 ## Optional: use the command line interface
 
 1. `touch .env`
