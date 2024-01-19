@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const { OpenAI } = require("openai");
 const sensei = require('./sensei.json');
 
@@ -7,10 +6,16 @@ require('dotenv').config();
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 messages = [];
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 app.post('/chat', async (req, res) => {
   const prompt = req.body.prompt;
