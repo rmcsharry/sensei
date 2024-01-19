@@ -1,5 +1,6 @@
 const express = require('express');
 const { OpenAI } = require("openai");
+const sensei = require('./sensei.json');
 
 require('dotenv').config();
 const app = express();
@@ -21,19 +22,21 @@ app.post('/chat', async (req, res) => {
     content: prompt,
   });
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages,
-  });
+  if (sensei.target == "chat-completions") {
+    const response = await openai.chat.completions.create({
+      model: sensei.model,
+      messages,
+    });
 
-  messages.push({
-    role: response.choices[0].message.role,
-    content: response.choices[0].message.content,
-  });
-  res.send(response.choices[0].message);
+    messages.push({
+      role: response.choices[0].message.role,
+      content: response.choices[0].message.content,
+    });
+    res.send(response.choices[0].message);
 
-  console.log("Messages:", messages);
-  console.log("Response choice 0:", response.choices[0]);
+    console.log("Messages:", messages);
+    console.log("Response choice 0:", response.choices[0]);
+  }
 });
 
 const port = process.env.PORT || 3000;
