@@ -11,6 +11,7 @@
         <button type="submit">Send</button>
     </form>
     <div id="response"></div>
+    <div id="jsonResponse"></div>
 
     <script>
         document.getElementById('chatForm').addEventListener('submit', function(e) {
@@ -23,9 +24,11 @@
                 },
                 body: JSON.stringify({ prompt }),
             })
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                document.getElementById('response').innerText = data;
+                const content = data.content;
+                document.getElementById('response').innerText = content;
+                document.getElementById('jsonResponse').innerText = data;
             })
             .catch(error => console.error('Error:', error));
         });
