@@ -13,6 +13,13 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 messages = [];
 
+if (sensei.systemPrompt) {
+  messages.push({
+    role: 'system',
+    content: sensei.systemPrompt,
+  });
+}
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
