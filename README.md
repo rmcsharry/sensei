@@ -45,14 +45,19 @@ Since you will now have multiple apps, you will need to reference them by name. 
 5. `git push {your-branch-name} {your-branch-name}:main`
 6. `heroku open {your-branch-name}`
 
+This will fail if your branch name is already in use on Heroku.
+
 ## Experimental: Create a new branch with the shell script
 
 Trying something out here. From the root of the directory:
 
-1. `chmod +x branch.sh`
-2. `./branch.sh your-branch-name YOUR-OPENAI-API-KEY`
+1. `brew install jq` (if on Mac, otherwise [https://jqlang.github.io/jq/download/](follow these instructions))
+2. `chmod +x branch.sh`
+3. `./branch.sh your-branch-name YOUR-OPENAI-API-KEY`
 
 This _should_ create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want. This should basically do all of the steps from the section above.
+
+This will fail if your branch name is already in use on Heroku.
 
 ## Optional: use the command line interface
 
