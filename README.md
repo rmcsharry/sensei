@@ -1,4 +1,4 @@
-![sensei icon](sensei.png)
+<img src="sensei.png" alt="sensei icon" style="width: 25%; float: left;" />
 
 # sensei
 framework for quickly developing and deploying AI agents
