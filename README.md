@@ -44,7 +44,7 @@ From the root of the directory:
 2. `chmod +x branch.sh`
 3. `./branch.sh {your-branch-name} {YOUR-OPENAI-API-KEY}`
 
-This will create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want. The script will fail if your branch name is already in use on Heroku.
+This will create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want.
 
 If you want to track the branch on GitHub, run `git push origin {your-branch-name}`
 
