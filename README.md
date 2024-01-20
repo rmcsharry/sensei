@@ -1,3 +1,5 @@
+![sensei icon](sensei.png)
+
 # sensei
 framework for quickly developing and deploying AI agents
 
