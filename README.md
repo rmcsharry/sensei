@@ -51,7 +51,7 @@ This will fail if your branch name is already in use on Heroku.
 
 From the root of the directory:
 
-1. `brew install jq` (if on Mac, otherwise [https://jqlang.github.io/jq/download/](follow these instructions))
+1. `brew install jq` (if on Mac, otherwise [follow these instructions](https://jqlang.github.io/jq/download/))
 2. `chmod +x branch.sh`
 3. `./branch.sh {your-branch-name} {YOUR-OPENAI-API-KEY}`
 
