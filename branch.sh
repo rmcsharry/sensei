@@ -26,3 +26,6 @@ git remote add $BRANCH_NAME https://git.heroku.com/$BRANCH_NAME.git
 
 # Push the branch to Heroku
 git push $BRANCH_NAME $BRANCH_NAME:main
+
+# Open the Heroku app in a browser
+heroku open --app $BRANCH_NAME

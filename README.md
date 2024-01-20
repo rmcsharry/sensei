@@ -42,8 +42,8 @@ Since you will now have multiple apps, you will need to reference them by name. 
 2. `heroku create {your-branch-name}`
 3. `heroku config:set OPENAI_API_KEY={YOUR-KEY} --app {your-branch-name}`
 4. `git remote add {your-branch-name} https://git.heroku.com/{your-branch-name}.git`
-4. `git push {your-branch-name} {your-branch-name}:main`
-5. `heroku open {your-branch-name}`
+5. `git push {your-branch-name} {your-branch-name}:main`
+6. `heroku open {your-branch-name}`
 
 ## Experimental: Create a new branch with the shell script
 
@@ -51,7 +51,7 @@ Trying something out here.
 
 1. `./branch.sh your-branch-name YOUR-OPENAI-API-KEY`
 
-This _should_ create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want.
+This _should_ create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want. This should basically do all of the steps from the section above.
 
 ## Optional: use the command line interface
 
