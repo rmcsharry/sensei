@@ -47,9 +47,10 @@ Since you will now have multiple apps, you will need to reference them by name. 
 
 ## Experimental: Create a new branch with the shell script
 
-Trying something out here.
+Trying something out here. From the root of the directory:
 
-1. `./branch.sh your-branch-name YOUR-OPENAI-API-KEY`
+1. `chmod +x branch.sh`
+2. `./branch.sh your-branch-name YOUR-OPENAI-API-KEY`
 
 This _should_ create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want. This should basically do all of the steps from the section above.
 
