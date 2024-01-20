@@ -34,20 +34,9 @@ Currently only the [Chat Completions API](https://platform.openai.com/docs/guide
 
 ## Create a new agent in a new branch
 
-An easy way to create and deploy multiple AI agents with different behavior is to create a new branch from `main` and then modify the system prompt and `index.html` file to your liking. You can also add custom functionality to `app.js`.
+An easy way to create and deploy multiple AI agents with different behavior is to create a new branch from `main` and then modify the system prompt in `sensei.json` and frontend in `index.html` to suit your needs. You can also add custom functionality to `app.js`.
 
 Since you will now have multiple apps, you will need to reference them by name. The git push method will also change, since you will be working from a side branch but Heroku wants you to push to a main branch.
-
-1. `git checkout -b {your-branch-name}`
-2. `heroku create {your-branch-name}`
-3. `heroku config:set OPENAI_API_KEY={YOUR-KEY} --app {your-branch-name}`
-4. `git remote add {your-branch-name} https://git.heroku.com/{your-branch-name}.git`
-5. `git push {your-branch-name} {your-branch-name}:main`
-6. `heroku open {your-branch-name}`
-
-This will fail if your branch name is already in use on Heroku.
-
-## Create a new agent in a new branch
 
 From the root of the directory:
 
@@ -57,9 +46,11 @@ From the root of the directory:
 
 This will create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want. The script will fail if your branch name is already in use on Heroku.
 
-When pushing changes, run `git push {your-branch-name} {your-branch-name}:main`, since Heroku automatically sets new deployments to a `main` branch, but you're pushing a different branch to what Heroku considers main.
+If you want to track the branch on GitHub, run `git push origin {your-branch-name}`
 
-If you want to track the branch on GitHub and have GitHub set as `origin`, run `git push origin {your-branch-name}`
+When deploying changes to Heroku, run `git push {your-branch-name} {your-branch-name}:main` instead of `git push heroku main`
+
+When opening the app from the command line, run `heroku open --app {your-branch-name}`
 
 ## Experimental: use the command line interface
 
