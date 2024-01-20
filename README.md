@@ -47,24 +47,26 @@ Since you will now have multiple apps, you will need to reference them by name. 
 
 This will fail if your branch name is already in use on Heroku.
 
-## Experimental: Create a new branch with the shell script
+## Create a new agent in a new branch
 
-Trying something out here. From the root of the directory:
+From the root of the directory:
 
 1. `brew install jq` (if on Mac, otherwise [https://jqlang.github.io/jq/download/](follow these instructions))
 2. `chmod +x branch.sh`
-3. `./branch.sh your-branch-name YOUR-OPENAI-API-KEY`
+3. `./branch.sh {your-branch-name} {YOUR-OPENAI-API-KEY}`
 
-This _should_ create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want. This should basically do all of the steps from the section above.
+This will create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want. The script will fail if your branch name is already in use on Heroku.
 
-This will fail if your branch name is already in use on Heroku.
+When pushing changes, run `git push {your-branch-name} {your-branch-name}:main`, since Heroku automatically sets new deployments to a `main` branch, but you're pushing a different branch to what Heroku considers main.
 
-## Optional: use the command line interface
+If you want to track the branch on GitHub and have GitHub set as `origin`, run `git push origin {your-branch-name}`
+
+## Experimental: use the command line interface
 
 1. `touch .env`
 2. add `OPENAI_API_KEY={YOUR-KEY}` to `.env`
 3. `node prompt.js`
 
-## Optional: use GitHub workflows
+## Experimental: use GitHub workflows
 
 Use [GitHub](https://github.com/) to host your repository and set up CI before deploying to Heroku. There is a GitHub workflow file you can tinker with. 
