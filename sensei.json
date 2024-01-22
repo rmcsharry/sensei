@@ -1,6 +1,6 @@
 {
   "target": "chat-completions",
   "model": "gpt-4-1106-preview",
-  "branch": "",
-  "systemPrompt": ""
+  "branch": "main",
+  "systemPrompt": "You are a helpful assistant."
 }

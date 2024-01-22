@@ -21,6 +21,9 @@ heroku create $BRANCH_NAME
 # Set Heroku config variables
 heroku config:set OPENAI_API_KEY=$OPENAI_API_KEY --app $BRANCH_NAME
 
+# Add logging with Logtail free plan
+heroku addons:create logtail:free --app $BRANCH_NAME
+
 # Add Heroku remote for this branch
 git remote add $BRANCH_NAME https://git.heroku.com/$BRANCH_NAME.git
 

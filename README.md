@@ -13,8 +13,9 @@ You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Hero
 4. `heroku login`
 5. `heroku create`
 6. `heroku config:set OPENAI_API_KEY={YOUR-KEY}`
-7. `git push heroku main`
-8. `heroku open`
+7. `heroku addons:create logtail:free`
+8. `git push heroku main`
+9. `heroku open`
 
 ## Config options
 
@@ -44,7 +45,9 @@ From the root of the directory:
 2. `chmod +x branch.sh`
 3. `./branch.sh {your-branch-name} {YOUR-OPENAI-API-KEY}`
 
-This will create a new branch with that name, deploy it to Heroku, and set it up with your OpenAI API key, which can be unique to each branch if you want.
+This will create and check out a new branch with that name, deploy it to Heroku, set it up with your OpenAI API key, and add logging with the Logtail free plan.
+
+_TODO_: This will fail if the branch name is not unique. The config should have a space-level variable that is appended to branch names to make them unique but identifiable.
 
 If you want to track the branch on GitHub, run `git push origin {your-branch-name}`
 
