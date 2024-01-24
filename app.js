@@ -12,6 +12,7 @@ app.use(express.static('public'));
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 messages = [];
+botMessage = "";
 
 if (sensei.systemPrompt) {
   messages.push({
@@ -29,26 +30,117 @@ app.post('/chat', async (req, res) => {
   if (!prompt) {
     return res.status(400).send({ message: 'Prompt is required' });
   }
-  
-  messages.push({
-    role: 'user',
-    content: prompt,
-  });
 
   if (sensei.target == "chat-completions") {
+    messages.push({
+      role: 'user',
+      content: prompt,
+    });
+
     const response = await openai.chat.completions.create({
       model: sensei.model,
       messages,
     });
 
+    botMessage = response.choices[0].message;
+
     messages.push({
-      role: response.choices[0].message.role,
-      content: response.choices[0].message.content,
+      role: botMessage.role,
+      content: botMessage.content,
     });
-    res.send(response.choices[0].message);
+    res.send(botMessage);
 
     console.log("Messages:", messages);
     console.log("Response choice 0:", response.choices[0]);
+  }
+
+  if (sensei.target == "assistant") {
+    function delay(time) {
+      return new Promise(resolve => setTimeout(resolve, time));
+    } 
+
+    const assistant = await openai.beta.assistants.create({
+      name: sensei.branch,
+      instructions: sensei.systemPrompt,
+      tools: [{ type: "code_interpreter" }, { type: "retrieval"}],
+      model: sensei.model
+    });
+
+    const thread = await openai.beta.threads.create();
+
+    await openai.beta.threads.messages.create(
+      thread.id,
+      {
+        role: "user",
+        content: prompt
+      }
+    );
+
+    const run = await openai.beta.threads.runs.create(
+      thread.id,
+      { 
+        assistant_id: assistant.id,
+        // instructions: "You can add custom instructions, which will override the system prompt.."
+      }
+    );
+    let runId = run.id;
+
+    while (run.status != "completed") {
+      await delay(2000);
+      console.log("run status:", run.status);
+      run = await openai.beta.threads.runs.retrieve(
+        thread.id,
+        runId
+      );
+      if (run.status === "failed") { console.log("run:", run); }
+      if (run.status === "requires_action") {
+        let tools_outputs = [];
+        let tool_calls = run.required_action.submit_tool_outputs.tool_calls;
+        for (let tool_call of tool_calls) {
+          let functionName = tool_call.function.name;
+          let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
+          let response;
+          if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
+            console.log("functionName:", functionName);
+            console.log("functionArguments:", functionArguments);
+            response = await functions[functionName](...functionArguments);
+          } else {
+            response = 'We had an issue calling an external function.'
+          }
+          tools_outputs.push(
+            {
+              tool_call_id: tool_call.id,
+              output: JSON.stringify(response)
+            }
+          );
+        }
+        run = openai.beta.threads.runs.submitToolOutputs(
+          thread.id,
+          runId,
+          {
+            tool_outputs: tools_outputs
+          }
+        );
+      }
+    }
+
+    let originalMessageLength = messages.length;
+    let completedThread = await openai.beta.threads.messages.list(thread.id);
+    let newMessages = completedThread.data.slice();
+    for (let message of newMessages) {
+      messages.push(message.content[0]);
+    }
+    messages = messages.slice(originalMessageLength);
+    let botMessage = messages[0].text.value;
+
+    messages.push({
+      role: "assistant",
+      content: botMessage
+    });
+    res.send(botMessage);
+
+    console.log("Messages:", messages);
+    console.log("Response data:", response.data);
   }
 });
 
