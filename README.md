@@ -27,6 +27,7 @@ Example:
 {
   "target": "chat-completions",
   "model": "gpt-4-1106-preview",
+  "branch": "kitty-cat",
   "systemPrompt": "You are a little kitty cat."
 }
 ```
