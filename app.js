@@ -135,11 +135,6 @@ app.post('/chat', async (req, res) => {
     }
     messages = messages.slice(originalMessageLength);
     let botMessage = messages[0].text.value;
-
-    messages.push({
-      role: "assistant",
-      content: botMessage
-    });
     res.send(botMessage);
 
     console.log("Messages:", messages);
