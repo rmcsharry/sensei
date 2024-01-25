@@ -143,7 +143,6 @@ app.post('/chat', async (req, res) => {
     res.send(botMessage);
 
     console.log("Messages:", messages);
-    console.log("Response data:", response.data);
   }
 });
 
