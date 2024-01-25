@@ -42,13 +42,13 @@ app.post('/chat', async (req, res) => {
       messages,
     });
 
-    botMessage = response.choices[0].message;
+    returnValue = response.choices[0].message;
 
     messages.push({
-      role: botMessage.role,
-      content: botMessage.content,
+      role: returnValue.role,
+      content: returnValue.content,
     });
-    res.send(botMessage);
+    res.send(returnValue);
 
     console.log("Messages:", messages);
     console.log("Response choice 0:", response.choices[0]);
@@ -135,7 +135,11 @@ app.post('/chat', async (req, res) => {
     }
     messages = messages.slice(originalMessageLength);
     let botMessage = messages[0].text.value;
-    res.send(botMessage);
+    let returnValue = {
+      role: "assistant",
+      content: botMessage
+    }
+    res.send(returnValue);
 
     console.log("Messages:", messages);
   }
