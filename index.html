@@ -17,47 +17,25 @@
     <div id="jsonResponse"></div>
 
     <script>
-        if (sensei.target == 'chat-completions') {
-            document.getElementById('chatForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const prompt = document.getElementById('prompt').value;
-                fetch('/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("data", data);
-                    const content = data.content;
-                    document.getElementById('response').innerText = content;
-                    document.getElementById('jsonResponse').innerText = JSON.stringify(data, null, 2);
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        } else if (sensei.target == 'assistant') {
-            document.getElementById('chatForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const prompt = document.getElementById('prompt').value;
-                fetch('/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("data", data);
-                    const content = data.content;
-                    document.getElementById('response').innerText = content;
-                    document.getElementById('jsonResponse').innerText = JSON.stringify(data, null, 2);
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        }
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("data", data);
+                const content = data.content;
+                document.getElementById('response').innerText = content;
+                document.getElementById('jsonResponse').innerText = JSON.stringify(data, null, 2);
+            })
+            .catch(error => console.error('Error:', error));
+        });
     </script>
 </body>
 </html>
