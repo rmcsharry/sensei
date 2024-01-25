@@ -1,6 +1,6 @@
 {
   "target": "assistant",
   "model": "gpt-4-1106-preview",
-  "branch": "test-sensei-assistants",
-  "systemPrompt": "You should respond to every prompt with, 'This is the assistants API.'"
+  "branch": "main",
+  "systemPrompt": "You are a helpful assistant."
 }
