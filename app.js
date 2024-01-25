@@ -65,8 +65,10 @@ app.post('/chat', async (req, res) => {
       tools: [{ type: "code_interpreter" }, { type: "retrieval"}],
       model: sensei.model
     });
+    console.log("assistant:", assistant);
 
     const thread = await openai.beta.threads.create();
+    console.log("thread:", thread);
 
     await openai.beta.threads.messages.create(
       thread.id,
@@ -84,6 +86,7 @@ app.post('/chat', async (req, res) => {
       }
     );
     let runId = run.id;
+    console.log("run:", run);
 
     while (run.status != "completed") {
       await delay(2000);
