@@ -76,7 +76,7 @@ app.post('/chat', async (req, res) => {
       }
     );
 
-    const run = await openai.beta.threads.runs.create(
+    let run = await openai.beta.threads.runs.create(
       thread.id,
       { 
         assistant_id: assistant.id,
