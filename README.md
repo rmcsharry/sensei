@@ -32,7 +32,7 @@ Example:
 }
 ```
 
-Currently only the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) is supported as a target, but we want to add support for the Assistants API soon.
+Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Assistants API, change the value for `target` to `assistant`. By default, this will deploy a new assistant and thread for each chat session. Function calls by assistants are not yet supported.
 
 ## Create a new agent in a new branch
 
@@ -48,7 +48,7 @@ From the root of the directory:
 
 This will create and check out a new branch with that name, deploy it to Heroku, set it up with your OpenAI API key, and add logging with the Logtail free plan.
 
-_TODO_: This will fail if the branch name is not unique. The config should have a space-level variable that is appended to branch names to make them unique but identifiable.
+Note: This will fail if the branch name is not unique.
 
 If you want to track the branch on GitHub, run `git push origin {your-branch-name}`
 
