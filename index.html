@@ -12,8 +12,6 @@
         <br>
         <button type="submit">Send</button>
     </form>
-    <div id="response"></div>
-    <br><br>
     <div id="jsonResponse"></div>
 
     <script>
@@ -30,8 +28,6 @@
             .then(response => response.json())
             .then(data => {
                 console.log("data", data);
-                const content = data.content;
-                document.getElementById('response').innerText = content;
                 document.getElementById('jsonResponse').innerText = JSON.stringify(data, null, 2);
             })
             .catch(error => console.error('Error:', error));
