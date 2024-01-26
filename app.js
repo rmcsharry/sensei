@@ -25,6 +25,21 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/status/:runId', (req, res) => {
+  const runId = req.params.runId;
+
+  // Check the status of the job with the given runId
+  // For example, you might look it up in a database or a memory store
+  const status = getStatus(runId); // Implement this function according to your logic
+
+  if (status) {
+      res.json({ status: status });
+  } else {
+      res.status(404).send('Run not found');
+  }
+});
+
+
 app.post('/chat', async (req, res) => {
   const prompt = req.body.prompt;
   if (!prompt) {
