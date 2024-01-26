@@ -51,7 +51,7 @@ app.post('/chat', async (req, res) => {
     res.send(returnValue);
 
     console.log("Messages:", messages);
-    console.log("Response choice 0:", response.choices[0]);
+    console.log("Response:", response);
   }
 
   if (sensei.target == "assistant") {
