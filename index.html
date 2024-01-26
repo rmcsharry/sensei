@@ -37,7 +37,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log("data", data);
-                document.getElementById('jsonResponse').innerText = JSON.stringify(data, null, 2);
+                document.getElementById('jsonResponse').textContent = JSON.stringify(data, null, 2);
             })
             .catch(error => console.error('Error:', error));
         });
