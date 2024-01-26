@@ -28,9 +28,13 @@ app.get('/', (req, res) => {
 app.get('/status/:runId', (req, res) => {
   const runId = req.params.runId;
 
-  // Check the status of the job with the given runId
-  // For example, you might look it up in a database or a memory store
-  const status = getStatus(runId); // Implement this function according to your logic
+  let status = '';
+
+  if (sensei.target == "chat") {
+    // get status from chat id
+  } else if (sensei.target == "assistant") {
+    // get status from run id
+  }
 
   if (status) {
       res.json({ status: status });
@@ -46,7 +50,7 @@ app.post('/chat', async (req, res) => {
     return res.status(400).send({ message: 'Prompt is required' });
   }
 
-  if (sensei.target == "chat-completions") {
+  if (sensei.target == "chat") {
     messages.push({
       role: 'user',
       content: prompt,
