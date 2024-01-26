@@ -2,7 +2,16 @@
 <html>
 <head>
     <title>Sensei</title>
-    <!-- Add any additional CSS here -->
+    <style>
+        #jsonOutput {
+            white-space: pre-wrap;       /* Since JSON is formatted with white space */
+            word-wrap: break-word;       /* To prevent horizontal scrolling */
+            background-color: #f4f4f4;   /* Light grey background */
+            border: 1px solid #ddd;      /* Adding a border */
+            padding: 10px;               /* Some padding for aesthetics */
+            font-family: 'Courier New', monospace; /* Font change to monospace */
+        }
+    </style>
 </head>
 <body>
     <form id="chatForm">
@@ -12,7 +21,7 @@
         <br>
         <button type="submit">Send</button>
     </form>
-    <div id="jsonResponse"></div>
+    <pre id="jsonResponse"></div>
 
     <script>
         document.getElementById('chatForm').addEventListener('submit', function(e) {
