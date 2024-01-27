@@ -11,8 +11,7 @@ app.use(express.static('public'));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-messages = [];
-botMessage = "";
+let messages = [];
 
 if (sensei.systemPrompt) {
   messages.push({
