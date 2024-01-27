@@ -32,7 +32,7 @@ Example:
 }
 ```
 
-Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Assistants API, change the value for `target` to `assistant`. By default, this will deploy a new assistant and thread for each chat session. Function calls by assistants are not yet supported.
+Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Assistants API, change the value for `target` to `assistant`. By default, this will deploy a new assistant and thread for each chat session.
 
 ## Create a new agent in a new branch
 

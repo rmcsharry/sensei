@@ -44,7 +44,7 @@ app.get('/status/:runId', (req, res) => {
 });
 
 
-app.post('/chat', async (req, res) => {
+app.post('/prompt', async (req, res) => {
   const prompt = req.body.prompt;
   if (!prompt) {
     return res.status(400).send({ message: 'Prompt is required' });
