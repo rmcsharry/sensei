@@ -46,21 +46,28 @@ async function callChat(messages, prompt) {
   return returnValue;
 }
 
-async function callAssistant(messages, prompt) {
+async function callAssistant(messages, prompt, assistant, thread) {
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
   } 
+  if (!assistant) {
+    assistant = await openai.beta.assistants.create({
+      name: sensei.branch,
+      instructions: sensei.systemPrompt,
+      tools: [{ type: "code_interpreter" }, { type: "retrieval"}],
+      model: sensei.model
+    });
+    console.log("assistant:", assistant);
+  } else {
+    // assistant already exists
+  }
 
-  const assistant = await openai.beta.assistants.create({
-    name: sensei.branch,
-    instructions: sensei.systemPrompt,
-    tools: [{ type: "code_interpreter" }, { type: "retrieval"}],
-    model: sensei.model
-  });
-  console.log("assistant:", assistant);
-
-  const thread = await openai.beta.threads.create();
-  console.log("thread:", thread);
+  if (!thread) {
+    thread = await openai.beta.threads.create();
+    console.log("thread:", thread);
+  } else {
+    // thread already exists
+  }
 
   await openai.beta.threads.messages.create(
     thread.id,
@@ -170,7 +177,7 @@ app.post('/prompt', async (req, res) => {
   }
 
   if (sensei.target == "assistant") {
-    returnValue = await callAssistant(messages, prompt);
+    returnValue = await callAssistant(messages, prompt, assistant, thread);
     res.send(returnValue);
   }
 });
