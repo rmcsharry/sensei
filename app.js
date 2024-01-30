@@ -22,7 +22,7 @@ if (sensei.systemPrompt) {
   });
 }
 
-async function chat(messages, prompt) {
+async function callChat(messages, prompt) {
   messages.push({
     role: 'user',
     content: prompt,
@@ -46,7 +46,7 @@ async function chat(messages, prompt) {
   return returnValue;
 }
 
-async function assistant(messages, prompt) {
+async function callAssistant(messages, prompt) {
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
   } 
@@ -165,12 +165,12 @@ app.post('/prompt', async (req, res) => {
   }
 
   if (sensei.target == "chat") {
-    returnValue = await chat(messages, prompt);
+    returnValue = await callChat(messages, prompt);
     res.send(returnValue);
   }
 
   if (sensei.target == "assistant") {
-    returnValue = await assistant(messages, prompt);
+    returnValue = await callAssistant(messages, prompt);
     res.send(returnValue);
   }
 });
