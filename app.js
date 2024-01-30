@@ -165,20 +165,12 @@ app.post('/prompt', async (req, res) => {
   }
 
   if (sensei.target == "chat") {
-    chatParams = {
-      messages: messages,
-      prompt: prompt
-    }
-    returnValue = await callChat(chatParams);
+    returnValue = await callChat(messages, prompt);
     res.send(returnValue);
   }
 
   if (sensei.target == "assistant") {
-    assistantParams = {
-      messages: messages,
-      prompt: prompt
-    }
-    returnValue = await callAssistant(assistantParams);
+    returnValue = await callAssistant(messages, prompt);
     res.send(returnValue);
   }
 });
