@@ -40,9 +40,6 @@ async function callChat(messages, prompt) {
     content: returnValue.content,
   });
 
-  console.log("Messages:", messages);
-  console.log("Response:", response);
-
   return returnValue;
 }
 
@@ -57,14 +54,12 @@ async function callAssistant(messages, prompt, assistant, thread) {
       tools: [{ type: "code_interpreter" }, { type: "retrieval"}],
       model: sensei.model
     });
-    console.log("assistant:", assistant);
   } else {
     // assistant already exists
   }
 
   if (!thread) {
     thread = await openai.beta.threads.create();
-    console.log("thread:", thread);
   } else {
     // thread already exists
   }
@@ -85,16 +80,14 @@ async function callAssistant(messages, prompt, assistant, thread) {
     }
   );
   let runId = run.id;
-  console.log("run:", run);
 
   while (run.status != "completed") {
     await delay(2000);
-    console.log("run status:", run.status);
     run = await openai.beta.threads.runs.retrieve(
       thread.id,
       runId
     );
-    if (run.status === "failed") { console.log("run:", run); }
+    if (run.status === "failed") { console.log("run failed:", run); }
     if (run.status === "requires_action") {
       let tools_outputs = [];
       let tool_calls = run.required_action.submit_tool_outputs.tool_calls;
@@ -103,8 +96,6 @@ async function callAssistant(messages, prompt, assistant, thread) {
         let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
         let response;
         if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
-          console.log("functionName:", functionName);
-          console.log("functionArguments:", functionArguments);
           response = await functions[functionName](...functionArguments);
         } else {
           response = 'We had an issue calling an external function.'
@@ -138,7 +129,6 @@ async function callAssistant(messages, prompt, assistant, thread) {
     role: "assistant",
     content: botMessage
   }
-  console.log("Messages:", messages);
   return {
     returnValue,
     assistant,
@@ -184,9 +174,7 @@ app.post('/prompt', async (req, res) => {
     // If assistant or thread are unassigned, pass them as undefined or null to callAssistant
     const initialAssistant = assistant || null;
     const initialThread = thread || null;
-    console.log("initialAssistant:", initialAssistant);
-    console.log("initial thread:", initialThread);
-    
+
     const { 
       returnValue,
       assistant: updatedAssistant,
@@ -195,10 +183,6 @@ app.post('/prompt', async (req, res) => {
 
     if (updatedAssistant) assistant = updatedAssistant;
     if (updatedThread) thread = updatedThread;
-    console.log("updated assistant:", updatedAssistant);
-    console.log("updated thread:", updatedThread);
-    console.log("assistant:", assistant);
-    console.log("thread:", thread);
 
     res.send(returnValue);
   }
