@@ -53,13 +53,6 @@ async function respond(prompt, requestId, target) {
     requestQueue[requestId].status = 'failed';
     requestQueue[requestId].data = error.message;
   }
-  
-  if (sensei.target == "assistant") {
-
-
-    res.send(returnValue);
-  }
-
 }
 
 async function callChat(messages, prompt) {
