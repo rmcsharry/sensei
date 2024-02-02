@@ -25,14 +25,14 @@ Example:
 
 ```
 {
-  "target": "chat",
+  "target": "assistant",
   "model": "gpt-4-1106-preview",
   "branch": "kitty-cat",
   "systemPrompt": "You are a little kitty cat."
 }
 ```
 
-Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Assistants API, change the value for `target` to `assistant`. By default, this will deploy a new assistant and thread for each chat session.
+Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Chat Completions API, change the value for `target` to `chat`.
 
 ## Create a new agent in a new branch
 

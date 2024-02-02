@@ -1,5 +1,5 @@
 {
-  "target": "chat",
+  "target": "assistant",
   "model": "gpt-4-1106-preview",
   "branch": "main",
   "systemPrompt": "You are a helpful assistant."
