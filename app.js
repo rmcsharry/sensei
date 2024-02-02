@@ -14,12 +14,52 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 let messages = [];
 let assistant = '';
 let thread = '';
+let requestQueue = {};
 
 if (sensei.systemPrompt) {
   messages.push({
     role: 'system',
     content: sensei.systemPrompt,
   });
+}
+
+async function respond(prompt, requestId, target) {
+  try {
+    let result;
+
+    if (target === "chat") {
+      const returnValue = await callChat(messages, prompt);
+      result = returnValue;
+    }
+
+    if (target === "assistant") {
+      // If assistant or thread are unassigned, pass them as undefined or null to callAssistant
+      const initialAssistant = assistant || null;
+      const initialThread = thread || null;
+      const { 
+        returnValue,
+        assistant: updatedAssistant,
+        thread: updatedThread 
+      } = await callAssistant(messages, prompt, initialAssistant, initialThread);
+  
+      if (updatedAssistant) assistant = updatedAssistant;
+      if (updatedThread) thread = updatedThread;
+      result = returnValue;
+    }
+    
+    requestQueue[requestId].status = 'completed';
+    requestQueue[requestId].data = result;
+  } catch (error) {
+    requestQueue[requestId].status = 'failed';
+    requestQueue[requestId].data = error.message;
+  }
+  
+  if (sensei.target == "assistant") {
+
+
+    res.send(returnValue);
+  }
+
 }
 
 async function callChat(messages, prompt) {
@@ -140,53 +180,41 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/status/:runId', (req, res) => {
-  const runId = req.params.runId;
-
-  let status = '';
-
-  if (sensei.target == "chat") {
-    // get status from chat id
-  } else if (sensei.target == "assistant") {
-    // get status from run id
-  }
-
-  if (status) {
-      res.json({ status: status });
-  } else {
-      res.status(404).send('Run not found');
-  }
-});
-
-
 app.post('/prompt', async (req, res) => {
   const prompt = req.body.prompt;
   if (!prompt) {
     return res.status(400).send({ message: 'Prompt is required' });
   }
 
-  if (sensei.target == "chat") {
-    returnValue = await callChat(messages, prompt);
-    res.send(returnValue);
-  }
+  // Generate a unique ID for the request
+  const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+  
+  // Initialize the request status
+  requestQueue[requestId] = { status: 'processing', data: null };
 
-  if (sensei.target == "assistant") {
-    // If assistant or thread are unassigned, pass them as undefined or null to callAssistant
-    const initialAssistant = assistant || null;
-    const initialThread = thread || null;
+  // Process asynchronously
+  processPrompt(prompt, requestId, sensei.target);
 
-    const { 
-      returnValue,
-      assistant: updatedAssistant,
-      thread: updatedThread 
-    } = await callAssistant(messages, prompt, initialAssistant, initialThread);
+  // Respond with requestId
+  res.json({ requestId });
+});
 
-    if (updatedAssistant) assistant = updatedAssistant;
-    if (updatedThread) thread = updatedThread;
-
-    res.send(returnValue);
+app.get('/status/:requestId', (req, res) => {
+  const { requestId } = req.params;
+  
+  if (requestQueue[requestId]) {
+    const { status, data } = requestQueue[requestId];
+    
+    if (status === 'completed' || status === 'failed') {
+      delete requestQueue[requestId];
+    }
+    
+    res.json({ status, data });
+  } else {
+    res.status(404).send({ message: 'Request not found' });
   }
 });
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

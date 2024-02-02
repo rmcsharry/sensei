@@ -36,11 +36,33 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log("data", data);
-                document.getElementById('jsonResponse').textContent = JSON.stringify(data, null, 2);
+                console.log("Request initiated", data);
+                // Start polling for the result using the requestId
+                if (data.requestId) {
+                    pollStatus(data.requestId);
+                }
             })
             .catch(error => console.error('Error:', error));
         });
+
+        function pollStatus(requestId) {
+            console.log('Polling for status with requestId:', requestId);
+            const intervalId = setInterval(() => {
+                fetch(`/status/${requestId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Polling response:', data);
+                        if (data.status === 'completed' || data.status === 'failed') {
+                            clearInterval(intervalId); // Stop polling
+                            document.getElementById('jsonResponse').textContent = JSON.stringify(data, null, 2);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Polling error:', error);
+                        clearInterval(intervalId); // Consider stopping polling on error
+                    });
+            }, 2000); // Poll every 2 seconds
+        }
     </script>
 </body>
 </html>
