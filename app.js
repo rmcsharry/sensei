@@ -28,8 +28,7 @@ async function respond(prompt, requestId, target) {
     let result;
 
     if (target === "chat") {
-      const returnValue = await callChat(messages, prompt);
-      result = returnValue;
+      result = await callChat(messages, prompt);
     }
 
     if (target === "assistant") {
