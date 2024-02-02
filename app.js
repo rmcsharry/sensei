@@ -193,7 +193,7 @@ app.post('/prompt', async (req, res) => {
   requestQueue[requestId] = { status: 'processing', data: null };
 
   // Process asynchronously
-  processPrompt(prompt, requestId, sensei.target);
+  respond(prompt, requestId, sensei.target);
 
   // Respond with requestId
   res.json({ requestId });
