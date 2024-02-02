@@ -139,7 +139,11 @@ async function callAssistant(messages, prompt, assistant, thread) {
     content: botMessage
   }
   console.log("Messages:", messages);
-  return returnValue;
+  return {
+    returnValue,
+    assistant,
+    thread
+  };
 }
 
 app.get('/', (req, res) => {
@@ -177,7 +181,25 @@ app.post('/prompt', async (req, res) => {
   }
 
   if (sensei.target == "assistant") {
-    returnValue = await callAssistant(messages, prompt, assistant, thread);
+    // If assistant or thread are unassigned, pass them as undefined or null to callAssistant
+    const initialAssistant = assistant || null;
+    const initialThread = thread || null;
+    console.log("initialAssistant:", initialAssistant);
+    console.log("initial thread:", initialThread);
+    
+    const { 
+      returnValue,
+      assistant: updatedAssistant,
+      thread: updatedThread 
+    } = await callAssistant(messages, prompt, initialAssistant, initialThread);
+
+    if (updatedAssistant) assistant = updatedAssistant;
+    if (updatedThread) thread = updatedThread;
+    console.log("updated assistant:", updatedAssistant);
+    console.log("updated thread:", updatedThread);
+    console.log("assistant:", assistant);
+    console.log("thread:", thread);
+
     res.send(returnValue);
   }
 });
