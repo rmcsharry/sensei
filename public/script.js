@@ -20,20 +20,27 @@ document.getElementById('chatForm').addEventListener('submit', function(e) {
 });
 
 function pollStatus(requestId) {
-  console.log('Polling for status with requestId:', requestId);
+  const threadContainer = document.getElementById('threadContainer');
   const intervalId = setInterval(() => {
-      fetch(`/status/${requestId}`)
-          .then(response => response.json())
-          .then(data => {
-              console.log('Polling response:', data);
-              if (data.status === 'completed' || data.status === 'failed') {
-                  clearInterval(intervalId); // Stop polling
-                  document.getElementById('jsonResponse').textContent = JSON.stringify(data, null, 2);
-              }
-          })
-          .catch(error => {
-              console.error('Polling error:', error);
-              clearInterval(intervalId);
-          });
-  }, 2000); // Poll every 2 seconds
+    fetch(`/status/${requestId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'completed' || data.status === 'failed') {
+        clearInterval(intervalId);
+        const newResponseElement = document.createElement("pre");
+        newResponseElement.classList.add("jsonResponse");
+        newResponseElement.textContent = JSON.stringify(data, null, 2);
+        if (threadContainer.firstChild) {
+          threadContainer.insertBefore(newResponseElement, threadContainer.firstChild);
+        } else {
+          threadContainer.appendChild(newResponseElement);
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Polling error:', error);
+      clearInterval(intervalId);
+    });
+  }, 2000);
 }
+  
