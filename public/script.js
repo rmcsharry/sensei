@@ -10,8 +10,11 @@ document.getElementById('chatForm').addEventListener('submit', function(e) {
   })
   .then(response => response.json())
   .then(data => {
-      console.log("Request initiated", data);
-      // Start polling for the result using the requestId
+    const userPromptElement = document.createElement("pre");
+    userPromptElement.classList.add("jsonResponse");
+    userPromptElement.textContent = JSON.stringify({ role: "user", content: prompt }, null, 2);
+    threadContainer.insertBefore(userPromptElement, threadContainer.firstChild);
+
       if (data.requestId) {
           pollStatus(data.requestId);
       }
