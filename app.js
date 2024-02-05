@@ -1,4 +1,6 @@
 const express = require('express');
+const { body, validationResult } = require('express-validator');
+const sanitizeHtml = require('sanitize-html');
 const { OpenAI } = require("openai");
 const sensei = require('./sensei.json');
 
@@ -172,22 +174,23 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.post('/prompt', async (req, res) => {
-  const prompt = req.body.prompt;
-  if (!prompt) {
-    return res.status(400).send({ message: 'Prompt is required' });
+app.post('/prompt', [
+  body('prompt').not().isEmpty().withMessage('Prompt is required'),
+  body('prompt').trim().escape(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
 
-  // Generate a unique ID for the request
+  let prompt = sanitizeHtml(req.body.prompt, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-  
-  // Initialize the request status
   requestQueue[requestId] = { status: 'processing', data: null };
-
-  // Process asynchronously
   respond(prompt, requestId, sensei.target);
-
-  // Respond with requestId
   res.json({ requestId });
 });
 
