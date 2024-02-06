@@ -15,11 +15,11 @@ You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Hero
 
 This will create and check out a new project with that name, deploy it to Heroku, set it up with your OpenAI API key, add logging with the Logtail free plan, and a Heroku Postgres database under the Basic plan. Note: This will fail if the project name is not unique.
 
-If you want to track the project on GitHub, run `git push origin {project-name}`
+To deploy changes to Heroku:
+`git push {project-name} {project-name}:main`
 
-When deploying changes to Heroku, run `git push {project-name} {project-name}:main`
-
-When opening the app from the command line, run `heroku open --app {project-name}`.
+To open the app from the command line:
+`heroku open --app {project-name}`.
 
 ## Config options
 
