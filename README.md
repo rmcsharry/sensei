@@ -1,5 +1,5 @@
 # Sensei
-Framework for quickly developing and deploying AI agents. Geared toward rapid development and experimentation with free cloud services.
+Framework for quickly developing and deploying AI agents. Geared toward rapid development and experimentation.
 
 ## Prerequisites
 
