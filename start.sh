@@ -36,6 +36,18 @@ heroku addons:create logtail:free --app "$PROJECT_NAME"
 # Deploy a Postgres database under the basic plan
 heroku addons:create heroku-postgresql:basic --app "$PROJECT_NAME"
 
+# Create a database table to store messages
+heroku pg:psql --app "$PROJECT_NAME" <<EOF
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    role VARCHAR(255),
+    content TEXT,
+    assistant VARCHAR(255),
+    thread VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+EOF
+
 # Push the main branch to Heroku
 git push $PROJECT_NAME $PROJECT_NAME:main
 

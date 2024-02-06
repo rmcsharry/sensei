@@ -33,6 +33,18 @@ heroku addons:create logtail:free --app $BRANCH_NAME
 # Deploy a Postgres database under the basic plan
 heroku addons:create heroku-postgresql:basic --app $BRANCH_NAME
 
+# Create a database table to store messages
+heroku pg:psql --app "$BRANCH_NAME" <<EOF
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    role VARCHAR(255),
+    content TEXT,
+    assistant VARCHAR(255),
+    thread VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+EOF
+
 # Add Heroku remote for this branch
 git remote add $BRANCH_NAME https://git.heroku.com/$BRANCH_NAME.git
 
