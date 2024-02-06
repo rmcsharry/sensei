@@ -3,7 +3,7 @@ Framework for quickly developing and deploying AI agents. Geared toward rapid de
 
 ## Prerequisites
 
-You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Heroku](https://signup.heroku.com/) account, and you have the `yarn`, `node`, and `heroku` packages installed on your machine.
+You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Heroku](https://signup.heroku.com/) account, and you have the `yarn`, `node`, and `heroku` packages installed on your machine. You will also need to have billing information set up with Heroku, though the readme instructions will guide you to cheap or free Heroku services where available.
 
 ## Steps to get started
 
@@ -14,8 +14,9 @@ You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Hero
 5. `heroku create`
 6. `heroku config:set OPENAI_API_KEY={YOUR-KEY}`
 7. `heroku addons:create logtail:free`
-8. `git push heroku main`
-9. `heroku open`
+8. `heroku addons:create heroku-postgresql:basic`
+9. `git push heroku main`
+10. `heroku open`
 
 ## Config options
 

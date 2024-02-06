@@ -24,6 +24,9 @@ heroku config:set OPENAI_API_KEY=$OPENAI_API_KEY --app $BRANCH_NAME
 # Add logging with Logtail free plan
 heroku addons:create logtail:free --app $BRANCH_NAME
 
+# Deploy a Postgres database under the basic plan
+heroku addons:create heroku-postgresql:basic --app $BRANCH_NAME
+
 # Add Heroku remote for this branch
 git remote add $BRANCH_NAME https://git.heroku.com/$BRANCH_NAME.git
 
