@@ -159,9 +159,17 @@ async function callAssistant(messages, prompt, assistant, thread) {
   }
   messages = messages.slice(originalMessageLength);
   let botMessage = messages[0].text.value;
-  let returnValue = {
-    role: "assistant",
-    content: botMessage
+  let returnValue;
+  if (assistant.name){ 
+    returnValue = {
+      role: assistant.name,
+      content: botMessage
+    }
+  } else {
+    returnValue = {
+      role: assistant.id,
+      content: botMessage
+    }
   }
   return {
     returnValue,
