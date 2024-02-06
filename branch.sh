@@ -15,6 +15,12 @@ git checkout -b $BRANCH_NAME
 # Update the branch name in sensei.json
 jq --arg branch "$BRANCH_NAME" '.branch = $branch' sensei.json > temp.json && mv temp.json sensei.json
 
+# Add the updated sensei.json to the staging area
+git add sensei.json
+
+# Commit the change with a message
+git commit -m "update branch name in sensei.json to $BRANCH_NAME"
+
 # Create a new Heroku app
 heroku create $BRANCH_NAME
 
