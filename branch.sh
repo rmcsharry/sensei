@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Check if a branch name was provided
+# Check if a branch name and API key were provided
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 branch-name OPENAI_API_KEY"
     exit 1
