@@ -45,6 +45,16 @@ CREATE TABLE messages (
 );
 EOF
 
+# Create a database table to store companions (accounts that send queries, could be human or AI)
+heroku pg:psql --app "$BRANCH_NAME" <<EOF
+CREATE TABLE companions (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    address VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+EOF
+
 # Add Heroku remote for this branch
 git remote add $BRANCH_NAME https://git.heroku.com/$BRANCH_NAME.git
 

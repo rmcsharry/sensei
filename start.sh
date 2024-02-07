@@ -48,6 +48,16 @@ CREATE TABLE messages (
 );
 EOF
 
+# Create a database table to store companions (accounts that send queries, could be human or AI)
+heroku pg:psql --app "$PROJECT_NAME" <<EOF
+CREATE TABLE companions (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    address VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+EOF
+
 # Push the main branch to Heroku
 git push $PROJECT_NAME $PROJECT_NAME:main
 
