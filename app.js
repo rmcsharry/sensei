@@ -264,8 +264,17 @@ app.post('/register', [
   }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login', [
+  body('name').trim().escape(),
+  body('password').trim(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { name, password } = req.body;
+  
   try {
     const result = await pool.query("SELECT * FROM companions WHERE name = $1", [name]);
     if (result.rows.length > 0) {
