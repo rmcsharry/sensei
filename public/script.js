@@ -43,8 +43,8 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  const username = document.getElementById('registerUsername').value;
-  const password = document.getElementById('registerPassword').value;
+  const username = document.getElementById('loginUsername').value;
+  const password = document.getElementById('loginPassword').value;
   fetch('/login', {
       method: 'POST',
       headers: {
