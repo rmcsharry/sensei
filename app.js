@@ -250,12 +250,12 @@ app.post('/register', [
   }
 
   const { name, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedpassword = await bcrypt.hash(password, 10);
 
   try {
       await pool.query(
-          "INSERT INTO companions (name, hashedPassword, created_at) VALUES ($1, $2, NOW())",
-          [name, hashedPassword]
+          "INSERT INTO companions (name, hashedpassword, created_at) VALUES ($1, $2, NOW())",
+          [name, hashedpassword]
       );
       res.status(201).send("Companion registered successfully");
   } catch (error) {
@@ -280,7 +280,7 @@ app.post('/login', [
     if (result.rows.length > 0) {
       const companion = result.rows[0];
       console.log(companion);
-      const match = await bcrypt.compare(password, companion.hashedPassword);
+      const match = await bcrypt.compare(password, companion.hashedpassword);
       if (match) {
         res.status(202).send("Logged in successfully");
       } else {
