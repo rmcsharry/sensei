@@ -24,7 +24,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 let messages = [];
 let guide = '';
-let companion = 'companion';
+let companion = 'companion_name';
 let thread = '';
 let requestQueue = {};
 
@@ -74,10 +74,10 @@ async function respond(prompt, requestId, target) {
 
 async function callChat(messages, prompt) {
   messages.push({
-    role: 'user',
+    role: 'user', // have to call companion user for openai api
     content: prompt,
   });
-  saveMessage('user', prompt);
+  saveMessage('companion', prompt);
 
   const response = await openai.chat.completions.create({
     model: sensei.model,
@@ -86,14 +86,14 @@ async function callChat(messages, prompt) {
 
   returnValue = response.choices[0].message;
 
-  saveMessage(returnValue.role, returnValue.content);
+  saveMessage('guide', returnValue.content);
 
   return returnValue;
 }
 
 async function callAssistant(messages, prompt, guide, thread) {
   messages.push({
-    role: 'user',
+    role: 'companion',
     content: prompt,
   });
 
@@ -117,12 +117,12 @@ async function callAssistant(messages, prompt, guide, thread) {
     // thread already exists
   }
 
-  saveMessage('user', prompt, guide.id, companion, thread.id);
+  saveMessage('companion', prompt, guide.id, companion, thread.id);
 
   await openai.beta.threads.messages.create(
     thread.id,
     {
-      role: "user",
+      role: "user", // have to call companion user for openai api calls
       content: prompt
     }
   );
@@ -180,20 +180,12 @@ async function callAssistant(messages, prompt, guide, thread) {
     messages.push(message.content[0]);
   }
   messages = messages.slice(originalMessageLength);
-  let botMessage = messages[0].text.value;
-  saveMessage(guide.name, botMessage, guide.id, companion, thread.id);
-  let returnValue;
-  if (guide.name){ 
-    returnValue = {
-      role: guide.name,
-      content: botMessage
-    }
-  } else {
-    returnValue = {
-      role: guide.id,
-      content: botMessage
-    }
-  }
+  let guideMessage = messages[0].text.value;
+  saveMessage('guide', guideMessage, guide.id, companion, thread.id);
+  let returnValue = {
+    role: 'guide',
+    content: guideMessage
+  };
   return {
     returnValue,
     guide,
@@ -279,8 +271,8 @@ app.post('/login', [
   try {
     const result = await pool.query("SELECT * FROM companions WHERE name = $1", [name]);
     if (result.rows.length > 0) {
-      const companion = result.rows[0];
-      const match = await bcrypt.compare(password, companion.hashedpassword);
+      const foundCompanion = result.rows[0];
+      const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
       if (match) {
         res.send("Logged in successfully");
       } else {
