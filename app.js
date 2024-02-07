@@ -30,10 +30,6 @@ if (sensei.systemPrompt) {
 }
 
 async function saveMessage(role, content, assistant = null, thread = null) {
-  messages.push({
-    role: role,
-    content: content,
-  });
   const insertQuery = `INSERT INTO messages (role, content, assistant, thread, created_at) VALUES ($1, $2, $3, $4, NOW())`;
   try {
     await pool.query(insertQuery, [role, content, assistant, thread]);
@@ -74,6 +70,10 @@ async function respond(prompt, requestId, target) {
 }
 
 async function callChat(messages, prompt) {
+  messages.push({
+    role: 'user',
+    content: prompt,
+  });
   saveMessage('user', prompt);
 
   const response = await openai.chat.completions.create({
@@ -89,6 +89,12 @@ async function callChat(messages, prompt) {
 }
 
 async function callAssistant(messages, prompt, assistant, thread) {
+  messages.push({
+    role: 'user',
+    content: prompt,
+  });
+  saveMessage('user', prompt);
+
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
   } 
@@ -162,8 +168,6 @@ async function callAssistant(messages, prompt, assistant, thread) {
     }
   }
 
-  saveMessage('user', prompt);
-  let botMessage;
   let originalMessageLength = messages.length;
   console.log("originalMessageLength:", originalMessageLength);
   
@@ -171,11 +175,11 @@ async function callAssistant(messages, prompt, assistant, thread) {
   let newMessages = completedThread.data.slice();
   console.log("newMessages:", newMessages);
   for (let message of newMessages) {
-    console.log("message:", message.content[0].text.value);
-    botMessage = message.content[0].text.value;
-    saveMessage(assistant.name, botMessage, assistant.id, thread.id);
+    messages.push(message.content[0]);
   }
   messages = messages.slice(originalMessageLength);
+  let botMessage = messages[0].text.value;
+  saveMessage(assistant.name, botMessage, assistant.id, thread.id);
   console.log("botMessage:", botMessage);
   let returnValue;
   if (assistant.name){ 
