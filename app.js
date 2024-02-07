@@ -166,7 +166,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
   let completedThread = await openai.beta.threads.messages.list(thread.id);
   let newMessages = completedThread.data.slice();
   for (let message of newMessages) {
-    console.log("message:", message.content.text.value);
+    console.log("message:", message.content);
     saveMessage(assistant.name, message.text.value, assistant.id, thread.id);
   }
   messages = messages.slice(originalMessageLength);
