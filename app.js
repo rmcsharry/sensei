@@ -239,12 +239,16 @@ app.get('/status/:requestId', (req, res) => {
   }
 });
 
-app.post('/register', async (req, res) => {
-  const { name, password } = req.body;
-  if (!name || !password) {
-      return res.status(400).send("Name and password are required");
+app.post('/register', [
+  body('name').trim().escape(),
+  body('password').trim(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
 
+  const { name, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -258,8 +262,6 @@ app.post('/register', async (req, res) => {
       res.status(500).send("Server error");
   }
 });
-
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

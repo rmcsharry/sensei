@@ -22,6 +22,26 @@ document.getElementById('chatForm').addEventListener('submit', function(e) {
   .catch(error => console.error('Error:', error));
 });
 
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  fetch('/register', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: username, password }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log('Registration successful', data);
+      // Handle successful registration, e.g., displaying a success message or redirecting
+  })
+  .catch(error => console.error('Error:', error));
+});
+
+
 function pollStatus(requestId) {
   const threadContainer = document.getElementById('threadContainer');
   const intervalId = setInterval(() => {
