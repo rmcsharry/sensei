@@ -257,7 +257,7 @@ app.post('/register', [
           "INSERT INTO companions (name, hashedPassword, created_at) VALUES ($1, $2, NOW())",
           [name, hashedPassword]
       );
-      res.status(201).send("User created successfully");
+      res.status(201).send("Companion registered successfully");
   } catch (error) {
       console.error(error);
       res.status(500).send("Server error");
@@ -274,20 +274,19 @@ app.post('/login', [
   }
 
   const { name, password } = req.body;
-  
+
   try {
     const result = await pool.query("SELECT * FROM companions WHERE name = $1", [name]);
     if (result.rows.length > 0) {
-      const user = result.rows[0];
-      const match = await bcrypt.compare(password, user.hashedpassword);
+      const companion = result.rows[0];
+      const match = await bcrypt.compare(password, companion.hashedpassword);
       if (match) {
-        req.session.userId = user.id; // Establishing a session
         res.send("Logged in successfully");
       } else {
         res.status(401).send("Password is incorrect");
       }
     } else {
-      res.status(404).send("User not found");
+      res.status(404).send("Companion not found");
     }
   } catch (error) {
     console.error(error);
