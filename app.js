@@ -279,10 +279,9 @@ app.post('/login', [
     const result = await pool.query("SELECT * FROM companions WHERE name = $1", [name]);
     if (result.rows.length > 0) {
       const companion = result.rows[0];
-      console.log(companion);
       const match = await bcrypt.compare(password, companion.hashedpassword);
       if (match) {
-        res.status(202).send("Logged in successfully");
+        res.send("Logged in successfully");
       } else {
         res.status(401).send("Password is incorrect");
       }
