@@ -50,6 +50,7 @@ heroku pg:psql --app "$BRANCH_NAME" <<EOF
 CREATE TABLE companions (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
+    hashedPassword VARCHAR(255),
     address VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

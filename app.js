@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
+const bcrypt = require('bcrypt');
 const { OpenAI } = require("openai");
 const sensei = require('./sensei.json');
 const { Pool } = require('pg');
@@ -237,6 +238,27 @@ app.get('/status/:requestId', (req, res) => {
     res.status(404).send({ message: 'Request not found' });
   }
 });
+
+app.post('/register', async (req, res) => {
+  const { name, password } = req.body;
+  if (!name || !password) {
+      return res.status(400).send("Name and password are required");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  try {
+      await pool.query(
+          "INSERT INTO companions (name, hashedPassword, created_at) VALUES ($1, $2, NOW())",
+          [name, hashedPassword]
+      );
+      res.status(201).send("User created successfully");
+  } catch (error) {
+      console.error(error);
+      res.status(500).send("Server error");
+  }
+});
+
 
 
 const port = process.env.PORT || 3000;
