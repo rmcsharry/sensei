@@ -91,6 +91,7 @@ async function callChat(messages, prompt) {
 }
 
 async function callAssistant(messages, prompt, assistant, thread) {
+  saveMessage('user', prompt);
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
   } 
@@ -174,6 +175,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
   }
   messages = messages.slice(originalMessageLength);
   let botMessage = messages[0].text.value;
+  console.log("botMessage:", botMessage);
   let returnValue;
   if (assistant.name){ 
     returnValue = {
@@ -186,6 +188,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
       content: botMessage
     }
   }
+  console.log("returnValue:", returnValue);
   return {
     returnValue,
     assistant,
