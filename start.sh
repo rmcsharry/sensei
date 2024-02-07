@@ -43,6 +43,7 @@ CREATE TABLE messages (
     role VARCHAR(255),
     content TEXT,
     guide VARCHAR(255),
+    companion VARCHAR(255),
     thread VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -57,6 +58,13 @@ CREATE TABLE companions (
     address VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+EOF
+
+# Index messages by guide, companion, and thread for easy retrieval
+heroku pg:psql --app "$PROJECT_NAME" <<EOF
+CREATE INDEX idx_messages_guide ON messages(guide);
+CREATE INDEX idx_messages_companion ON messages(companion);
+CREATE INDEX idx_messages_thread ON messages(thread);
 EOF
 
 # Push the main branch to Heroku
