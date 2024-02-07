@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
 const { OpenAI } = require("openai");
 const sensei = require('./sensei.json');
 const { Pool } = require('pg');
@@ -262,6 +263,29 @@ app.post('/register', [
       res.status(500).send("Server error");
   }
 });
+
+app.post('/login', async (req, res) => {
+  const { name, password } = req.body;
+  try {
+    const result = await pool.query("SELECT * FROM companions WHERE name = $1", [name]);
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      const match = await bcrypt.compare(password, user.hashedpassword);
+      if (match) {
+        req.session.userId = user.id; // Establishing a session
+        res.send("Logged in successfully");
+      } else {
+        res.status(401).send("Password is incorrect");
+      }
+    } else {
+      res.status(404).send("User not found");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
