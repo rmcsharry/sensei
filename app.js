@@ -30,10 +30,12 @@ if (sensei.systemPrompt) {
 }
 
 async function saveMessage(role, content, assistant = null, thread = null) {
+  console.log("messages before push:", messages);
   messages.push({
     role: role,
     content: content,
   });
+  console.log("messages after push:", messages);
   const insertQuery = `INSERT INTO messages (role, content, assistant, thread, created_at) VALUES ($1, $2, $3, $4, NOW())`;
   try {
     await pool.query(insertQuery, [role, content, assistant, thread]);
@@ -163,9 +165,11 @@ async function callAssistant(messages, prompt, assistant, thread) {
   }
 
   let originalMessageLength = messages.length;
+  console.log("originalMessageLength:", originalMessageLength);
   let completedThread = await openai.beta.threads.messages.list(thread.id);
   let newMessages = completedThread.data.slice();
   for (let message of newMessages) {
+    console.log("message:", message);
     saveMessage(assistant.name, message.content[0].text.value, assistant.id, thread.id);
   }
   messages = messages.slice(originalMessageLength);
