@@ -1,6 +1,6 @@
 {
   "target": "assistant",
   "model": "gpt-4-1106-preview",
-  "branch": "sensei-4",
+  "branch": "main",
   "systemPrompt": "You are a helpful assistant."
 }
