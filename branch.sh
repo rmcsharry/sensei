@@ -39,7 +39,7 @@ CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
     role VARCHAR(255),
     content TEXT,
-    assistant VARCHAR(255),
+    guide VARCHAR(255),
     thread VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -21,7 +21,7 @@ app.use(express.static('public'));
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 let messages = [];
-let assistant = '';
+let guide = '';
 let thread = '';
 let requestQueue = {};
 
@@ -29,10 +29,10 @@ if (sensei.systemPrompt) {
   saveMessage('system', sensei.systemPrompt);
 }
 
-async function saveMessage(role, content, assistant = null, thread = null) {
-  const insertQuery = `INSERT INTO messages (role, content, assistant, thread, created_at) VALUES ($1, $2, $3, $4, NOW())`;
+async function saveMessage(role, content, guide = null, thread = null) {
+  const insertQuery = `INSERT INTO messages (role, content, guide, thread, created_at) VALUES ($1, $2, $3, $4, NOW())`;
   try {
-    await pool.query(insertQuery, [role, content, assistant, thread]);
+    await pool.query(insertQuery, [role, content, guide, thread]);
   } catch (err) {
     console.error('Error saving message to database:', err);
   }
@@ -47,16 +47,16 @@ async function respond(prompt, requestId, target) {
     }
 
     if (target === "assistant") {
-      // If assistant or thread are unassigned, pass them as undefined or null to callAssistant
-      const initialAssistant = assistant || null;
+      // If guide or thread are unassigned, pass them as undefined or null to callAssistant
+      const initialGuide = guide || null;
       const initialThread = thread || null;
       const { 
         returnValue,
-        assistant: updatedAssistant,
+        guide: updatedGuide,
         thread: updatedThread 
-      } = await callAssistant(messages, prompt, initialAssistant, initialThread);
+      } = await callAssistant(messages, prompt, initialGuide, initialThread);
   
-      if (updatedAssistant) assistant = updatedAssistant;
+      if (updatedGuide) guide = updatedGuide;
       if (updatedThread) thread = updatedThread;
       result = returnValue;
     }
@@ -88,7 +88,7 @@ async function callChat(messages, prompt) {
   return returnValue;
 }
 
-async function callAssistant(messages, prompt, assistant, thread) {
+async function callAssistant(messages, prompt, guide, thread) {
   messages.push({
     role: 'user',
     content: prompt,
@@ -97,15 +97,15 @@ async function callAssistant(messages, prompt, assistant, thread) {
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
   } 
-  if (!assistant) {
-    assistant = await openai.beta.assistants.create({
+  if (!guide) {
+    guide = await openai.beta.assistants.create({
       name: sensei.branch,
       instructions: sensei.systemPrompt,
       tools: [{ type: "code_interpreter" }, { type: "retrieval"}],
       model: sensei.model
     });
   } else {
-    // assistant already exists
+    // guide already exists
   }
 
   if (!thread) {
@@ -114,7 +114,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
     // thread already exists
   }
 
-  saveMessage('user', prompt, assistant.id, thread.id);
+  saveMessage('user', prompt, guide.id, thread.id);
 
   await openai.beta.threads.messages.create(
     thread.id,
@@ -127,7 +127,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
   let run = await openai.beta.threads.runs.create(
     thread.id,
     { 
-      assistant_id: assistant.id,
+      assistant_id: guide.id,
       // instructions: "You can add custom instructions, which will override the system prompt.."
     }
   );
@@ -178,22 +178,22 @@ async function callAssistant(messages, prompt, assistant, thread) {
   }
   messages = messages.slice(originalMessageLength);
   let botMessage = messages[0].text.value;
-  saveMessage(assistant.name, botMessage, assistant.id, thread.id);
+  saveMessage(guide.name, botMessage, guide.id, thread.id);
   let returnValue;
-  if (assistant.name){ 
+  if (guide.name){ 
     returnValue = {
-      role: assistant.name,
+      role: guide.name,
       content: botMessage
     }
   } else {
     returnValue = {
-      role: assistant.id,
+      role: guide.id,
       content: botMessage
     }
   }
   return {
     returnValue,
-    assistant,
+    guide,
     thread
   };
 }
