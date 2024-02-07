@@ -171,7 +171,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
   let newMessages = completedThread.data.slice();
   console.log("newMessages:", newMessages);
   for (let message of newMessages) {
-    console.log("message:", message);
+    console.log("message:", message.content[0].text.value);
     botMessage = message.content[0].text.value;
     saveMessage(assistant.name, botMessage, assistant.id, thread.id);
   }
