@@ -93,7 +93,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
     role: 'user',
     content: prompt,
   });
-  saveMessage('user', prompt);
+  saveMessage('user', prompt, assistant.id, thread.id);
 
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
