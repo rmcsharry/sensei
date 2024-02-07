@@ -1,9 +1,9 @@
 # Sensei
-Framework for quickly developing and deploying AI agents. Geared toward rapid development and experimentation.
+Framework for quickly developing and deploying AI guides. Geared toward rapid development and experimentation.
 
 ## Prerequisites
 
-You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Heroku](https://signup.heroku.com/) account, and you have the `yarn`, `node`, and `heroku` packages installed on your machine. You will also need to have Postgres [installed locally](https://devcenter.heroku.com/articles/local-setup-heroku-postgres) and [CLI tools](https://postgresapp.com/documentation/cli-tools.html) set up.
+You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Heroku](https://signup.heroku.com/) account, and you have the `yarn`, `node`, and `heroku` packages installed on your machine. You will also need to have Postgres [installed locally](https://devcenter.heroku.com/articles/local-setup-heroku-postgres) and [Postgres CLI tools](https://postgresapp.com/documentation/cli-tools.html) set up.
 
 ## Steps to get started
 
@@ -56,4 +56,4 @@ The `./branch.sh` script is basically the same as the `./start.sh` script, but s
 
 ## Experimental: use GitHub workflows
 
-Use [GitHub](https://github.com/) to host your repository and set up CI before deploying to Heroku. There is a GitHub workflow file you can tinker with. 
+Use [GitHub](https://github.com/) to host your repository and set up CI before deploying to Heroku. There is a GitHub workflow file you can tinker with in `.github/workflows`. 
