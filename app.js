@@ -169,12 +169,13 @@ async function callAssistant(messages, prompt, assistant, thread) {
   console.log("originalMessageLength:", originalMessageLength);
   let completedThread = await openai.beta.threads.messages.list(thread.id);
   let newMessages = completedThread.data.slice();
+  let botMessage;
   for (let message of newMessages) {
     console.log("message:", message);
+    botMessage = message.content[0].text.value;
     saveMessage(assistant.name, message.content[0].text.value, assistant.id, thread.id);
   }
   messages = messages.slice(originalMessageLength);
-  let botMessage = messages[0].text.value;
   console.log("botMessage:", botMessage);
   let returnValue;
   if (assistant.name){ 
