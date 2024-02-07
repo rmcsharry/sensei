@@ -48,12 +48,6 @@ From the root of the directory:
 
 The `./branch.sh` script is basically the same as the `./start.sh` script, but skips running `yarn` and `heroku login`. Just like project names, the branch name must be unique to deploy successfully to Heroku.
 
-## Experimental: use the command line interface
-
-1. `touch .env`
-2. add `OPENAI_API_KEY={YOUR-KEY}` to `.env`
-3. `node prompt.js`
-
 ## Experimental: use GitHub workflows
 
 Use [GitHub](https://github.com/) to host your repository and set up CI before deploying to Heroku. There is a GitHub workflow file you can tinker with in `.github/workflows`. 
