@@ -169,18 +169,15 @@ async function callAssistant(messages, prompt, assistant, thread) {
   }
 
   let originalMessageLength = messages.length;
-  console.log("originalMessageLength:", originalMessageLength);
   
   let completedThread = await openai.beta.threads.messages.list(thread.id);
   let newMessages = completedThread.data.slice();
-  console.log("newMessages:", newMessages);
   for (let message of newMessages) {
     messages.push(message.content[0]);
   }
   messages = messages.slice(originalMessageLength);
   let botMessage = messages[0].text.value;
   saveMessage(assistant.name, botMessage, assistant.id, thread.id);
-  console.log("botMessage:", botMessage);
   let returnValue;
   if (assistant.name){ 
     returnValue = {
@@ -193,7 +190,6 @@ async function callAssistant(messages, prompt, assistant, thread) {
       content: botMessage
     }
   }
-  console.log("returnValue:", returnValue);
   return {
     returnValue,
     assistant,
