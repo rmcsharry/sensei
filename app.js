@@ -24,6 +24,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 let messages = [];
 let guide = '';
+let companion = 'companion';
 let thread = '';
 let requestQueue = {};
 
@@ -31,7 +32,7 @@ if (sensei.systemPrompt) {
   saveMessage('system', sensei.systemPrompt);
 }
 
-async function saveMessage(role, content, guide = null, thread = null) {
+async function saveMessage(role, content, guide = null, companion = null, thread = null) {
   const insertQuery = `INSERT INTO messages (role, content, guide, thread, created_at) VALUES ($1, $2, $3, $4, NOW())`;
   try {
     await pool.query(insertQuery, [role, content, guide, thread]);
@@ -116,7 +117,7 @@ async function callAssistant(messages, prompt, guide, thread) {
     // thread already exists
   }
 
-  saveMessage('user', prompt, guide.id, thread.id);
+  saveMessage('user', prompt, guide.id, companion, thread.id);
 
   await openai.beta.threads.messages.create(
     thread.id,
@@ -180,7 +181,7 @@ async function callAssistant(messages, prompt, guide, thread) {
   }
   messages = messages.slice(originalMessageLength);
   let botMessage = messages[0].text.value;
-  saveMessage(guide.name, botMessage, guide.id, thread.id);
+  saveMessage(guide.name, botMessage, guide.id, companion, thread.id);
   let returnValue;
   if (guide.name){ 
     returnValue = {
