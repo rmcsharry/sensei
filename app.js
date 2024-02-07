@@ -3,6 +3,13 @@ const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
 const { OpenAI } = require("openai");
 const sensei = require('./sensei.json');
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 require('dotenv').config();
 const app = express();
@@ -19,10 +26,20 @@ let thread = '';
 let requestQueue = {};
 
 if (sensei.systemPrompt) {
+  saveMessage('system', sensei.systemPrompt);
+}
+
+async function saveMessage(role, content, assistant = null, thread = null) {
   messages.push({
-    role: 'system',
-    content: sensei.systemPrompt,
+    role: role,
+    content: content,
   });
+  const insertQuery = `INSERT INTO messages (role, content, assistant, thread, created_at) VALUES ($1, $2, $3, $4, NOW())`;
+  try {
+    await pool.query(insertQuery, [role, content, assistant, thread]);
+  } catch (err) {
+    console.error('Error saving message to database:', err);
+  }
 }
 
 async function respond(prompt, requestId, target) {
@@ -57,10 +74,7 @@ async function respond(prompt, requestId, target) {
 }
 
 async function callChat(messages, prompt) {
-  messages.push({
-    role: 'user',
-    content: prompt,
-  });
+  saveMessage('user', prompt);
 
   const response = await openai.chat.completions.create({
     model: sensei.model,
@@ -69,10 +83,7 @@ async function callChat(messages, prompt) {
 
   returnValue = response.choices[0].message;
 
-  messages.push({
-    role: returnValue.role,
-    content: returnValue.content,
-  });
+  saveMessage(returnValue.role, returnValue.content);
 
   return returnValue;
 }
@@ -155,7 +166,7 @@ async function callAssistant(messages, prompt, assistant, thread) {
   let completedThread = await openai.beta.threads.messages.list(thread.id);
   let newMessages = completedThread.data.slice();
   for (let message of newMessages) {
-    messages.push(message.content[0]);
+    saveMessage(assistant.name, message.text.value, assistant.id, thread.id);
   }
   messages = messages.slice(originalMessageLength);
   let botMessage = messages[0].text.value;
