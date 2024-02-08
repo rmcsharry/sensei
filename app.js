@@ -282,6 +282,7 @@ app.post('/login', [
       const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
       if (match) {
         req.session.userId = foundCompanion.id;
+        req.session.save();
         res.send("Logged in successfully");
       } else {
         res.status(401).send("Password is incorrect");
