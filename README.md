@@ -11,7 +11,7 @@ You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Hero
 2. `cd sensei`
 3. `brew install jq` (if on Mac, otherwise [follow these instructions](https://jqlang.github.io/jq/download/))
 4. `chmod +x start.sh`
-5. `./start.sh {project-name} {OPENAI-API-KEY}`
+5. `./start.sh {project-name} {OPENAI-API-KEY} {SESSION-SECRET}`
 
 This will create and check out a new project with that name, deploy it to Heroku, set it up with your OpenAI API key, add logging with the Logtail free plan, and a Heroku Postgres database under the Basic plan. Note: This will fail if the project name is not unique.
 
@@ -44,7 +44,7 @@ An easy way to create and deploy multiple AIs with different behavior is to crea
 
 From the root of the directory:
 1. `chmod +x branch.sh`
-2. `./branch.sh {branch-name} {OPENAI-API-KEY}`
+2. `./branch.sh {branch-name} {OPENAI-API-KEY} {SESSION-SECRET}`
 
 The `./branch.sh` script is basically the same as the `./start.sh` script, but skips running `yarn` and `heroku login`. Just like project names, the branch name must be unique to deploy successfully to Heroku.
 

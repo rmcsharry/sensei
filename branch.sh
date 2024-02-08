@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Check if a branch name and API key were provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 branch-name OPENAI_API_KEY"
+# Check if project name, OpenAI API key, and session secret were provided
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 project-name YOUR-OPENAI-API-KEY YOUR-SESSION-SECRET"
     exit 1
 fi
 
-BRANCH_NAME=$1
+PROJECT_NAME=$1
 OPENAI_API_KEY=$2
+SESSION_SECRET=$3
 
 # Create a new branch
 git checkout -b $BRANCH_NAME
@@ -25,7 +26,8 @@ git commit -m "update branch name in sensei.json to $BRANCH_NAME"
 heroku create $BRANCH_NAME
 
 # Set Heroku config variables
-heroku config:set OPENAI_API_KEY=$OPENAI_API_KEY --app $BRANCH_NAME
+heroku config:set OPENAI_API_KEY="$OPENAI_API_KEY" --app "$BRANCH_NAME"
+heroku config:set SESSION_SECRET="$SESSION_SECRET" --app "$BRANCH_NAME"
 
 # Add logging with Logtail free plan
 heroku addons:create logtail:free --app $BRANCH_NAME

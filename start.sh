@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Check if project name and OpenAI API key were provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 project-name YOUR-OPENAI-API-KEY"
+# Check if project name, OpenAI API key, and session secret were provided
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 project-name YOUR-OPENAI-API-KEY YOUR-SESSION-SECRET"
     exit 1
 fi
 
 PROJECT_NAME=$1
 OPENAI_API_KEY=$2
+SESSION_SECRET=$3
 
 # Install dependencies
 yarn
@@ -29,6 +30,7 @@ heroku create "$PROJECT_NAME"
 
 # Set Heroku config variables
 heroku config:set OPENAI_API_KEY="$OPENAI_API_KEY" --app "$PROJECT_NAME"
+heroku config:set SESSION_SECRET="$SESSION_SECRET" --app "$PROJECT_NAME"
 
 # Add logging with Logtail free plan
 heroku addons:create logtail:free --app "$PROJECT_NAME"

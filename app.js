@@ -19,6 +19,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: !!(process.env.NODE_ENV === 'production') }
+}));
+
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -274,6 +281,7 @@ app.post('/login', [
       const foundCompanion = result.rows[0];
       const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
       if (match) {
+        req.session.userId = foundCompanion.id;
         res.send("Logged in successfully");
       } else {
         res.status(401).send("Password is incorrect");
