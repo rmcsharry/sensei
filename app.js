@@ -284,7 +284,6 @@ app.post('/login', [
         req.session.userId = foundCompanion.id;
         req.session.save();
         console.log("session:", req.session);
-        res.send("Logged in successfully");
       } else {
         res.status(401).send("Password is incorrect");
       }
