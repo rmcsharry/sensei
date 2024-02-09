@@ -23,9 +23,13 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: !!(process.env.NODE_ENV === 'production') }
+  store: new MemcachedStore({
+    servers: [process.env.MEMCACHIER_SERVERS],
+    prefix: '_session_'
+  })
 }));
 app.set('trust proxy', 1);
+var MemcachedStore = require('connect-memjs')(session);
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
