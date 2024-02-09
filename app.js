@@ -25,7 +25,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: !!(process.env.NODE_ENV === 'production') }
 }));
-
+app.set('trust proxy', 1);
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
