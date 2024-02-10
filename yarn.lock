@@ -191,6 +191,13 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
+connect-pg-simple@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/connect-pg-simple/-/connect-pg-simple-9.0.1.tgz#98637ff17a5bfeaeef638093fcf484bc96fcbbf6"
+  integrity sha512-BuwWJH3K3aLpONkO9s12WhZ9ceMjIBxIJAh0JD9x4z1Y9nShmWqZvge5PG/+4j2cIOcguUoa2PSQ4HO/oTsrVg==
+  dependencies:
+    pg "^8.8.0"
+
 console-control-strings@^1.0.0, console-control-strings@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
@@ -895,7 +902,7 @@ pg-types@^2.1.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
-pg@^8.11.3:
+pg@^8.11.3, pg@^8.8.0:
   version "8.11.3"
   resolved "https://registry.yarnpkg.com/pg/-/pg-8.11.3.tgz#d7db6e3fe268fcedd65b8e4599cda0b8b4bf76cb"
   integrity sha512-+9iuvG8QfaaUrrph+kpF24cXkH1YOOUeArRNYIxq1viYHZagBxrTno7cecY1Fa44tJeZvaoG+Djpkc3JwehN5g==
