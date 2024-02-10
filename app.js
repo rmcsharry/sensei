@@ -2,9 +2,10 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
 const bcrypt = require('bcrypt');
-const session = require('express-session');
 const { OpenAI } = require("openai");
 const sensei = require('./sensei.json');
+const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -20,9 +21,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(session({
+  store: new pgSession({
+    pool: pool, // Use the existing PostgreSQL connection pool
+    tableName: 'session' // Optional. Use a custom table name. Default is 'session'
+  }),
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
 }));
 app.set('trust proxy', 1);
 
