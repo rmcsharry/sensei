@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
@@ -13,6 +14,7 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+const app = express();
 app.use(session({
   store: new pgSession({
     pool: pool, // Use the existing PostgreSQL connection pool
@@ -24,9 +26,6 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
 }));
 app.set('trust proxy', 1);
-
-require('dotenv').config();
-const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
