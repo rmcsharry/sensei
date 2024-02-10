@@ -22,14 +22,9 @@ app.use(express.static('public'));
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
-  store: new MemcachedStore({
-    servers: [process.env.MEMCACHIER_SERVERS],
-    prefix: '_session_'
-  })
+  saveUninitialized: true
 }));
 app.set('trust proxy', 1);
-var MemcachedStore = require('connect-memjs')(session);
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
