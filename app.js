@@ -68,7 +68,7 @@ async function respond(prompt, requestId, target) {
         returnValue,
         guide: updatedGuide,
         thread: updatedThread 
-      } = await callAssistant(messages, prompt, initialGuide, initialCompanion, initialThread);
+      } = await callAssistant(messages, prompt, initialGuide, initialThread);
   
       if (updatedGuide) guide = updatedGuide;
       if (updatedThread) thread = updatedThread;
@@ -102,7 +102,7 @@ async function callChat(messages, prompt) {
   return returnValue;
 }
 
-async function callAssistant(messages, prompt, guide, companion, thread) {
+async function callAssistant(messages, prompt, guide, thread) {
   messages.push({
     role: 'companion',
     content: prompt,
