@@ -35,7 +35,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 let messages = [];
 let guide = '';
-let companion = 'companion_name';
+let companion = '';
 let thread = '';
 let requestQueue = {};
 
@@ -44,9 +44,9 @@ if (sensei.systemPrompt) {
 }
 
 async function saveMessage(role, content, guide = null, companion = null, thread = null) {
-  const insertQuery = `INSERT INTO messages (role, content, guide, thread, created_at) VALUES ($1, $2, $3, $4, NOW())`;
+  const insertQuery = `INSERT INTO messages (role, content, guide, companion, thread, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`;
   try {
-    await pool.query(insertQuery, [role, content, guide, thread]);
+    await pool.query(insertQuery, [role, content, guide, companion, thread]);
   } catch (err) {
     console.error('Error saving message to database:', err);
   }
@@ -61,14 +61,14 @@ async function respond(prompt, requestId, target) {
     }
 
     if (target === "assistant") {
-      // If guide or thread are unassigned, pass them as undefined or null to callAssistant
+      // If guide, companion, or thread are unassigned, pass them as null to callAssistant
       const initialGuide = guide || null;
       const initialThread = thread || null;
       const { 
         returnValue,
         guide: updatedGuide,
         thread: updatedThread 
-      } = await callAssistant(messages, prompt, initialGuide, initialThread);
+      } = await callAssistant(messages, prompt, initialGuide, initialCompanion, initialThread);
   
       if (updatedGuide) guide = updatedGuide;
       if (updatedThread) thread = updatedThread;
@@ -102,7 +102,7 @@ async function callChat(messages, prompt) {
   return returnValue;
 }
 
-async function callAssistant(messages, prompt, guide, thread) {
+async function callAssistant(messages, prompt, guide, companion, thread) {
   messages.push({
     role: 'companion',
     content: prompt,
@@ -217,6 +217,8 @@ app.post('/prompt', [
     return res.status(400).json({ errors: errors.array() });
   }
 
+  if (!companion && req.session.userId) { companion = req.session.userId };
+
   let prompt = sanitizeHtml(req.body.prompt, {
     allowedTags: [],
     allowedAttributes: {},
@@ -285,8 +287,8 @@ app.post('/login', [
       const foundCompanion = result.rows[0];
       const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
       if (match) {
-        req.session.userId = foundCompanion.id; // Store the user's ID or any other relevant information in the session
-        res.send({ message: "Logged in successfully" }); // Respond to the client indicating successful login
+        req.session.userId = foundCompanion.id;
+        res.send({ message: "Logged in successfully" });
       } else {
         res.status(401).send("Password is incorrect");
       }
