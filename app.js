@@ -13,13 +13,6 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
-
-require('dotenv').config();
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 app.use(session({
   store: new pgSession({
     pool: pool, // Use the existing PostgreSQL connection pool
@@ -31,6 +24,13 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
 }));
 app.set('trust proxy', 1);
+
+require('dotenv').config();
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -286,9 +286,8 @@ app.post('/login', [
       const foundCompanion = result.rows[0];
       const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
       if (match) {
-        req.session.userId = foundCompanion.id;
-        req.session.save();
-        console.log("session:", req.session);
+        req.session.userId = foundCompanion.id; // Store the user's ID or any other relevant information in the session
+        res.send({ message: "Logged in successfully" }); // Respond to the client indicating successful login
       } else {
         res.status(401).send("Password is incorrect");
       }
