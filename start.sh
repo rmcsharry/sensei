@@ -69,6 +69,16 @@ CREATE INDEX idx_messages_companion ON messages(companion);
 CREATE INDEX idx_messages_thread ON messages(thread);
 EOF
 
+# Create a table to store sessions
+heroku pg:psql --app "$PROJECT_NAME" <<EOF
+CREATE TABLE IF NOT EXISTS "session" (
+  "sid" varchar NOT NULL COLLATE "default",
+  "sess" json NOT NULL,
+  "expire" timestamp(6) NOT NULL
+) WITH (OIDS=FALSE);
+ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+EOF
+
 # Push the main branch to Heroku
 git push $PROJECT_NAME $PROJECT_NAME:main
 
