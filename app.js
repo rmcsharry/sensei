@@ -217,7 +217,7 @@ app.post('/prompt', [
     return res.status(400).json({ errors: errors.array() });
   }
 
-  if (!companion && req.session.userId) { companion = req.session.userId };
+  if (!companion && req.session.companionId) { companion = req.session.companionId };
 
   let prompt = sanitizeHtml(req.body.prompt, {
     allowedTags: [],
@@ -287,7 +287,7 @@ app.post('/login', [
       const foundCompanion = result.rows[0];
       const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
       if (match) {
-        req.session.userId = foundCompanion.id;
+        req.session.companionId = foundCompanion.id;
         res.send({ message: "Logged in successfully" });
       } else {
         res.status(401).send("Password is incorrect");
