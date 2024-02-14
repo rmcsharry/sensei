@@ -61,7 +61,7 @@ async function respond(prompt, requestId, target) {
     }
 
     if (target === "assistant") {
-      // If guide, companion, or thread are unassigned, pass them as null to callAssistant
+      // If guide or thread are unassigned, pass them as null to callAssistant
       const initialGuide = guide || null;
       const initialThread = thread || null;
       const { 
@@ -217,7 +217,12 @@ app.post('/prompt', [
     return res.status(400).json({ errors: errors.array() });
   }
 
-  if (!companion && req.session.companionId) { companion = req.session.companionId };
+  if (!companion && req.session.companionId) { 
+    companion = req.session.companionId 
+  } else {
+    // Companion is not logged in, use the session ID as a pseudo-identifier for the companion
+    companion = req.sessionID;
+  };
 
   let prompt = sanitizeHtml(req.body.prompt, {
     allowedTags: [],
