@@ -43,6 +43,15 @@ if (sensei.systemPrompt) {
   saveMessage('system', sensei.systemPrompt);
 }
 
+// Initialize session variables if they do not exist
+function initializeSessionVariables(session) {
+  if (!session.companion) session.companion = null;
+  if (!session.messages) session.messages = [];
+  if (!session.guide) session.guide = '';
+  if (!session.thread) session.thread = '';
+  if (!session.requestQueue) session.requestQueue = {};
+}
+
 async function saveMessage(role, content, guide = null, companion = null, thread = null) {
   const insertQuery = `INSERT INTO messages (role, content, guide, companion, thread, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`;
   try {
