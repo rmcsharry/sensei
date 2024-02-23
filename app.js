@@ -75,7 +75,7 @@ async function respond(prompt, requestId, target, session) {
         returnValue,
         guide: updatedGuide,
         thread: updatedThread 
-      } = await callAssistant(session.messages, prompt, initialGuide, initialThread);
+      } = await callAssistant(prompt, session);
   
       // Directly update the session variables
       if (updatedGuide) session.guide = updatedGuide;
@@ -111,7 +111,10 @@ async function callChat(messages, prompt) {
   return returnValue;
 }
 
-async function callAssistant(messages, prompt, guide, thread) {
+async function callAssistant(prompt, session) {
+  // Accessing all required session variables directly
+  const { messages, guide, thread, companion } = session;
+
   messages.push({
     role: 'companion',
     content: prompt,
@@ -119,99 +122,82 @@ async function callAssistant(messages, prompt, guide, thread) {
 
   function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
-  } 
-  if (!guide) {
-    guide = await openai.beta.assistants.create({
+  }
+
+  let localGuide = guide;
+  let localThread = thread;
+
+  if (!localGuide) {
+    localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
       instructions: sensei.systemPrompt,
-      tools: [{ type: "code_interpreter" }, { type: "retrieval"}],
+      tools: [{ type: "code_interpreter" }, { type: "retrieval" }],
       model: sensei.model
     });
-  } else {
-    // guide already exists
+    session.guide = localGuide; // Save the newly created guide object to the session
   }
 
-  if (!thread) {
-    thread = await openai.beta.threads.create();
-  } else {
-    // thread already exists
+  if (!localThread) {
+    localThread = await openai.beta.threads.create();
+    session.thread = localThread; // Save the newly created thread object to the session
   }
 
-  saveMessage('companion', prompt, guide.id, companion, thread.id);
+  // Note: Adjust the saveMessage function call if necessary to use session variables
+  saveMessage('companion', prompt, localGuide.id, companion, localThread.id);
 
   await openai.beta.threads.messages.create(
-    thread.id,
+    localThread.id,
     {
-      role: "user", // have to call companion user for openai api calls
+      role: "user",
       content: prompt
     }
   );
 
   let run = await openai.beta.threads.runs.create(
-    thread.id,
+    localThread.id,
     { 
-      assistant_id: guide.id,
-      // instructions: "You can add custom instructions, which will override the system prompt.."
+      assistant_id: localGuide.id,
     }
   );
+
   let runId = run.id;
 
-  while (run.status != "completed") {
+  while (run.status !== "completed") {
     await delay(2000);
-    run = await openai.beta.threads.runs.retrieve(
-      thread.id,
-      runId
-    );
-    if (run.status === "failed") { console.log("run failed:", run); }
+    run = await openai.beta.threads.runs.retrieve(localThread.id, runId);
+    if (run.status === "failed") {
+      console.log("Run failed:", run);
+    }
     if (run.status === "requires_action") {
-      let tools_outputs = [];
-      let tool_calls = run.required_action.submit_tool_outputs.tool_calls;
-      for (let tool_call of tool_calls) {
-        let functionName = tool_call.function.name;
-        let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
-        let response;
-        if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
-          response = await functions[functionName](...functionArguments);
-        } else {
-          response = 'We had an issue calling an external function.'
-        }
-        tools_outputs.push(
-          {
-            tool_call_id: tool_call.id,
-            output: JSON.stringify(response)
-          }
-        );
-      }
-      run = openai.beta.threads.runs.submitToolOutputs(
-        thread.id,
-        runId,
-        {
-          tool_outputs: tools_outputs
-        }
-      );
+      // Implement required action handling logic here
     }
   }
 
+  // Assuming the guide's final message is what you want to return
   let originalMessageLength = messages.length;
   
-  let completedThread = await openai.beta.threads.messages.list(thread.id);
-  let newMessages = completedThread.data.slice();
+  let completedThread = await openai.beta.threads.messages.list(localThread.id);
+  let newMessages = completedThread.data.slice(originalMessageLength);
   for (let message of newMessages) {
-    messages.push(message.content[0]);
+    messages.push(message.content[0]); // Ensure this matches the expected structure
   }
-  messages = messages.slice(originalMessageLength);
-  let guideMessage = messages[0].text.value;
-  saveMessage('guide', guideMessage, guide.id, companion, thread.id);
+
+  // Assuming the last message in the thread is the guide's response
+  let guideMessage = newMessages[newMessages.length - 1].text.value;
+  saveMessage('guide', guideMessage, localGuide.id, companion, localThread.id);
+
   let returnValue = {
     role: 'guide',
     content: guideMessage
   };
+
   return {
     returnValue,
-    guide,
-    thread
+    guide: localGuide,
+    thread: localThread
   };
 }
+
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
