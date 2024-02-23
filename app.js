@@ -17,13 +17,13 @@ const pool = new Pool({
 const app = express();
 app.use(session({
   store: new pgSession({
-    pool: pool, // Use the existing PostgreSQL connection pool
-    tableName: 'session' // Optional. Use a custom table name. Default is 'session'
+    pool: pool,
+    tableName: 'session'
   }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' } // Secure cookies in production
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 app.set('trust proxy', 1);
 
@@ -37,7 +37,6 @@ if (sensei.systemPrompt) {
   saveMessage('system', sensei.systemPrompt);
 }
 
-// Initialize session variables if they do not exist
 function initializeSessionVariables(session) {
   if (!session.companion) session.companion = null;
   if (!session.messages) session.messages = [];
@@ -56,37 +55,29 @@ async function saveMessage(role, content, guide = null, companion = null, thread
 }
 
 async function respond(prompt, requestId, target, session) {
-  initializeSessionVariables(session); // Ensure session variables are initialized
+  initializeSessionVariables(session);
 
   try {
     let result;
 
     if (target === "chat") {
-      // Directly modify and use session.messages
       result = await callChat(session.messages, prompt);
-      // No need to explicitly save session.messages as callChat modifies the array directly
     }
 
     if (target === "assistant") {
-      // Use session variables directly for checks and updates
-      const initialGuide = session.guide || null;
-      const initialThread = session.thread || null;
       const { 
         returnValue,
         guide: updatedGuide,
         thread: updatedThread 
       } = await callAssistant(prompt, session);
   
-      // Directly update the session variables
       if (updatedGuide) session.guide = updatedGuide;
       if (updatedThread) session.thread = updatedThread;
       result = returnValue;
     }
     
-    // Directly update the session's requestQueue
     session.requestQueue[requestId] = { status: 'completed', data: result };
   } catch (error) {
-    // Directly update the session's requestQueue on error
     session.requestQueue[requestId] = { status: 'failed', data: error.message };
   }
 }
@@ -112,7 +103,6 @@ async function callChat(messages, prompt) {
 }
 
 async function callAssistant(prompt, session) {
-  // Accessing all required session variables directly
   let { messages, guide, thread, companion } = session;
 
   messages.push({
@@ -134,15 +124,14 @@ async function callAssistant(prompt, session) {
       tools: [{ type: "code_interpreter" }, { type: "retrieval" }],
       model: sensei.model
     });
-    session.guide = localGuide; // Save the newly created guide object to the session
+    session.guide = localGuide;
   }
 
   if (!localThread) {
     localThread = await openai.beta.threads.create();
-    session.thread = localThread; // Save the newly created thread object to the session
+    session.thread = localThread;
   }
 
-  // Note: Adjust the saveMessage function call if necessary to use session variables
   saveMessage('companion', prompt, localGuide.id, companion, localThread.id);
 
   await openai.beta.threads.messages.create(
@@ -197,7 +186,6 @@ async function callAssistant(prompt, session) {
     }
   }
 
-  // Assuming the guide's final message is what you want to return
   let originalMessageLength = messages.length;
   
   let completedThread = await openai.beta.threads.messages.list(localThread.id);
@@ -207,7 +195,6 @@ async function callAssistant(prompt, session) {
   }
   messages = messages.slice(originalMessageLength);
 
-  // Assuming the last message in the thread is the guide's response
   let guideMessage = messages[0].text.value;
   saveMessage('guide', guideMessage, localGuide.id, companion, localThread.id);
 
@@ -232,16 +219,13 @@ app.post('/prompt', [
   body('prompt').not().isEmpty().withMessage('Prompt is required'),
   body('prompt').trim().escape(),
 ], async (req, res) => {
-  // Ensure session variables are initialized
   initializeSessionVariables(req.session);
 
-  // Validate request body
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  // Set companion based on session or use sessionID as fallback
   if (!req.session.companion && req.session.companionId) {
     req.session.companion = req.session.companionId;
   } else if (!req.session.companion) {
@@ -249,21 +233,16 @@ app.post('/prompt', [
     req.session.companion = req.sessionID;
   }
 
-  // Sanitize the prompt input
   const sanitizedPrompt = sanitizeHtml(req.body.prompt, {
     allowedTags: [],
     allowedAttributes: {},
   });
 
-  // Generate a unique request ID
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
   
-  // Initialize request status in session's requestQueue
   req.session.requestQueue[requestId] = { status: 'processing', data: null };
 
-  // Call respond function and pass session object
   respond(sanitizedPrompt, requestId, sensei.target, req.session).then(() => {
-    // Optionally ensure session is saved after async operation
     req.session.save((err) => {
       if (err) {
         console.error('Session save error:', err);
@@ -271,7 +250,6 @@ app.post('/prompt', [
     });
   });
 
-  // Respond with the request ID
   res.json({ requestId });
 });
 
