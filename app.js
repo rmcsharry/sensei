@@ -114,7 +114,6 @@ async function callChat(messages, prompt) {
 async function callAssistant(prompt, session) {
   // Accessing all required session variables directly
   let { messages, guide, thread, companion } = session;
-  console.log("session:", session);
 
   messages.push({
     role: 'companion',
@@ -202,9 +201,7 @@ async function callAssistant(prompt, session) {
   let originalMessageLength = messages.length;
   
   let completedThread = await openai.beta.threads.messages.list(localThread.id);
-  console.log("completed thread:", completedThread.data);
   let newMessages = completedThread.data.slice();
-  console.log("new messages:", newMessages);
   for (let message of newMessages) {
     messages.push(message.content[0]);
   }
@@ -212,7 +209,6 @@ async function callAssistant(prompt, session) {
 
   // Assuming the last message in the thread is the guide's response
   let guideMessage = messages[0].text.value;
-  console.log("guide message:", guideMessage);
   saveMessage('guide', guideMessage, localGuide.id, companion, localThread.id);
 
   let returnValue = {
