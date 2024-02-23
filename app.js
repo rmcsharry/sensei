@@ -221,32 +221,46 @@ app.post('/prompt', [
   body('prompt').not().isEmpty().withMessage('Prompt is required'),
   body('prompt').trim().escape(),
 ], async (req, res) => {
+  // Ensure session variables are initialized
   initializeSessionVariables(req.session);
 
+  // Validate request body
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  let { companion, messages, guide, thread, requestQueue } = req.session;
+  // Set companion based on session or use sessionID as fallback
+  if (!req.session.companion && req.session.companionId) {
+    req.session.companion = req.session.companionId;
+  } else if (!req.session.companion) {
+    // If companion is not logged in, use the session ID as a pseudo-identifier for the companion
+    req.session.companion = req.sessionID;
+  }
 
-  if (!companion && req.session.companionId) { 
-    companion = req.session.companionId 
-  } else {
-    // Companion is not logged in, use the session ID as a pseudo-identifier for the companion
-    companion = req.sessionID;
-  };
-  req.session.companion = companion;
-
-  let prompt = sanitizeHtml(req.body.prompt, {
+  // Sanitize the prompt input
+  const sanitizedPrompt = sanitizeHtml(req.body.prompt, {
     allowedTags: [],
     allowedAttributes: {},
   });
 
+  // Generate a unique request ID
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-  requestQueue[requestId] = { status: 'processing', data: null };
-  req.session.requestQueue = requestQueue;
-  respond(prompt, requestId, sensei.target, req.session);
+  
+  // Initialize request status in session's requestQueue
+  req.session.requestQueue[requestId] = { status: 'processing', data: null };
+
+  // Call respond function and pass session object
+  respond(sanitizedPrompt, requestId, sensei.target, req.session).then(() => {
+    // Optionally ensure session is saved after async operation
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+      }
+    });
+  });
+
+  // Respond with the request ID
   res.json({ requestId });
 });
 
