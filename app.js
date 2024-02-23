@@ -197,6 +197,9 @@ async function callAssistant(prompt, session) {
       );
     }
   }
+
+  // Assuming the guide's final message is what you want to return
+  let originalMessageLength = messages.length;
   
   let completedThread = await openai.beta.threads.messages.list(localThread.id);
   console.log("completed thread:", completedThread.data);
@@ -205,6 +208,7 @@ async function callAssistant(prompt, session) {
   for (let message of newMessages) {
     messages.push(message.content[0]);
   }
+  messages = messages.slice(originalMessageLength);
 
   // Assuming the last message in the thread is the guide's response
   let guideMessage = messages[0].text.value;
