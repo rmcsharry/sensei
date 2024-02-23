@@ -55,36 +55,42 @@ async function saveMessage(role, content, guide = null, companion = null, thread
   }
 }
 
-async function respond(prompt, requestId, target) {
+async function respond(prompt, requestId, target, session) {
+  initializeSessionVariables(session); // Ensure session variables are initialized
+
   try {
     let result;
 
     if (target === "chat") {
-      result = await callChat(messages, prompt);
+      // Directly modify and use session.messages
+      result = await callChat(session.messages, prompt);
+      // No need to explicitly save session.messages as callChat modifies the array directly
     }
 
     if (target === "assistant") {
-      // If guide or thread are unassigned, pass them as null to callAssistant
-      const initialGuide = guide || null;
-      const initialThread = thread || null;
+      // Use session variables directly for checks and updates
+      const initialGuide = session.guide || null;
+      const initialThread = session.thread || null;
       const { 
         returnValue,
         guide: updatedGuide,
         thread: updatedThread 
-      } = await callAssistant(messages, prompt, initialGuide, initialThread);
+      } = await callAssistant(session.messages, prompt, initialGuide, initialThread);
   
-      if (updatedGuide) guide = updatedGuide;
-      if (updatedThread) thread = updatedThread;
+      // Directly update the session variables
+      if (updatedGuide) session.guide = updatedGuide;
+      if (updatedThread) session.thread = updatedThread;
       result = returnValue;
     }
     
-    requestQueue[requestId].status = 'completed';
-    requestQueue[requestId].data = result;
+    // Directly update the session's requestQueue
+    session.requestQueue[requestId] = { status: 'completed', data: result };
   } catch (error) {
-    requestQueue[requestId].status = 'failed';
-    requestQueue[requestId].data = error.message;
+    // Directly update the session's requestQueue on error
+    session.requestQueue[requestId] = { status: 'failed', data: error.message };
   }
 }
+
 
 async function callChat(messages, prompt) {
   messages.push({
@@ -215,10 +221,14 @@ app.post('/prompt', [
   body('prompt').not().isEmpty().withMessage('Prompt is required'),
   body('prompt').trim().escape(),
 ], async (req, res) => {
+  initializeSessionVariables(req.session);
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+
+  let { companion, messages, guide, thread, requestQueue } = req.session;
 
   if (!companion && req.session.companionId) { 
     companion = req.session.companionId 
@@ -226,6 +236,7 @@ app.post('/prompt', [
     // Companion is not logged in, use the session ID as a pseudo-identifier for the companion
     companion = req.sessionID;
   };
+  req.session.companion = companion;
 
   let prompt = sanitizeHtml(req.body.prompt, {
     allowedTags: [],
@@ -234,18 +245,23 @@ app.post('/prompt', [
 
   const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
   requestQueue[requestId] = { status: 'processing', data: null };
-  respond(prompt, requestId, sensei.target);
+  req.session.requestQueue = requestQueue;
+  respond(prompt, requestId, sensei.target, req.session);
   res.json({ requestId });
 });
 
 app.get('/status/:requestId', (req, res) => {
+  initializeSessionVariables(req.session);
+
   const { requestId } = req.params;
+  let { requestQueue } = req.session;
   
   if (requestQueue[requestId]) {
     const { status, data } = requestQueue[requestId];
     
     if (status === 'completed' || status === 'failed') {
       delete requestQueue[requestId];
+      req.session.requestQueue = requestQueue;
     }
     
     res.json({ status, data });
