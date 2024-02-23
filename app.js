@@ -170,23 +170,44 @@ async function callAssistant(prompt, session) {
       console.log("Run failed:", run);
     }
     if (run.status === "requires_action") {
-      // Implement required action handling logic here
+      let tools_outputs = [];
+      let tool_calls = run.required_action.submit_tool_outputs.tool_calls;
+      for (let tool_call of tool_calls) {
+        let functionName = tool_call.function.name;
+        let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
+        let response;
+        if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
+          response = await functions[functionName](...functionArguments);
+        } else {
+          response = 'We had an issue calling an external function.'
+        }
+        tools_outputs.push(
+          {
+            tool_call_id: tool_call.id,
+            output: JSON.stringify(response)
+          }
+        );
+      }
+      run = openai.beta.threads.runs.submitToolOutputs(
+        thread.id,
+        runId,
+        {
+          tool_outputs: tools_outputs
+        }
+      );
     }
   }
-
-  // Assuming the guide's final message is what you want to return
-  let originalMessageLength = messages.length;
   
   let completedThread = await openai.beta.threads.messages.list(localThread.id);
   console.log("completed thread:", completedThread.data);
-  let newMessages = completedThread.data.slice(originalMessageLength);
+  let newMessages = completedThread.data.slice();
   console.log("new messages:", newMessages);
   for (let message of newMessages) {
     messages.push(message.content[0]);
   }
 
   // Assuming the last message in the thread is the guide's response
-  let guideMessage = newMessages[newMessages.length - 1].text.value;
+  let guideMessage = messages[0].text.value;
   console.log("guide message:", guideMessage);
   saveMessage('guide', guideMessage, localGuide.id, companion, localThread.id);
 
