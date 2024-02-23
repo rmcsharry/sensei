@@ -113,7 +113,7 @@ async function callChat(messages, prompt) {
 
 async function callAssistant(prompt, session) {
   // Accessing all required session variables directly
-  const { messages, guide, thread, companion } = session;
+  let { messages, guide, thread, companion } = session;
   console.log("session:", session);
 
   messages.push({
