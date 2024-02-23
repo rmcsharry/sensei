@@ -177,13 +177,16 @@ async function callAssistant(prompt, session) {
   let originalMessageLength = messages.length;
   
   let completedThread = await openai.beta.threads.messages.list(localThread.id);
+  console.log("completed thread:", completedThread);
   let newMessages = completedThread.data.slice(originalMessageLength);
+  console.log("new messages:", newMessages);
   for (let message of newMessages) {
-    messages.push(message.content[0]); // Ensure this matches the expected structure
+    messages.push(message.content[0]);
   }
 
   // Assuming the last message in the thread is the guide's response
   let guideMessage = newMessages[newMessages.length - 1].text.value;
+  console.log("guide message:", guideMessage);
   saveMessage('guide', guideMessage, localGuide.id, companion, localThread.id);
 
   let returnValue = {
