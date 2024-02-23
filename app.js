@@ -33,12 +33,6 @@ app.use(express.static('public'));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-let messages = [];
-let guide = '';
-let companion = '';
-let thread = '';
-let requestQueue = {};
-
 if (sensei.systemPrompt) {
   saveMessage('system', sensei.systemPrompt);
 }
