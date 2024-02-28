@@ -1,0 +1,9 @@
+{
+  "name": "getBlockNumber",
+  "parameters": {
+    "type": "object",
+    "properties": {},
+    "required": []
+  },
+  "description": "Returns the block number of the most recently mined block."
+}
