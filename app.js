@@ -48,7 +48,7 @@ function initializeSessionVariables(session) {
   if (!session.functions) session.functions = {};
 }
 
-async function initializeFunctions() {
+async function initializeFunctions(session) {
   const functionsDir = path.join(__dirname, 'functions');
   try {
     const files = await fs.promises.readdir(functionsDir);
@@ -161,7 +161,7 @@ async function callAssistant(prompt, session) {
   let localThread = thread;
 
   if (!localGuide) {
-    await initializeFunctions();
+    await initializeFunctions(session);
     const fileIds = await uploadFiles();
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
