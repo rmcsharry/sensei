@@ -236,7 +236,7 @@ async function callAssistant(prompt, session) {
         );
       }
       run = openai.beta.threads.runs.submitToolOutputs(
-        thread.id,
+        localThread.id,
         runId,
         {
           tool_outputs: tools_outputs
