@@ -146,7 +146,7 @@ async function callChat(messages, prompt) {
 }
 
 async function callAssistant(prompt, session) {
-  let { messages, guide, thread, companion } = session;
+  let { messages, guide, thread, companion, functions } = session;
 
   messages.push({
     role: 'companion',
@@ -211,7 +211,7 @@ async function callAssistant(prompt, session) {
         let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
         let response;
         if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
-          response = await functions[functionName](...functionArguments);
+          response = await session.functions[functionName](...functionArguments);
         } else {
           response = 'We had an issue calling an external function.'
         }
