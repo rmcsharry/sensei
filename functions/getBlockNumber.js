@@ -1,5 +1,5 @@
 // Imports the Alchemy SDK
-import { Alchemy, Network } from 'alchemy-sdk';
+const { Alchemy, Network } = require('alchemy-sdk');
 
 // Configures the Alchemy SDK
 const alchemyConfig = {
@@ -15,4 +15,4 @@ function getBlockNumber() {
   return alchemy.core.getBlockNumber();
 }
 
-export default getBlockNumber;
+module.exports = getBlockNumber;
