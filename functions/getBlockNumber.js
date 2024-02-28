@@ -1,5 +1,5 @@
 function getBlockNumber() {
-  return 42069; // arbitrary block number for testing
+  return 123098; // arbitrary block number for testing
 }
 
 module.exports = getBlockNumber;
