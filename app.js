@@ -218,13 +218,16 @@ async function callAssistant(prompt, session) {
       let tool_calls = run.required_action.submit_tool_outputs.tool_calls;
       for (let tool_call of tool_calls) {
         let functionName = tool_call.function.name;
+        console.log("function name:", functionName);
         let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
+        console.log("function arguments:", functionArguments);
         let response;
         if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
-          response = await session.functions[functionName](...functionArguments);
+          response = await functions[functionName](...functionArguments);
         } else {
           response = 'We had an issue calling an external function.'
         }
+        console.log("function response:", response);
         tools_outputs.push(
           {
             tool_call_id: tool_call.id,
