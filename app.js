@@ -45,6 +45,23 @@ function initializeSessionVariables(session) {
   if (!session.guide) session.guide = '';
   if (!session.thread) session.thread = '';
   if (!session.requestQueue) session.requestQueue = {};
+  if (!session.functions) session.functions = {};
+}
+
+async function initializeFunctions() {
+  const functionsDir = path.join(__dirname, 'functions');
+  try {
+    const files = await fs.promises.readdir(functionsDir);
+    for (const file of files) {
+      if (path.extname(file) === '.js') {
+        const moduleName = path.basename(file, '.js');
+        session.functions[moduleName] = require(path.join(functionsDir, file));
+        console.log("session functions:", session.functions);
+      }
+    }
+  } catch (err) {
+    console.error('Error loading functions into session:', err);
+  }
 }
 
 async function saveMessage(role, content, guide = null, companion = null, thread = null) {
@@ -144,6 +161,7 @@ async function callAssistant(prompt, session) {
   let localThread = thread;
 
   if (!localGuide) {
+    await initializeFunctions();
     const fileIds = await uploadFiles();
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
