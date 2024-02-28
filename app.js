@@ -88,7 +88,7 @@ async function uploadFiles() {
   const filesDir = path.join(__dirname, 'files');
 
   try {
-    const files = await fs.readdir(filesDir);
+    const files = await fs.promises.readdir(filesDir);
     const fileIds = [];
     for (const fileName of files) {
       const filePath = path.join(filesDir, fileName);
