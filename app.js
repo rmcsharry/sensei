@@ -155,7 +155,7 @@ async function callChat(messages, prompt) {
 }
 
 async function callAssistant(prompt, session) {
-  let { messages, guide, thread, companion, functions } = session;
+  let { messages, guide, thread, companion } = session;
 
   messages.push({
     role: 'companion',
@@ -171,7 +171,6 @@ async function callAssistant(prompt, session) {
 
   if (!localGuide) {
     const functionDefinitions = await initializeFunctions(session);
-    functions = session.functions;
     const fileIds = await uploadFiles();
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
@@ -223,8 +222,8 @@ async function callAssistant(prompt, session) {
         let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
         console.log("function arguments:", functionArguments);
         let response;
-        if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
-          response = await functions[functionName](...functionArguments);
+        if (Object.prototype.hasOwnProperty.call(session.functions, functionName)) {
+          response = await session.functions[functionName](...functionArguments);
         } else {
           response = 'We had an issue calling an external function.'
         }
