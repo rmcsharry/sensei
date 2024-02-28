@@ -171,6 +171,7 @@ async function callAssistant(prompt, session) {
 
   if (!localGuide) {
     const functionDefinitions = await initializeFunctions(session);
+    functions = session.functions;
     const fileIds = await uploadFiles();
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
