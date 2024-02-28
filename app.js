@@ -1,4 +1,6 @@
 require('dotenv').config();
+const fs = require('fs').promises;
+const path = require('path');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
@@ -82,6 +84,30 @@ async function respond(prompt, requestId, target, session) {
   }
 }
 
+async function uploadFiles() {
+  const filesDir = path.join(__dirname, 'files');
+
+  try {
+    const files = await fs.readdir(filesDir);
+    const fileIds = [];
+    for (const fileName of files) {
+      const filePath = path.join(filesDir, fileName);
+      const fileStream = fs.createReadStream(filePath);
+      const file = await openai.files.create({
+        file: fileStream,
+        purpose: 'assistants',
+      });
+      fileIds.push(file.id);
+    }
+
+    if (fileIds.length === 0) {
+      console.log("No files were uploaded.");
+    }
+    return fileIds;
+  } catch (error) {
+    console.error("Error uploading files:", error);
+  }
+}
 
 async function callChat(messages, prompt) {
   messages.push({
@@ -118,11 +144,13 @@ async function callAssistant(prompt, session) {
   let localThread = thread;
 
   if (!localGuide) {
+    const fileIds = uploadFiles();
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
       instructions: sensei.systemPrompt,
       tools: [{ type: "code_interpreter" }, { type: "retrieval" }],
-      model: sensei.model
+      model: sensei.model,
+      file_ids: fileIds
     });
     session.guide = localGuide;
   }
