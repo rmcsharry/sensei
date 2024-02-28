@@ -50,6 +50,7 @@ function initializeSessionVariables(session) {
 
 async function initializeFunctions(session) {
   const functionsDir = path.join(__dirname, 'functions');
+  const functionDefinitions = [];
   try {
     const files = await fs.promises.readdir(functionsDir);
     for (const file of files) {
@@ -57,11 +58,19 @@ async function initializeFunctions(session) {
         const moduleName = path.basename(file, '.js');
         session.functions[moduleName] = require(path.join(functionsDir, file));
         console.log("session functions:", session.functions);
+      } else if (path.extname(file) === '.json') {
+        const definition = JSON.parse(await fs.promises.readFile(path.join(functionsDir, file), 'utf8'));
+        functionDefinitions.push({
+          type: "function",
+          function: definition
+        });
       }
     }
   } catch (err) {
     console.error('Error loading functions into session:', err);
   }
+
+  return functionDefinitions;
 }
 
 async function saveMessage(role, content, guide = null, companion = null, thread = null) {
@@ -161,15 +170,16 @@ async function callAssistant(prompt, session) {
   let localThread = thread;
 
   if (!localGuide) {
-    await initializeFunctions(session);
+    const functionDefinitions = await initializeFunctions(session);
     const fileIds = await uploadFiles();
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
       instructions: sensei.systemPrompt,
-      tools: [{ type: "code_interpreter" }, { type: "retrieval" }],
+      tools: [...functionDefinitions, { type: "code_interpreter" }, { type: "retrieval" }],
       model: sensei.model,
       file_ids: fileIds
     });
+    console.log("local guide tools:", localGuide.tools);
     session.guide = localGuide;
   }
 
