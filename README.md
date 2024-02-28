@@ -38,6 +38,27 @@ Example:
 
 Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Chat Completions API, change the value for `target` to `chat`.
 
+## Add files for knowledge retrieval
+
+Guides using the Assistants API will automatically have access to any files you put in the `files` directory. Check OpenAI's [current documentation](https://platform.openai.com/docs/assistants/tools/supported-files) for filetypes compatible with Retrieval. It's mostly text files, PowerPoints, and PDFs for now; no image support yet.
+
+## Add custom functions
+
+You can add your own JavaScript functions and [function definitions](https://platform.openai.com/docs/assistants/tools/function-calling) to the `functions` directory. Guides using the Assistants API will automatically have access to them.
+
+A few pointers:
+1. Functions and their definitions must have the same name, besides the filetype.
+2. Functions must have a .js filetype, while function definitions must be .json.
+3. The better the `description` in the function definition, the better your guide will know when and how to call it.
+
+### External API calls
+
+If you need to call external APIs as part of your function, you need to add your API key as a an environment variable in Heroku. This is done for you automatically by `start.sh` for your OpenAI API key. For other API keys, set it in the web interface, or run this:
+
+`heroku config:set NEW_API_KEY="{NEW_API_KEY}" --app "{PROJECT_NAME}"`
+
+Your `PROJECT_NAME` was set when you created the project. If you forget what it is, you can find it in `sensei.json` as the value for `branch`.
+
 ## Create a new branch
 
 An easy way to create and deploy multiple AIs with different behavior is to create a new branch from `main` and then modify the `sensei.json` config and application code to suit your needs.
@@ -48,6 +69,6 @@ From the root of the directory:
 
 The `./branch.sh` script is basically the same as the `./start.sh` script, but skips running `yarn` and `heroku login`. Just like project names, the branch name must be unique to deploy successfully to Heroku.
 
-## Experimental: use GitHub workflows
+## Use GitHub workflows
 
-Use [GitHub](https://github.com/) to host your repository and set up CI before deploying to Heroku. There is a GitHub workflow file you can tinker with in `.github/workflows`. 
+You can use [GitHub](https://github.com/) to host your repository and set up CI before deploying to Heroku. There is a GitHub workflow file to tinker with in `.github/workflows`. 
