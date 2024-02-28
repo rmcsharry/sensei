@@ -1,5 +1,5 @@
 require('dotenv').config();
-const fs = require('fs').promises;
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
@@ -144,7 +144,7 @@ async function callAssistant(prompt, session) {
   let localThread = thread;
 
   if (!localGuide) {
-    const fileIds = uploadFiles();
+    const fileIds = await uploadFiles();
     console.log("file ids:", fileIds);
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
