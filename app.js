@@ -249,7 +249,7 @@ async function callAssistant(prompt, session) {
             tool_outputs: tools_outputs
           }
         );
-        console.log("run after submitting tool outputs:", run);
+        console.log("submitted tool outputs");
       } catch (error) {
         console.error("Error submitting tool outputs:", error);
       }
