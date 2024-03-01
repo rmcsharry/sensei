@@ -37,6 +37,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 if (sensei.systemPrompt) {
   saveMessage('system', sensei.systemPrompt);
+  console.log("system prompt:", sensei.systemPrompt);
 }
 
 function initializeSessionVariables(session) {
