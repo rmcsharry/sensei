@@ -35,6 +35,9 @@ app.use(express.static('public'));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Set functions globally
+let functions = {};
+
 if (sensei.systemPrompt) {
   saveMessage('system', sensei.systemPrompt);
   console.log("system prompt:", sensei.systemPrompt);
@@ -46,7 +49,6 @@ function initializeSessionVariables(session) {
   if (!session.guide) session.guide = '';
   if (!session.thread) session.thread = '';
   if (!session.requestQueue) session.requestQueue = {};
-  if (!session.functions) session.functions = {};
   console.log("session variables initialized");
 }
 
@@ -58,7 +60,7 @@ async function initializeFunctions(session) {
     for (const file of files) {
       if (path.extname(file) === '.js') {
         const moduleName = path.basename(file, '.js');
-        session.functions[moduleName] = require(path.join(functionsDir, file));
+        functions[moduleName] = require(path.join(functionsDir, file));
       } else if (path.extname(file) === '.json') {
         const definition = JSON.parse(await fs.promises.readFile(path.join(functionsDir, file), 'utf8'));
         functionDefinitions.push({
@@ -229,8 +231,8 @@ async function callAssistant(prompt, session) {
         let functionName = tool_call.function.name;
         let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
         let response;
-        if (Object.prototype.hasOwnProperty.call(session.functions, functionName)) {
-          response = await session.functions[functionName](...functionArguments);
+        if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
+          response = await functions[functionName](...functionArguments);
         } else {
           response = 'We had an issue calling an external function.'
         }
@@ -398,7 +400,6 @@ app.post('/login', [
     res.status(500).send("Server error");
   }
 });
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
