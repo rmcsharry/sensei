@@ -37,15 +37,18 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Set functions globally
 let functions = {};
+let fullInstructions = '';
 
 if (sensei.systemPrompt) {
-  saveMessage('system', sensei.systemPrompt);
-  console.log("system prompt:", sensei.systemPrompt);
-}
-
-if (sensei.guides) {
-  const guideNames = sensei.guides.map(guide => guide.name);
-  saveMessage('system', "These are the names of the specialized guides available to you through the callGuide function: " + guideNames.join(', '));
+  if (sensei.guides) {
+    const guideNames = sensei.guides.map(guide => guide.name);
+    fullInstructions = sensei.systemPrompt + " These are the names of the specialized guides available to you through the callGuide function: " + guideNames.join(', ');
+    saveMessage('system', fullInstructions;
+  } else {
+    fullInstructions = sensei.systemPrompt;
+    saveMessage('system', fullInstructions);
+    console.log("system prompt:", sensei.systemPrompt);
+  }
 }
 
 function initializeSessionVariables(session) {
@@ -186,7 +189,8 @@ async function callAssistant(prompt, session) {
     const fileIds = await uploadFiles();
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
-      instructions: sensei.systemPrompt,
+      instructions: fullInstructions,
+      // instructions: sensei.systemPrompt,
       tools: [...functionDefinitions, { type: "code_interpreter" }, { type: "retrieval" }],
       model: sensei.model,
       file_ids: fileIds
