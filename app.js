@@ -43,7 +43,7 @@ if (sensei.systemPrompt) {
   if (sensei.guides) {
     const guideNames = sensei.guides.map(guide => guide.name);
     fullInstructions = sensei.systemPrompt + " These are the names of the specialized guides available to you through the callGuide function: " + guideNames.join(', ');
-    saveMessage('system', fullInstructions;
+    saveMessage('system', fullInstructions);
   } else {
     fullInstructions = sensei.systemPrompt;
     saveMessage('system', fullInstructions);
