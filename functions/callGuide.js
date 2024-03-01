@@ -5,6 +5,8 @@ function callGuide(name) {
     return "The secret word is 'cat'.";
   } else if (name === "secret-number-example") {
     return "The secret number is 34.";
+  } else {
+    return "Wrong name."
   }
 }
 
