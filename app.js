@@ -236,13 +236,17 @@ async function callAssistant(prompt, session) {
           }
         );
       }
-      run = await openai.beta.threads.runs.submitToolOutputs(
-        localThread.id,
-        runId,
-        {
-          tool_outputs: tools_outputs
-        }
-      );
+      try {
+        run = await openai.beta.threads.runs.submitToolOutputs(
+          localThread.id,
+          runId,
+          {
+            tool_outputs: tools_outputs
+          }
+        );
+      } catch (error) {
+        console.error("Error submitting tool outputs:", error);
+      }
     }
   }
 
