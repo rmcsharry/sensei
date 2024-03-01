@@ -2,7 +2,7 @@
   "target": "assistant",
   "model": "gpt-4-1106-preview",
   "branch": "guide",
-  "systemPrompt": "You are a helpful guide.",
+  "systemPrompt": "You are a helpful guide. You have access to other guides with specialized knowledge. If you are not certain of an answer, check your list of external guides to see if one of them can help.",
   "guides": {
     "secret-word-example": {
       "uri": "https://secret-word-example.com/prompt",
