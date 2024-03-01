@@ -46,6 +46,7 @@ function initializeSessionVariables(session) {
   if (!session.thread) session.thread = '';
   if (!session.requestQueue) session.requestQueue = {};
   if (!session.functions) session.functions = {};
+  console.log("session variables initialized:", session);
 }
 
 async function initializeFunctions(session) {
@@ -70,6 +71,7 @@ async function initializeFunctions(session) {
     console.error('Error loading functions into session:', err);
   }
 
+  console.log("function definitions:", functionDefinitions);
   return functionDefinitions;
 }
 
@@ -77,6 +79,7 @@ async function saveMessage(role, content, guide = null, companion = null, thread
   const insertQuery = `INSERT INTO messages (role, content, guide, companion, thread, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`;
   try {
     await pool.query(insertQuery, [role, content, guide, companion, thread]);
+    console.log("saved message:", content);
   } catch (err) {
     console.error('Error saving message to database:', err);
   }
@@ -179,13 +182,14 @@ async function callAssistant(prompt, session) {
       model: sensei.model,
       file_ids: fileIds
     });
-    console.log("local guide tools:", localGuide.tools);
+    console.log("local guide created:", localGuide);
     session.guide = localGuide;
   }
 
   if (!localThread) {
     localThread = await openai.beta.threads.create();
     session.thread = localThread;
+    console.log("local thread created:", localThread);
   }
 
   saveMessage('companion', prompt, localGuide.id, companion, localThread.id);
@@ -205,9 +209,12 @@ async function callAssistant(prompt, session) {
     }
   );
 
+  console.log("run created:", run);
+
   let runId = run.id;
 
   while (run.status !== "completed") {
+    console.log("run status:", run.status);
     await delay(2000);
     run = await openai.beta.threads.runs.retrieve(localThread.id, runId);
     console.log("run, in status check:", runId);
@@ -244,6 +251,7 @@ async function callAssistant(prompt, session) {
             tool_outputs: tools_outputs
           }
         );
+        console.log("run after submitting tool outputs:", run);
       } catch (error) {
         console.error("Error submitting tool outputs:", error);
       }
