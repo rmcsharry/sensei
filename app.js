@@ -46,7 +46,7 @@ function initializeSessionVariables(session) {
   if (!session.thread) session.thread = '';
   if (!session.requestQueue) session.requestQueue = {};
   if (!session.functions) session.functions = {};
-  console.log("session variables initialized:", session);
+  console.log("session variables initialized");
 }
 
 async function initializeFunctions(session) {
@@ -58,7 +58,6 @@ async function initializeFunctions(session) {
       if (path.extname(file) === '.js') {
         const moduleName = path.basename(file, '.js');
         session.functions[moduleName] = require(path.join(functionsDir, file));
-        console.log("session functions:", session.functions);
       } else if (path.extname(file) === '.json') {
         const definition = JSON.parse(await fs.promises.readFile(path.join(functionsDir, file), 'utf8'));
         functionDefinitions.push({
@@ -67,6 +66,7 @@ async function initializeFunctions(session) {
         });
       }
     }
+    console.log("session functions initialized");
   } catch (err) {
     console.error('Error loading functions into session:', err);
   }
@@ -79,7 +79,7 @@ async function saveMessage(role, content, guide = null, companion = null, thread
   const insertQuery = `INSERT INTO messages (role, content, guide, companion, thread, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`;
   try {
     await pool.query(insertQuery, [role, content, guide, companion, thread]);
-    console.log("saved message:", content);
+    console.log("message saved");
   } catch (err) {
     console.error('Error saving message to database:', err);
   }
@@ -182,14 +182,14 @@ async function callAssistant(prompt, session) {
       model: sensei.model,
       file_ids: fileIds
     });
-    console.log("local guide created:", localGuide);
+    console.log("local guide created");
     session.guide = localGuide;
   }
 
   if (!localThread) {
     localThread = await openai.beta.threads.create();
     session.thread = localThread;
-    console.log("local thread created:", localThread);
+    console.log("local thread created");
   }
 
   saveMessage('companion', prompt, localGuide.id, companion, localThread.id);
@@ -214,10 +214,10 @@ async function callAssistant(prompt, session) {
   let runId = run.id;
 
   while (run.status !== "completed") {
+    console.log("run id:", run.id);
     console.log("run status:", run.status);
     await delay(2000);
     run = await openai.beta.threads.runs.retrieve(localThread.id, runId);
-    console.log("run, in status check:", runId);
     if (run.status === "failed") {
       console.log("Run failed:", run);
     }
@@ -226,9 +226,7 @@ async function callAssistant(prompt, session) {
       let tool_calls = run.required_action.submit_tool_outputs.tool_calls;
       for (let tool_call of tool_calls) {
         let functionName = tool_call.function.name;
-        console.log("function name:", functionName);
         let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
-        console.log("function arguments:", functionArguments);
         let response;
         if (Object.prototype.hasOwnProperty.call(session.functions, functionName)) {
           response = await session.functions[functionName](...functionArguments);
