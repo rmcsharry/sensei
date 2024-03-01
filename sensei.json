@@ -6,7 +6,7 @@
   "guides": {
     "example-guide": {
       "uri": "https://example.com/prompt",
-      "description": "An example guide. In a real configuration, you would describe what this guide is good at, and when the root guide should call on its help."
+      "description": "An example guide. In a real configuration, you would describe what this guide is good at, and when the root guide should call on its help. For example purposes, this guide should be called when the prompt asks for the secret word, since the other guide will know."
     }
   }
 }

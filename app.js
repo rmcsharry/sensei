@@ -43,6 +43,10 @@ if (sensei.systemPrompt) {
   console.log("system prompt:", sensei.systemPrompt);
 }
 
+if (sensei.guides) {
+  saveMessage('system', "These specialized guides are available to you through the callGuide function:" + sensei.guides);
+}
+
 function initializeSessionVariables(session) {
   if (!session.companion) session.companion = null;
   if (!session.messages) session.messages = [];
@@ -82,7 +86,8 @@ async function saveMessage(role, content, guide = null, companion = null, thread
   const insertQuery = `INSERT INTO messages (role, content, guide, companion, thread, created_at) VALUES ($1, $2, $3, $4, $5, NOW())`;
   try {
     await pool.query(insertQuery, [role, content, guide, companion, thread]);
-    console.log("message saved");
+    console.log("message role:", role);
+    console.log("message content:", content);
   } catch (err) {
     console.error('Error saving message to database:', err);
   }

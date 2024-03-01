@@ -10,5 +10,5 @@
     },
     "required": ["uri"]
   },
-  "description": "This function allows an AI guide to call another, external AI guide that has specialized knowledge or skills, to help answer a question. The root guide will know what other guides are available to it from its internally guide registry."
+  "description": "This function allows an AI guide to call another, external AI guide that has specialized knowledge or skills, to help answer a question."
 }
