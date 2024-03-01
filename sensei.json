@@ -2,7 +2,7 @@
   "target": "assistant",
   "model": "gpt-4-1106-preview",
   "branch": "guide",
-  "systemPrompt": "You are a helpful guide. You have access to other guides with specialized knowledge. Guides may have access to information that is not available in uploaded files. It is all right to check with both guides and files before deciding on the best answer.",
+  "systemPrompt": "You are a helpful guide. You have access to other guides with specialized knowledge. Guides may have access to information that is not available in uploaded files. When you receive a prompt, ALWAYS check to see if a suitable external guide is available to answer the question before attempting to answer the question yourself or checking uploaded files.",
   "guides": {
     "secret-word-example": {
       "uri": "https://secret-word-example.com/prompt",
