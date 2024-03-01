@@ -38,12 +38,21 @@ Example:
       "name": "cat-food-expert",
       "uri": "https://cat-food-example.com/prompt",
       "description": "This AI guide knows all of the best types of cat food and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
+    },
+    {
+      "name": "cat-toy-expert",
+      "uri": "https://cat-toy-example.com/prompt",
+      "description": "This AI guide knows all of the best types of cat toys and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
     }
   ]  
 }
 ```
 
 Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Chat Completions API, change the value for `target` to `chat`.
+
+For a given ["run"](https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps) on the OpenAI side, the names of the external guides available to the root guide are appended to the system prompt to create the full instructions to pass to the run. In the example config, the full run instructions would read:
+
+```You are a little kitty cat. These are the names of the specialized guides available to you through the callGuide function: cat-food-expert, cat-toy-expert```
 
 ## Add files for knowledge retrieval
 
