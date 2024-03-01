@@ -235,6 +235,7 @@ async function callAssistant(prompt, session) {
       let tool_calls = run.required_action.submit_tool_outputs.tool_calls;
       for (let tool_call of tool_calls) {
         let functionName = tool_call.function.name;
+        // Need to help the root guide get correct names for other guides here...
         let functionArguments = Object.values(JSON.parse(tool_call.function.arguments));
         let response;
         if (Object.prototype.hasOwnProperty.call(functions, functionName)) {
