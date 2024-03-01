@@ -4,9 +4,9 @@
   "branch": "guide",
   "systemPrompt": "You are a helpful guide.",
   "guides": {
-    "example-guide": {
-      "uri": "https://example.com/prompt",
-      "description": "An example guide. In a real configuration, you would describe what this guide is good at, and when the root guide should call on its help. For example purposes, this guide should be called when the prompt asks for the secret word, since the other guide will know."
+    "secret-word-example": {
+      "uri": "https://secret-word-example.com/prompt",
+      "description": "This guide knows the secret word."
     }
   }
 }
