@@ -33,12 +33,13 @@ Example:
   "model": "gpt-4-1106-preview",
   "branch": "kitty-cat",
   "systemPrompt": "You are a little kitty cat.",
-  "guides": {
-    "cat-food": {
+  "guides": [
+    {
+      "name": "cat-food-expert",
       "uri": "https://cat-food-example.com/prompt",
       "description": "This AI guide knows all of the best types of cat food and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
     }
-  }  
+  ]  
 }
 ```
 

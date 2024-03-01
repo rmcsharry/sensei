@@ -3,12 +3,12 @@
   "parameters": {
     "type": "object",
     "properties": {
-      "uri": {
+      "name": {
         "type": "string",
-        "description": "The URI for the prompt endpoint of the external AI guide."
+        "description": "The name of the external guide."
       }
     },
-    "required": ["uri"]
+    "required": ["name"]
   },
   "description": "This function allows an AI guide to call another, external AI guide that has specialized knowledge or skills, to help answer a question."
 }

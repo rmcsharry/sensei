@@ -44,7 +44,8 @@ if (sensei.systemPrompt) {
 }
 
 if (sensei.guides) {
-  saveMessage('system', "These specialized guides are available to you through the callGuide function:" + sensei.guides);
+  const guideNames = sensei.guides.map(guide => guide.name);
+  saveMessage('system', "These specialized guides are available to you through the callGuide function:" + guideNames.join(', '));
 }
 
 function initializeSessionVariables(session) {
