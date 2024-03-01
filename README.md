@@ -23,7 +23,7 @@ To open the app from the command line:
 
 ## Config options
 
-The `sensei.json` config file allows you to set a few values: `target`, `model`, and `systemPrompt`.
+The `sensei.json` config file allows you to set a few values.
 
 Example:
 
@@ -32,7 +32,13 @@ Example:
   "target": "assistant",
   "model": "gpt-4-1106-preview",
   "branch": "kitty-cat",
-  "systemPrompt": "You are a little kitty cat."
+  "systemPrompt": "You are a little kitty cat.",
+  "guides": {
+    "cat-food": {
+      "uri": "https://cat-food-example.com/prompt",
+      "description": "This AI guide knows all of the best types of cat food and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
+    }
+  }  
 }
 ```
 

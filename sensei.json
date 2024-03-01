@@ -2,5 +2,11 @@
   "target": "assistant",
   "model": "gpt-4-1106-preview",
   "branch": "guide",
-  "systemPrompt": "You are a helpful guide."
+  "systemPrompt": "You are a helpful guide.",
+  "guides": {
+    "example-guide": {
+      "uri": "https://example.com/prompt",
+      "description": "An example guide. In a real configuration, you would describe what this guide is good at, and when the root guide should call on its help."
+    }
+  }
 }

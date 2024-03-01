@@ -69,7 +69,7 @@ async function initializeFunctions(session) {
         });
       }
     }
-    console.log("session functions initialized");
+    console.log("functions initialized:", functions);
   } catch (err) {
     console.error('Error loading functions into session:', err);
   }
