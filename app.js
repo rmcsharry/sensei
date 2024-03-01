@@ -210,6 +210,7 @@ async function callAssistant(prompt, session) {
   while (run.status !== "completed") {
     await delay(2000);
     run = await openai.beta.threads.runs.retrieve(localThread.id, runId);
+    console.log("run, in status check:", runId);
     if (run.status === "failed") {
       console.log("Run failed:", run);
     }
