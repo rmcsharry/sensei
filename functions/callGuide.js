@@ -1,7 +1,7 @@
 const sensei = require('../sensei.json');
 
 // This code should call a guide's prompt endpoint and return a result.
-function callGuide(name) {
+async function callGuide(name) {
   const guideNames = sensei.guides.map(guide => guide.name);
   console.log("Available guides: " + guideNames.join(", "));
 
