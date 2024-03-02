@@ -6,7 +6,7 @@ if [ "$#" -ne 3 ]; then
     exit 1
 fi
 
-PROJECT_NAME=$1
+BRANCH_NAME=$1
 OPENAI_API_KEY=$2
 SESSION_SECRET=$3
 
