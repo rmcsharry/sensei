@@ -44,6 +44,7 @@ if (sensei.systemPrompt) {
     // Create an object with guide names as keys and descriptions as values
     const guideDetailsObject = sensei.guides.reduce((acc, guide) => {
       acc[guide.name] = guide.description;
+      console.log("Process env by name: ", process.env[guide.name]);
       return acc;
     }, {});
 

@@ -9,7 +9,6 @@ async function callGuide(name, prompt) {
   }
 
   // Dynamically get the URI from environment variables
-  console.log("Process env by name: ", process.env[name]);
   const uri = process.env[name]; // Directly use 'name' to reference the env variable
 
   if (!uri) {
