@@ -5,11 +5,11 @@
   "systemPrompt": "You are a helpful guide.",
   "guides": [
     {
-      "name": "secret-word-example",
+      "name": "secretWordExample",
       "description": "This guide knows the secret word."
     },
     {
-      "name": "secret-number-example",
+      "name": "secretNumberExample",
       "description": "This guide knows the secret number."
     }
   ]
