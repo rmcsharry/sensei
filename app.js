@@ -41,8 +41,9 @@ let fullInstructions = '';
 
 if (sensei.systemPrompt) {
   if (sensei.guides) {
-    const guideNames = sensei.guides.map(guide => guide.name);
-    fullInstructions = sensei.systemPrompt + " These are the names of the specialized guides available to you through the callGuide function: " + guideNames.join(', ');
+    // Concatenate each guide's name and description
+    const guideDetails = sensei.guides.map(guide => `${guide.name} (${guide.description})`);
+    fullInstructions = sensei.systemPrompt + " These are the names and descriptions of the specialized guides available to you through the callGuide function: " + guideDetails.join(', ');
     saveMessage('system', fullInstructions);
   } else {
     fullInstructions = sensei.systemPrompt;
@@ -50,6 +51,7 @@ if (sensei.systemPrompt) {
     console.log("system prompt:", sensei.systemPrompt);
   }
 }
+
 
 function initializeSessionVariables(session) {
   if (!session.companion) session.companion = null;
@@ -190,7 +192,6 @@ async function callAssistant(prompt, session) {
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
       instructions: fullInstructions,
-      // instructions: sensei.systemPrompt,
       tools: [...functionDefinitions, { type: "code_interpreter" }, { type: "retrieval" }],
       model: sensei.model,
       file_ids: fileIds
