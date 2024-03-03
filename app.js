@@ -45,6 +45,7 @@ if (sensei.systemPrompt) {
     const guideDetailsObject = sensei.guides.reduce((acc, guide) => {
       acc[guide.name] = guide.description;
       console.log("Process env by name: ", process.env[guide.name]);
+      console.log("All environment variables:", JSON.stringify(process.env, null, 2));
       return acc;
     }, {});
 
