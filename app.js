@@ -41,9 +41,16 @@ let fullInstructions = '';
 
 if (sensei.systemPrompt) {
   if (sensei.guides) {
-    // Concatenate each guide's name and description
-    const guideDetails = sensei.guides.map(guide => `${guide.name} (${guide.description})`);
-    fullInstructions = sensei.systemPrompt + " These are the names and descriptions of the specialized guides available to you through the callGuide function: " + guideDetails.join(', ');
+    // Create an object with guide names as keys and descriptions as values
+    const guideDetailsObject = sensei.guides.reduce((acc, guide) => {
+      acc[guide.name] = guide.description;
+      return acc;
+    }, {});
+
+    // Stringify the guideDetailsObject
+    const guideDetailsString = JSON.stringify(guideDetailsObject);
+
+    fullInstructions = sensei.systemPrompt + " These are the specialized guides available to you through the callGuide function: " + guideDetailsString;
     saveMessage('system', fullInstructions);
   } else {
     fullInstructions = sensei.systemPrompt;
@@ -51,6 +58,7 @@ if (sensei.systemPrompt) {
     console.log("system prompt:", sensei.systemPrompt);
   }
 }
+
 
 
 function initializeSessionVariables(session) {
