@@ -1,7 +1,7 @@
 const sensei = require('../sensei.json');
-const fetch = require('node-fetch');
 
 async function callGuide(name, prompt) {
+  const fetch = (await import('node-fetch')).default;
   const guide = sensei.guides.find(g => g.name === name);
   if (!guide) {
     console.log("Guide not found.");
