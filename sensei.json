@@ -6,12 +6,10 @@
   "guides": [
     {
       "name": "secret-word-example",
-      "uri": "https://secret-word-example.com/prompt",
       "description": "This guide knows the secret word."
     },
     {
       "name": "secret-number-example",
-      "uri": "https://secret-number-example.com/prompt",
       "description": "This guide knows the secret number."
     }
   ]

@@ -36,17 +36,21 @@ Example:
   "guides": [
     {
       "name": "cat-food-expert",
-      "uri": "https://cat-food-example.com/prompt",
       "description": "This AI guide knows all of the best types of cat food and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
     },
     {
       "name": "cat-toy-expert",
-      "uri": "https://cat-toy-example.com/prompt",
       "description": "This AI guide knows all of the best types of cat toys and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
     }
   ]  
 }
 ```
+
+For the guides to work, you will need to define a URI endpoint with the same exact name in your environment variables. For example:
+
+```cat-food-expert=https://cat-food-expert.com/prompt```
+
+One of the main goals of Sensei is to make it easy to create _networks of guides_ who can assist each other. By creating a `cat-food-expert` guide with Sensei and deploying it, you can make its prompt endpoint available to other guides in your network. The URI endpoints for guides are stored as environment variables to shield them from the client side.
 
 Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Chat Completions API, change the value for `target` to `chat`.
 

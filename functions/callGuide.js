@@ -1,18 +1,43 @@
 const sensei = require('../sensei.json');
+const fetch = require('node-fetch');
 
-// This code should call a guide's prompt endpoint and return a result.
 async function callGuide(name, prompt) {
-  const guideNames = sensei.guides.map(guide => guide.name);
-  console.log("Available guides: " + guideNames.join(", "));
+  const guide = sensei.guides.find(g => g.name === name);
+  if (!guide) {
+    console.log("Guide not found.");
+    return "Wrong name.";
+  }
 
+  // Dynamically get the URI from environment variables
+  const uri = process.env[name]; // Directly use 'name' to reference the env variable
+
+  if (!uri) {
+    console.log("URI for the guide not found in environment variables.");
+    return "URI not set for " + name;
+  }
+
+  console.log("Available guides: " + sensei.guides.map(g => g.name).join(", "));
   console.log("Calling the guide called " + name + "...")
   console.log("With the prompt: " + prompt + "...");
-  if (name === "secret-word-example") {
-    return "The secret word is 'cat'.";
-  } else if (name === "secret-number-example") {
-    return "The secret number is 34.";
-  } else {
-    return "Wrong name."
+
+  try {
+    const response = await fetch(uri, {
+      method: 'POST', // Assuming the guide expects a POST request
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt }) // Adjust based on the guide's expected payload
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    return data; // Adjust based on the guide's response structure
+  } catch (error) {
+    console.error("Failed to call the guide:", error);
+    return "Failed to fetch guide response.";
   }
 }
 
