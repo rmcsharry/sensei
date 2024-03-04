@@ -48,7 +48,7 @@ Example:
 
 For the guides to work, you will need to define a URI endpoint with the same exact name in your environment variables. For example:
 
-```catFoodExpert=https://cat-food-expert.com/prompt```
+```catFoodExpert=https://cat-food-expert.com```
 
 One of the main goals of Sensei is to make it easy to create _networks of guides_ who can assist each other. By creating a `cat-food-expert` guide with Sensei and deploying it, you can make its prompt endpoint available to other guides in your network. The URI endpoints for guides are stored as environment variables to shield them from the client side.
 
