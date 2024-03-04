@@ -30,17 +30,24 @@ async function callGuide(name, prompt) {
 
     if (!promptResponse.ok) throw new Error('Failed to submit prompt');
 
+    // Capture the 'Set-Cookie' header from the response
+    const sessionCookie = promptResponse.headers.get('set-cookie');
+
     const { requestId } = await promptResponse.json();
 
     // Function to delay for polling
     const delay = time => new Promise(resolve => setTimeout(resolve, time));
 
-    // Polling the /status/:requestId endpoint
-    let statusResponse;
-    let statusData;
+    // Initialize statusResponse and statusData outside of the do-while loop
+    let statusResponse, statusData;
     do {
       await delay(2000); // Wait for 2 seconds before polling again
-      statusResponse = await fetch(`${uri}/status/${requestId}`);
+      // Include the sessionCookie in the subsequent request to maintain the session
+      statusResponse = await fetch(`${uri}/status/${requestId}`, {
+        headers: {
+          'Cookie': sessionCookie
+        }
+      });
       if (!statusResponse.ok) throw new Error('Failed to fetch status');
       statusData = await statusResponse.json();
     } while (statusData.status !== 'completed' && statusData.status !== 'failed');
