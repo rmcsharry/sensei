@@ -1,14 +1,39 @@
 #!/bin/bash
 
-# Check if project name, OpenAI API key, and session secret were provided
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 project-name YOUR-OPENAI-API-KEY YOUR-SESSION-SECRET"
-    exit 1
-fi
+# Initialize variables
+BRANCH_NAME=""
+OPENAI_API_KEY=""
+SESSION_SECRET=""
 
-BRANCH_NAME=$1
-OPENAI_API_KEY=$2
-SESSION_SECRET=$3
+# Function to display usage
+usage() {
+    echo "Usage: $0 --name branch-name --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET"
+    exit 1
+}
+
+# Parse command line options
+while getopts ":n:k:s:" opt; do
+  case ${opt} in
+    n )
+      BRANCH_NAME=$OPTARG
+      ;;
+    k )
+      OPENAI_API_KEY=$OPTARG
+      ;;
+    s )
+      SESSION_SECRET=$OPTARG
+      ;;
+    \? )
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+# Check if all options were provided
+if [ -z "${BRANCH_NAME}" ] || [ -z "${OPENAI_API_KEY}" ] || [ -z "${SESSION_SECRET}" ]; then
+    usage
+fi
 
 # Create a new branch
 git checkout -b $BRANCH_NAME
