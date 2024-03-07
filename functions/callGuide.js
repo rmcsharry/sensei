@@ -16,7 +16,7 @@ async function callGuide(name, prompt) {
     return "URI not set for " + name;
   }
 
-  console.log(`Calling the guide called ${name} with the prompt: ${prompt}...`);
+  console.log(`Calling the guide called ${name} at ${uri} with the prompt: ${prompt}...`);
 
   try {
     // Initial POST request to the /prompt endpoint
