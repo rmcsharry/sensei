@@ -14,7 +14,7 @@
     },
     {
       "name": "timewarp4",
-      "description": "This guide has the application code in its files."
+      "description": "This guide has the application code in its files. Do not pass in a file id when prompting the guide. Let it find the file on its own."
     }
   ]
 }
