@@ -66,7 +66,8 @@ For a given ["run"](https://platform.openai.com/docs/assistants/how-it-works/run
 
 You can use a shell script to add new guides.
 
-```./addGuide.sh name1 "description1" uri1 name2 "description2" uri2```
+1. `chmod +x addGuide.sh`
+2. ```./addGuide.sh name1 "description1" uri1 name2 "description2" uri2```
 
 This will add the guide names and descriptions to `sensei.json`, and the guide URIs as environment variables locally and on Heroku.
 

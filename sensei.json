@@ -1,7 +1,7 @@
 {
   "target": "assistant",
   "model": "gpt-4-1106-preview",
-  "branch": "guide",
+  "branch": "sensei-prod",
   "systemPrompt": "You are a helpful guide.",
   "guides": [
     {
@@ -11,6 +11,10 @@
     {
       "name": "secretnumberexample",
       "description": "This guide knows the secret number."
+    },
+    {
+      "name": "timewarp4",
+      "description": "This guide has the application code in its files."
     }
   ]
 }
