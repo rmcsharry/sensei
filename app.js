@@ -137,28 +137,42 @@ async function respond(prompt, requestId, target, session) {
 
 async function uploadFiles() {
   const filesDir = path.join(__dirname, 'files');
+  const retryDelay = 1000; // Delay in milliseconds
+  const maxRetries = 3; // Maximum number of retries
+  let retries = 0;
 
-  try {
-    const files = await fs.promises.readdir(filesDir);
-    const fileIds = [];
-    for (const fileName of files) {
-      const filePath = path.join(filesDir, fileName);
-      const fileStream = fs.createReadStream(filePath);
-      const file = await openai.files.create({
-        file: fileStream,
-        purpose: 'assistants',
-      });
-      fileIds.push(file.id);
-    }
+  while (retries < maxRetries) {
+    try {
+      const files = await fs.promises.readdir(filesDir);
+      const fileIds = [];
+      for (const fileName of files) {
+        const filePath = path.join(filesDir, fileName);
+        const fileStream = fs.createReadStream(filePath);
+        const file = await openai.files.create({
+          file: fileStream,
+          purpose: 'assistants',
+        });
+        fileIds.push(file.id);
+      }
 
-    if (fileIds.length === 0) {
-      console.log("No files were uploaded.");
+      if (fileIds.length === 0) {
+        console.log("No files were uploaded.");
+      }
+      return fileIds;
+    } catch (error) {
+      console.error("Error uploading files, attempt #" + (retries + 1), error);
+      retries++;
+      if (retries < maxRetries) {
+        console.log(`Retrying in ${retryDelay/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+      } else {
+        console.error("Failed to upload files after retries.");
+        throw error; // Rethrow the last error encountered
+      }
     }
-    return fileIds;
-  } catch (error) {
-    console.error("Error uploading files:", error);
   }
 }
+
 
 async function callChat(messages, prompt) {
   messages.push({
