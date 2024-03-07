@@ -20,6 +20,9 @@ while (( "$#" >= 3 )); do
   description=$2
   uri=$3
 
+  # Remove a trailing slash from the uri if present
+  uri="${uri%/}"
+  
   # Update sensei.json with new guide
   jq --arg name "$name" --arg desc "$description" '.guides += [{"name": $name, "description": $desc}]' sensei.json > temp.json && mv temp.json sensei.json
 

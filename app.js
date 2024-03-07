@@ -59,8 +59,6 @@ if (sensei.systemPrompt) {
   }
 }
 
-
-
 function initializeSessionVariables(session) {
   if (!session.companion) session.companion = null;
   if (!session.messages) session.messages = [];
