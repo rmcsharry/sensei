@@ -1,37 +1,30 @@
 #!/bin/bash
 
-# Initialize variables
 BRANCH_NAME=""
 OPENAI_API_KEY=""
 SESSION_SECRET=""
+FILE_PATHS=""
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 --name branch-name --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET"
+    echo "Usage: $0 --name branch-name --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files \"path1 path2 path3\""
     exit 1
 }
 
-# Parse command line options
-while getopts ":n:k:s:" opt; do
-  case ${opt} in
-    n )
-      BRANCH_NAME=$OPTARG
-      ;;
-    k )
-      OPENAI_API_KEY=$OPTARG
-      ;;
-    s )
-      SESSION_SECRET=$OPTARG
-      ;;
-    \? )
-      usage
-      ;;
-  esac
+# Parse named command line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --name) BRANCH_NAME="$2"; shift ;;
+        --openai-key) OPENAI_API_KEY="$2"; shift ;;
+        --session-secret) SESSION_SECRET="$2"; shift ;;
+        --files) FILE_PATHS="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; usage; exit 1 ;;
+    esac
+    shift
 done
-shift $((OPTIND -1))
 
-# Check if all options were provided
-if [ -z "${BRANCH_NAME}" ] || [ -z "${OPENAI_API_KEY}" ] || [ -z "${SESSION_SECRET}" ]; then
+# Verify required arguments
+if [ -z "$BRANCH_NAME" ] || [ -z "$OPENAI_API_KEY" ] || [ -z "$SESSION_SECRET" ]; then
     usage
 fi
 
@@ -46,6 +39,18 @@ git add sensei.json
 
 # Commit the change with a message
 git commit -m "update branch name in sensei.json to $BRANCH_NAME"
+
+# Add the specified files to the files directory
+mkdir -p files # Ensure the files directory exists
+IFS=' ' read -r -a filePathArray <<< "$FILE_PATHS"
+for filePath in "${filePathArray[@]}"; do
+    cp "$filePath" files/
+done
+echo "Copied specified files to the files directory."
+
+# Add the copied files to git, commit, and continue as before
+git add files/*
+git commit -m "Added specific files to the files directory."
 
 # Create a new Heroku app
 heroku create $BRANCH_NAME
