@@ -11,15 +11,17 @@ You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Hero
 2. `cd sensei`
 3. `brew install jq` (if on Mac, otherwise [follow these instructions](https://jqlang.github.io/jq/download/))
 4. `chmod +x start.sh`
-5. `./start.sh --name projectName --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files "path/to/file1 path/to/file2"`
+5. `./start.sh --name projectname --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files "path/to/file1 path/to/file2"`
 
 This will create and check out a new project with that name, deploy it to Heroku, set it up with your OpenAI API key, add logging with the Logtail free plan, and a Heroku Postgres database under the Basic plan. Note: This will fail if the project name is not unique.
 
 To deploy changes to Heroku:
-`git push projectName projectName:main`
+`git push projectname projectname:main`
 
 To open the app from the command line:
-`heroku open --app projectName`.
+`heroku open --app projectname`.
+
+_Annoying sidenote:_ Only lowercase letters, digits, and dashes allowed for project names. And since we want to use project names as guide names—and hyphens are not allowed for Heroku config variables—that means no dashes. Just lowercase letters and digits. Sorry!
 
 ## Config options
 
@@ -31,15 +33,15 @@ Example:
 {
   "target": "assistant",
   "model": "gpt-4-1106-preview",
-  "branch": "kittyCat",
+  "branch": "kittycat",
   "systemPrompt": "You are a little kitty cat.",
   "guides": [
     {
-      "name": "catFoodExpert",
+      "name": "catfoodexpert",
       "description": "This AI guide knows all of the best types of cat food and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
     },
     {
-      "name": "catToyExpert",
+      "name": "cattoyexpert",
       "description": "This AI guide knows all of the best types of cat toys and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
     }
   ]  
@@ -48,17 +50,17 @@ Example:
 
 For the guides to work, you will need to define a URI endpoint with the same exact name in your environment variables. For example:
 
-```catFoodExpert=https://cat-food-expert.com```
+```catfoodexpert=https://cat-food-expert.com```
 
-One of the main goals of Sensei is to make it easy to create _networks of guides_ who can assist each other. By creating a `catFoodExpert` guide with Sensei and deploying it, you can make its prompt endpoint available to other guides in your network. The URI endpoints for guides are stored as environment variables to shield them from the client side.
+One of the main goals of Sensei is to make it easy to create _networks of guides_ who can assist each other. By creating a `catfoodexpert` guide with Sensei and deploying it, you can make its prompt endpoint available to other guides in your network. The URI endpoints for guides are stored as environment variables to shield them from the client side.
 
-Annoying sidenote: [No hyphens allowed](https://devcenter.heroku.com/articles/config-vars#config-var-policies) for Heroku config variables, and, therefore, no hyphens allowed for guide names.
+_Annoying sidenote:_ [No hyphens allowed](https://devcenter.heroku.com/articles/config-vars#config-var-policies) for Heroku config variables, and, therefore, no hyphens allowed for guide names.
 
 Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Chat Completions API, change the value for `target` to `chat`.
 
 For a given ["run"](https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps) on the OpenAI side, the names of the external guides available to the root guide are appended to the system prompt to create the full instructions to pass to the run. In the example config, the full run instructions would read:
 
-```You are a little kitty cat. These are the names of the specialized guides available to you through the callGuide function: catFoodExpert, catToyExpert```
+```You are a little kitty cat. These are the names of the specialized guides available to you through the callGuide function: catfoodexpert, cattoyexpert```
 
 ## Add guides from a script
 
@@ -85,9 +87,9 @@ A few pointers:
 
 If you need to call external APIs as part of your function, you need to add your API key as a an environment variable in Heroku. This is done for you automatically by `start.sh` for your OpenAI API key. For other API keys, set it in the web interface, or run this:
 
-`heroku config:set NEW_API_KEY="{NEW_API_KEY}" --app "{projectName}"`
+`heroku config:set NEW_API_KEY="{NEW_API_KEY}" --app "{projectname}"`
 
-Your `projectName` was set when you created the project. If you forget what it is, you can find it in `sensei.json` as the value for `branch`.
+Your `projectname` was set when you created the project. If you forget what it is, you can find it in `sensei.json` as the value for `branch`.
 
 ## Create a new branch
 
@@ -95,7 +97,7 @@ An easy way to create and deploy multiple AIs with different behavior is to crea
 
 From the root of the directory:
 1. `chmod +x branch.sh`
-2. `./branch.sh --name branchName --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files "path/to/file1 path/to/file2"`
+2. `./branch.sh --name branchname --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files "path/to/file1 path/to/file2"`
 
 The `./branch.sh` script is basically the same as the `./start.sh` script, but skips running `yarn` and `heroku login`. Just like project names, the branch name must be unique to deploy successfully to Heroku.
 
