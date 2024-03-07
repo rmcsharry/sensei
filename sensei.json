@@ -1,7 +1,7 @@
 {
   "target": "assistant",
   "model": "gpt-4-1106-preview",
-  "branch": "guide",
+  "branch": "sensei-prod",
   "systemPrompt": "You are a helpful guide.",
   "guides": [
     {

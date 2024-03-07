@@ -60,6 +60,14 @@ For a given ["run"](https://platform.openai.com/docs/assistants/how-it-works/run
 
 ```You are a little kitty cat. These are the names of the specialized guides available to you through the callGuide function: catFoodExpert, catToyExpert```
 
+## Add guides from a script
+
+You can use a shell script to add new guides.
+
+```./addGuide.sh name1 "description1" uri1 name2 "description2" uri2```
+
+This will add the guide names and descriptions to `sensei.json`, and the guide URIs as environment variables locally and on Heroku.
+
 ## Add files for knowledge retrieval
 
 Guides using the Assistants API will automatically have access to any files you put in the `files` directory. Check OpenAI's [current documentation](https://platform.openai.com/docs/assistants/tools/supported-files) for filetypes compatible with Retrieval. It's mostly text files, PowerPoints, and PDFs for now; no image support yet.
