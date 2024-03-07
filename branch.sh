@@ -42,7 +42,7 @@ git commit -m "update branch name in sensei.json to $BRANCH_NAME"
 
 # Add the specified files to the files directory
 mkdir -p files # Ensure the files directory exists
-IFS=' ' read -r -a filePathArray <<< "$FILE_PATHS"
+IFS=',' read -r -a filePathArray <<< "$FILE_PATHS"
 for filePath in "${filePathArray[@]}"; do
     cp "$filePath" files/
 done
