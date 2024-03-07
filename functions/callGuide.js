@@ -28,7 +28,22 @@ async function callGuide(name, prompt) {
       body: JSON.stringify({ prompt })
     });
 
-    if (!promptResponse.ok) throw new Error('Failed to submit prompt');
+    if (!promptResponse.ok) {
+      // Attempt to read the response body, which might contain more details about the error
+      let errMsg = `Failed to submit prompt. Status: ${promptResponse.status} (${promptResponse.statusText})`;
+      try {
+        const errorBody = await promptResponse.json(); // Assuming the error body is JSON-formatted
+        if (errorBody.error) {
+          errMsg += `; Error: ${errorBody.error}`;
+        } else if (errorBody.message) { // Some APIs might use a different field to convey error messages
+          errMsg += `; Message: ${errorBody.message}`;
+        }
+      } catch (bodyError) {
+        // If reading the body or parsing JSON fails, include a generic message
+        errMsg += `. Additionally, there was an error parsing the error response: ${bodyError.message}`;
+      }
+      throw new Error(errMsg);
+    }
 
     // Capture the 'Set-Cookie' header from the response
     const sessionCookie = promptResponse.headers.get('set-cookie');
