@@ -1,3 +1,33 @@
+let recorder, audioStream;
+const startRecordingButton = document.getElementById("startRecording");
+const stopRecordingButton = document.getElementById("stopRecording");
+const audioElement = document.getElementById("audio");
+
+function pollStatus(requestId) {
+  const threadContainer = document.getElementById('threadContainer');
+  const intervalId = setInterval(() => {
+    fetch(`/status/${requestId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'completed' || data.status === 'failed') {
+        clearInterval(intervalId);
+        const newResponseElement = document.createElement("pre");
+        newResponseElement.classList.add("jsonResponse");
+        newResponseElement.textContent = JSON.stringify(data, null, 2);
+        if (threadContainer.firstChild) {
+          threadContainer.insertBefore(newResponseElement, threadContainer.firstChild);
+        } else {
+          threadContainer.appendChild(newResponseElement);
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Polling error:', error);
+      clearInterval(intervalId);
+    });
+  }, 2000);
+}
+
 document.getElementById('chatForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const prompt = document.getElementById('prompt').value;
@@ -59,30 +89,43 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   })
   .catch(error => console.error('Error:', error));
 });
+  
+startRecordingButton.addEventListener("click", async () => {
+  audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  recorder = new MediaRecorder(audioStream);
+  let audioChunks = [];
 
+  recorder.ondataavailable = e => {
+    audioChunks.push(e.data);
+  };
 
-function pollStatus(requestId) {
-  const threadContainer = document.getElementById('threadContainer');
-  const intervalId = setInterval(() => {
-    fetch(`/status/${requestId}`)
+  recorder.onstop = async () => {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+    audioElement.src = URL.createObjectURL(audioBlob);
+    
+    // Prepare the audio blob for uploading
+    const formData = new FormData();
+    formData.append("audioFile", audioBlob, "audio.mp3");
+    
+    // Send the audio file to the server
+    fetch("/upload-audio", {
+      method: "POST",
+      body: formData,
+    })
     .then(response => response.json())
     .then(data => {
-      if (data.status === 'completed' || data.status === 'failed') {
-        clearInterval(intervalId);
-        const newResponseElement = document.createElement("pre");
-        newResponseElement.classList.add("jsonResponse");
-        newResponseElement.textContent = JSON.stringify(data, null, 2);
-        if (threadContainer.firstChild) {
-          threadContainer.insertBefore(newResponseElement, threadContainer.firstChild);
-        } else {
-          threadContainer.appendChild(newResponseElement);
-        }
-      }
+      console.log(data);
+      // Handle the server response here, e.g., displaying the transcription
     })
     .catch(error => {
-      console.error('Polling error:', error);
-      clearInterval(intervalId);
+      console.error("Error uploading audio: ", error);
     });
-  }, 2000);
-}
-  
+  };
+
+  recorder.start();
+});
+
+stopRecordingButton.addEventListener("click", () => {
+  recorder.stop();
+  audioStream.getTracks().forEach(track => track.stop());
+});
