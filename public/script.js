@@ -28,6 +28,29 @@ function pollStatus(requestId) {
   }, 2000);
 }
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  const chatForm = document.getElementById('chatForm');
+  const registerForm = document.getElementById('registerForm');
+  const loginForm = document.getElementById('loginForm');
+
+  // Add buttons for toggling the forms in your HTML
+  const showChatFormButton = document.getElementById('showChatForm');
+  const showRegisterFormButton = document.getElementById('showRegisterForm');
+  const showLoginFormButton = document.getElementById('showLoginForm');
+
+  showChatFormButton.addEventListener('click', () => {
+      chatForm.style.display = chatForm.style.display === 'none' ? 'block' : 'none';
+  });
+
+  showRegisterFormButton.addEventListener('click', () => {
+      registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
+  });
+
+  showLoginFormButton.addEventListener('click', () => {
+      loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+  });
+});
+
 document.getElementById('chatForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const prompt = document.getElementById('prompt').value;
