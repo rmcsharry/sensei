@@ -116,7 +116,15 @@ startRecordingButton.addEventListener("click", async () => {
     .then(response => response.json())
     .then(data => {
       console.log(data);
-      // Handle the server response here, e.g., displaying the transcription
+      const transcriptionElement = document.createElement("pre");
+      transcriptionElement.classList.add("jsonResponse");
+      transcriptionElement.textContent = JSON.stringify({ role: "user", content: data.transcription }, null, 2);
+      threadContainer.insertBefore(transcriptionElement, threadContainer.firstChild);
+
+      // Now that we have displayed the transcript, let's poll for the guide response
+      if (data.requestId) {
+        pollStatus(data.requestId);
+      }
     })
     .catch(error => {
       console.error("Error uploading audio: ", error);
