@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const express = require('express');
 const multer = require('multer');
@@ -322,6 +323,22 @@ async function callAssistant(prompt, session) {
   };
 }
 
+// After receiving the file
+const convertAudioFormat = (inputPath, outputPath) => {
+  return new Promise((resolve, reject) => {
+    ffmpeg(inputPath)
+      .toFormat('mp3') // Convert to mp3 or another supported format
+      .on('error', (err) => {
+        console.error('An error occurred: ' + err.message);
+        reject(err);
+      })
+      .on('end', () => {
+        console.log('Processing finished !');
+        resolve(outputPath);
+      })
+      .save(outputPath);
+  });
+};
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
@@ -442,10 +459,15 @@ app.post('/login', [
 
 app.post('/upload-audio', upload.single('audioFile'), async (req, res) => {
   const filePath = req.file.path;
-  
+  const convertedFilePath = filePath + ".mp3"; // Define the output file path
+
   try {
+    // Convert the audio file to a supported format
+    await convertAudioFormat(filePath, convertedFilePath);
+
+    // Now use convertedFilePath instead of filePath for the transcription
     const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(filePath),
+      file: fs.createReadStream(convertedFilePath),
       model: "whisper-1",
     });
     
@@ -454,12 +476,11 @@ app.post('/upload-audio', upload.single('audioFile'), async (req, res) => {
   } catch (error) {
     console.error('Error transcribing audio:', error);
     res.status(500).json({ error: 'Error processing your audio file.' });
+  } finally {
+    // Clean up: delete the original and converted files
+    fs.unlink(filePath, (err) => { if (err) console.error(err); });
+    fs.unlink(convertedFilePath, (err) => { if (err) console.error(err); });
   }
-
-  // Optionally, delete the file after processing to save space
-  fs.unlink(filePath, (err) => {
-    if (err) throw err;
-  });
 });
 
 const port = process.env.PORT || 3000;
