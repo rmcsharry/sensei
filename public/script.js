@@ -1,7 +1,7 @@
 let recorder, audioStream;
 const startRecordingButton = document.getElementById("startRecording");
 const stopRecordingButton = document.getElementById("stopRecording");
-const audioElement = document.getElementById("audio");
+const audioElement = document.getElementById("audioPrompt");
 
 function pollStatus(requestId) {
   const threadContainer = document.getElementById('threadContainer');
@@ -33,30 +33,20 @@ function pollStatus(requestId) {
   }, 2000);
 }
 
-async function playAudioFromURL(audioUrl) {
-  try {
-    // Create an instance of AudioContext
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+function playAudioFromURL(audioUrl) {
+  // Find the audio element for the response
+  const audioResponseElement = document.getElementById("audioResponse");
 
-    // Fetch the audio file
-    const response = await fetch(audioUrl);
-    const arrayBuffer = await response.arrayBuffer();
+  // Set the source of the audio element to the provided URL
+  audioResponseElement.src = audioUrl;
 
-    // Decode the audio file data
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  // Remove the 'hidden' attribute to show the audio controls
+  audioResponseElement.hidden = false;
 
-    // Create a buffer source
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-
-    // Connect the source to the context's destination (the speakers)
-    source.connect(audioContext.destination);
-
-    // Play the audio
-    source.start(0);
-  } catch (error) {
-    console.error('Error playing audio from URL:', error);
-  }
+  // Attempt to play the audio
+  audioResponseElement.play().catch(error => {
+    console.error('Error playing audio:', error);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
