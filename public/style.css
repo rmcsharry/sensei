@@ -32,6 +32,6 @@ button {
 }
 
 #showChatForm, #showRegisterForm, #showLoginForm {
-  font-size: 85%;
-  padding: 8.5px;
+  font-size: 75%;
+  padding: 7.5px;
 }
