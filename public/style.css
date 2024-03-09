@@ -26,3 +26,7 @@ button {
   padding: 10px;
   font-family: 'Courier New', monospace;
 }
+
+#chatForm, #registerForm, #loginForm {
+  display: none;
+}
