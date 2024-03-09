@@ -471,8 +471,28 @@ app.post('/upload-audio', upload.single('audioFile'), async (req, res) => {
       model: "whisper-1",
     });
     
-    console.log(transcription.text);
-    res.json({ transcription: transcription.text });
+    console.log("Audio transcript:", transcription.text);
+    // Immediately use the transcription as a prompt
+    const sanitizedTranscript = sanitizeHtml(transcription.text, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+    const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+    // Initialize session variables if not already done for this session
+    initializeSessionVariables(req.session);
+
+    // Add to the request queue
+    req.session.requestQueue[requestId] = { status: 'processing', data: null };
+
+    // Send the transcription as a prompt
+    respond(sanitizedTranscript, requestId, target, req.session).then(() => {
+      req.session.save((err) => {
+        if (err) console.error('Session save error:', err);
+        // Respond with transcription and requestId for status checking
+        res.json({ transcription: sanitizedTranscript, requestId });
+      });
+    });
   } catch (error) {
     console.error('Error transcribing audio:', error);
     res.status(500).json({ error: 'Error processing your audio file.' });
