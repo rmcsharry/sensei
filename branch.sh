@@ -55,6 +55,9 @@ git commit -m "Added specific files to the files directory."
 # Create a new Heroku app
 heroku create $BRANCH_NAME
 
+# Add the FFmpeg buildpack to your Heroku application
+heroku buildpacks:add --index 1 https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git --app "$BRANCH_NAME"
+
 # Set Heroku config variables
 heroku config:set OPENAI_API_KEY="$OPENAI_API_KEY" --app "$BRANCH_NAME"
 heroku config:set SESSION_SECRET="$SESSION_SECRET" --app "$BRANCH_NAME"
