@@ -1,13 +1,17 @@
 require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
 const bcrypt = require('bcrypt');
 const { OpenAI } = require("openai");
+
 const sensei = require('./sensei.json');
 const session = require('express-session');
+
 const pgSession = require('connect-pg-simple')(session);
 const { Pool } = require('pg');
 const pool = new Pool({
@@ -16,6 +20,9 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+
+const upload = multer({ dest: 'uploads/' });
+
 const app = express();
 app.use(session({
   store: new pgSession({
@@ -431,6 +438,28 @@ app.post('/login', [
     console.error(error);
     res.status(500).send("Server error");
   }
+});
+
+app.post('/upload-audio', upload.single('audioFile'), async (req, res) => {
+  const filePath = req.file.path;
+  
+  try {
+    const transcription = await openai.audio.transcriptions.create({
+      file: fs.createReadStream(filePath),
+      model: "whisper-1",
+    });
+    
+    console.log(transcription.text);
+    res.json({ transcription: transcription.text });
+  } catch (error) {
+    console.error('Error transcribing audio:', error);
+    res.status(500).json({ error: 'Error processing your audio file.' });
+  }
+
+  // Optionally, delete the file after processing to save space
+  fs.unlink(filePath, (err) => {
+    if (err) throw err;
+  });
 });
 
 const port = process.env.PORT || 3000;
