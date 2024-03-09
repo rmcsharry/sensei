@@ -29,6 +29,9 @@ button {
 
 #chatForm, #registerForm, #loginForm {
   display: none;
+}
+
+#showChatForm, #showRegisterForm, #showLoginForm {
   font-size: 85%;
   padding: 8.5px;
 }
