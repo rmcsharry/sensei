@@ -102,6 +102,7 @@ startRecordingButton.addEventListener("click", async () => {
   recorder.onstop = async () => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
     audioElement.src = URL.createObjectURL(audioBlob);
+    audioElement.hidden = false; // Show the audio player
     
     // Prepare the audio blob for uploading
     const formData = new FormData();
@@ -123,9 +124,11 @@ startRecordingButton.addEventListener("click", async () => {
   };
 
   recorder.start();
+  stopRecordingButton.disabled = false; // Enable the stop recording button
 });
 
 stopRecordingButton.addEventListener("click", () => {
   recorder.stop();
   audioStream.getTracks().forEach(track => track.stop());
+  stopRecordingButton.disabled = true; // Disable the stop recording button again
 });
