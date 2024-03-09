@@ -153,8 +153,11 @@ async function respond(prompt, requestId, target, session) {
 }
 
 async function handleTTSResponse(ttsResponse, requestId) {
-  // Construct the path where the MP3 file will be saved
-  const audioFilePath = path.join(__dirname, 'audio', `${requestId}.mp3`);
+  const audioDirPath = path.join(__dirname, 'audio');
+  const audioFilePath = path.join(audioDirPath, `${requestId}.mp3`);
+
+  // Ensure the directory exists
+  await fs.promises.mkdir(audioDirPath, { recursive: true });
 
   // Convert the TTS response to a Buffer
   const buffer = Buffer.from(await ttsResponse.arrayBuffer());
@@ -163,7 +166,6 @@ async function handleTTSResponse(ttsResponse, requestId) {
   await fs.promises.writeFile(audioFilePath, buffer);
 
   // Return a URL or a relative path that can be accessed by the client
-  // Adjust the returned path based on how your server is configured to serve static files
   return `/audio/${requestId}.mp3`;
 }
 
