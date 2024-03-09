@@ -33,7 +33,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const registerForm = document.getElementById('registerForm');
   const loginForm = document.getElementById('loginForm');
 
-  // Add buttons for toggling the forms in your HTML
+  // Explicitly set initial display state to match CSS
+  chatForm.style.display = 'none';
+  registerForm.style.display = 'none';
+  loginForm.style.display = 'none';
+
   const showChatFormButton = document.getElementById('showChatForm');
   const showRegisterFormButton = document.getElementById('showRegisterForm');
   const showLoginFormButton = document.getElementById('showLoginForm');
