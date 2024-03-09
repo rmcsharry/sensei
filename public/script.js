@@ -19,6 +19,11 @@ function pollStatus(requestId) {
         } else {
           threadContainer.appendChild(newResponseElement);
         }
+
+        // If the response includes an audioUrl and the status is 'completed', play the audio
+        if (data.status === 'completed' && data.audioUrl) {
+          playAudioFromURL(data.audioUrl);
+        }
       }
     })
     .catch(error => {
@@ -26,6 +31,32 @@ function pollStatus(requestId) {
       clearInterval(intervalId);
     });
   }, 2000);
+}
+
+async function playAudioFromURL(audioUrl) {
+  try {
+    // Create an instance of AudioContext
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Fetch the audio file
+    const response = await fetch(audioUrl);
+    const arrayBuffer = await response.arrayBuffer();
+
+    // Decode the audio file data
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+    // Create a buffer source
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+
+    // Connect the source to the context's destination (the speakers)
+    source.connect(audioContext.destination);
+
+    // Play the audio
+    source.start(0);
+  } catch (error) {
+    console.error('Error playing audio from URL:', error);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {

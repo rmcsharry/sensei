@@ -40,6 +40,7 @@ app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use('/audio', express.static('audio'));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -134,11 +135,30 @@ async function respond(prompt, requestId, target, session) {
       if (updatedThread) session.thread = updatedThread;
       result = returnValue;
     }
+
+    // Call OpenAI's TTS API
+    const ttsResponse = await openai.audio.speech.create({
+      model: "tts-1-hd",
+      voice: "alloy",
+      input: result.content,
+    });
+
+    const audioUrl = await handleTTSResponse(ttsResponse, requestId);
+    result.audioUrl = audioUrl;
     
     session.requestQueue[requestId] = { status: 'completed', data: result };
   } catch (error) {
     session.requestQueue[requestId] = { status: 'failed', data: error.message };
   }
+}
+
+async function handleTTSResponse(ttsResponse, requestId) {
+  const audioFilePath = path.join(__dirname, 'audio', `${requestId}.mp3`);
+  await ttsResponse.stream_to_file(audioFilePath);
+
+  // Return a URL or a relative path that can be accessed by the client to play/download the MP3
+  // This will depend on how you serve static files in your Express app
+  return `/audio/${requestId}.mp3`;
 }
 
 async function uploadFiles() {
