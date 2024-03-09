@@ -40,7 +40,7 @@ app.set('trust proxy', 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use('/audio', express.static('audio'));
+app.use('/audio', express.static(path.join(__dirname, 'audio')));
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -153,11 +153,17 @@ async function respond(prompt, requestId, target, session) {
 }
 
 async function handleTTSResponse(ttsResponse, requestId) {
+  // Construct the path where the MP3 file will be saved
   const audioFilePath = path.join(__dirname, 'audio', `${requestId}.mp3`);
-  await ttsResponse.stream_to_file(audioFilePath);
 
-  // Return a URL or a relative path that can be accessed by the client to play/download the MP3
-  // This will depend on how you serve static files in your Express app
+  // Convert the TTS response to a Buffer
+  const buffer = Buffer.from(await ttsResponse.arrayBuffer());
+
+  // Write the buffer to a file asynchronously
+  await fs.promises.writeFile(audioFilePath, buffer);
+
+  // Return a URL or a relative path that can be accessed by the client
+  // Adjust the returned path based on how your server is configured to serve static files
   return `/audio/${requestId}.mp3`;
 }
 
