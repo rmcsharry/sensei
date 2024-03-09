@@ -21,8 +21,8 @@ function pollStatus(requestId) {
         }
 
         // If the response includes an audioUrl and the status is 'completed', play the audio
-        if (data.status === 'completed' && data.audioUrl) {
-          playAudioFromURL(data.audioUrl);
+        if (data.status === 'completed' && data.data && data.data.audioUrl) {
+          playAudioFromURL(data.data.audioUrl);
         }
       }
     })
@@ -34,6 +34,7 @@ function pollStatus(requestId) {
 }
 
 function playAudioFromURL(audioUrl) {
+  console.log("Attempting to play audio from URL:", audioUrl);
   // Find the audio element for the response
   const audioResponseElement = document.getElementById("audioResponse");
 
