@@ -92,7 +92,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   
 startRecordingButton.addEventListener("click", async () => {
   audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  recorder = new MediaRecorder(audioStream);
+  recorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm' });
   let audioChunks = [];
 
   recorder.ondataavailable = e => {
