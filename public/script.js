@@ -11,18 +11,25 @@ function pollStatus(requestId) {
     .then(data => {
       if (data.status === 'completed' || data.status === 'failed') {
         clearInterval(intervalId);
+        // Display a generic response or specific data based on task type
         const newResponseElement = document.createElement("pre");
         newResponseElement.classList.add("jsonResponse");
-        newResponseElement.textContent = JSON.stringify(data, null, 2);
-        if (threadContainer.firstChild) {
-          threadContainer.insertBefore(newResponseElement, threadContainer.firstChild);
-        } else {
-          threadContainer.appendChild(newResponseElement);
-        }
+        newResponseElement.textContent = JSON.stringify(data, null, 2); // Generic response
+        threadContainer.insertBefore(newResponseElement, threadContainer.firstChild);
 
-        // If the response includes an audioUrl and the status is 'completed', play the audio
-        if (data.status === 'completed' && data.data && data.data.audioUrl) {
-          playAudioFromURL(data.data.audioUrl);
+        // If the task completed successfully, handle specific data
+        if (data.status === 'completed') {
+          // Handle Text-to-Speech (TTS) response
+          if (data.data && data.data.audioUrl) {
+            playAudioFromURL(data.data.audioUrl);
+          } 
+          // Handle Speech-to-Text (STT) transcription or other types of responses
+          else if (data.data && data.data.transcription) {
+            // For example, display the transcription in the UI
+            const transcriptionElement = document.createElement("p");
+            transcriptionElement.textContent = "Transcription: " + data.data.transcription;
+            threadContainer.appendChild(transcriptionElement);
+          }
         }
       }
     })
@@ -35,16 +42,9 @@ function pollStatus(requestId) {
 
 function playAudioFromURL(audioUrl) {
   console.log("Attempting to play audio from URL:", audioUrl);
-  // Find the audio element for the response
   const audioResponseElement = document.getElementById("audioResponse");
-
-  // Set the source of the audio element to the provided URL
   audioResponseElement.src = audioUrl;
-
-  // Remove the 'hidden' attribute to show the audio controls
   audioResponseElement.hidden = false;
-
-  // Attempt to play the audio
   audioResponseElement.play().catch(error => {
     console.error('Error playing audio:', error);
   });
@@ -93,10 +93,9 @@ document.getElementById('chatForm').addEventListener('submit', function(e) {
     userPromptElement.classList.add("jsonResponse");
     userPromptElement.textContent = JSON.stringify({ role: "user", content: prompt }, null, 2);
     threadContainer.insertBefore(userPromptElement, threadContainer.firstChild);
-
-      if (data.requestId) {
-          pollStatus(data.requestId);
-      }
+    if (data.requestId) {
+        pollStatus(data.requestId);
+    }
   })
   .catch(error => console.error('Error:', error));
 });

@@ -207,7 +207,6 @@ async function uploadFiles() {
   }
 }
 
-
 async function callChat(messages, prompt) {
   messages.push({
     role: 'user', // have to call companion user for openai api
