@@ -3,41 +3,25 @@ const startRecordingButton = document.getElementById("startRecording");
 const stopRecordingButton = document.getElementById("stopRecording");
 const audioElement = document.getElementById("audioPrompt");
 
-function pollStatus(requestId) {
-  const threadContainer = document.getElementById('threadContainer');
+function pollStatus(requestId, onSuccess, onError) {
   const intervalId = setInterval(() => {
     fetch(`/status/${requestId}`)
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'completed' || data.status === 'failed') {
+      .then(response => response.json())
+      .then(data => {
         clearInterval(intervalId);
-        // Display a generic response or specific data based on task type
-        const newResponseElement = document.createElement("pre");
-        newResponseElement.classList.add("jsonResponse");
-        newResponseElement.textContent = JSON.stringify(data, null, 2); // Generic response
-        threadContainer.insertBefore(newResponseElement, threadContainer.firstChild);
-
-        // If the task completed successfully, handle specific data
         if (data.status === 'completed') {
-          // Handle Text-to-Speech (TTS) response
-          if (data.data && data.data.audioUrl) {
-            playAudioFromURL(data.data.audioUrl);
-          } 
-          // Handle Speech-to-Text (STT) transcription or other types of responses
-          else if (data.data && data.data.transcription) {
-            // For example, display the transcription in the UI
-            const transcriptionElement = document.createElement("p");
-            transcriptionElement.textContent = "Transcription: " + data.data.transcription;
-            threadContainer.appendChild(transcriptionElement);
-          }
+          onSuccess(data); // Call onSuccess handler with the received data
+        } else if (data.status === 'failed') {
+          onError(data); // Call onError handler with the error data
         }
-      }
-    })
-    .catch(error => {
-      console.error('Polling error:', error);
-      clearInterval(intervalId);
-    });
-  }, 2000);
+        // If still processing, keep polling
+      })
+      .catch(error => {
+        console.error('Polling error:', error);
+        clearInterval(intervalId);
+        onError(error); // Handle fetch errors
+      });
+  }, 2000); // Adjust polling interval as needed
 }
 
 function playAudioFromURL(audioUrl) {
@@ -140,7 +124,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   
 startRecordingButton.addEventListener("click", async () => {
   audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  recorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm' });
+  recorder = new MediaRecorder(audioStream  );
   let audioChunks = [];
 
   recorder.ondataavailable = e => {
@@ -164,14 +148,8 @@ startRecordingButton.addEventListener("click", async () => {
     .then(response => response.json())
     .then(data => {
       console.log(data);
-      const transcriptionElement = document.createElement("pre");
-      transcriptionElement.classList.add("jsonResponse");
-      transcriptionElement.textContent = JSON.stringify({ role: "user", content: data.transcription }, null, 2);
-      threadContainer.insertBefore(transcriptionElement, threadContainer.firstChild);
-
-      // Now that we have displayed the transcript, let's poll for the guide response
       if (data.requestId) {
-        pollStatus(data.requestId);
+        pollStatus(data.requestId, handleTranscriptionResult, handleError);
       }
     })
     .catch(error => {
@@ -182,6 +160,62 @@ startRecordingButton.addEventListener("click", async () => {
   recorder.start();
   stopRecordingButton.disabled = false; // Enable the stop recording button
 });
+
+function handleTranscriptionResult(data) {
+  // This function will be called once the transcription is successfully retrieved
+  displayTranscription(data.data.transcription);
+
+  // Next, send the transcription as a prompt to get the guide's response
+  sendPromptToBackend(data.data.transcription);
+}
+
+function displayTranscription(transcription) {
+  const transcriptionElement = document.createElement("pre");
+  transcriptionElement.classList.add("jsonResponse");
+  transcriptionElement.textContent = JSON.stringify({ role: "user", content: transcription }, null, 2);
+  threadContainer.insertBefore(transcriptionElement, threadContainer.firstChild);
+}
+
+function sendPromptToBackend(transcription) {
+  fetch('/prompt', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt: transcription }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.requestId) {
+          pollStatus(data.requestId, handleGuideResponse, handleError);
+      }
+  })
+  .catch(error => console.error('Error sending prompt:', error));
+}
+
+function handleGuideResponse(data) {
+  // Assuming the guide's response might include text and potentially an audio URL
+  if (data.data.audioUrl) {
+      // If there's an audio URL, play it
+      playAudioFromURL(data.data.audioUrl);
+  } else if (data.data.text) {
+      // If there's text, display it (you might want to modify this part based on your actual data structure)
+      displayTextResponse(data.data.text);
+  }
+}
+
+function displayTextResponse(text) {
+  const responseElement = document.createElement("pre");
+  responseElement.classList.add("jsonResponse");
+  responseElement.textContent = JSON.stringify({ role: "guide", content: text }, null, 2);
+  threadContainer.insertBefore(responseElement, threadContainer.firstChild);
+}
+
+
+function handleError(error) {
+  console.error("Polling error or processing error: ", error);
+  // Implement UI feedback for errors, e.g., displaying an error message to the user
+}
 
 stopRecordingButton.addEventListener("click", () => {
   recorder.stop();
