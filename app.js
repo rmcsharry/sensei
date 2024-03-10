@@ -1,52 +1,64 @@
+// Environment configuration
 require('dotenv').config();
 
+// Core modules
 const fs = require('fs');
-const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
+
+// External dependencies
 const express = require('express');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
 const bcrypt = require('bcrypt');
-const { OpenAI } = require("openai");
-
-const sensei = require('./sensei.json');
 const session = require('express-session');
-
 const pgSession = require('connect-pg-simple')(session);
 const { Pool } = require('pg');
+const ffmpeg = require('fluent-ffmpeg');
+const { OpenAI } = require("openai");
+
+// Application-specific imports
+const sensei = require('./sensei.json');
+
+// Database setup
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: { rejectUnauthorized: false }
 });
 
-const upload = multer({ dest: 'uploads/' });
-
+// Express application setup
 const app = express();
+
+// Middleware setup
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use('/audio', express.static(path.join(__dirname, 'audio')));
+
+// Session configuration
 app.use(session({
   store: new pgSession({
-    pool: pool,
-    tableName: 'session'
+    pool: pool, // Use the pool for session storage
+    tableName: 'session' // Define a custom table for session storage
   }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
+
+// Trust the first proxy
 app.set('trust proxy', 1);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
-app.use('/audio', express.static(path.join(__dirname, 'audio')));
+// File upload configuration
+const upload = multer({ dest: 'uploads/' });
 
+// OpenAI client setup
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Set functions globally
-let functions = {};
-let fullInstructions = '';
+// Global variables
+let functions = {}; // Will store function modules
+let fullInstructions = ''; // Compiled instructions from 'sensei.json'
 
 if (sensei.systemPrompt) {
   if (sensei.guides) {
