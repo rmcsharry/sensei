@@ -350,22 +350,35 @@ async function callAssistant(prompt, session) {
   };
 }
 
-// After receiving the file
-const convertAudioFormat = (inputPath, outputPath) => {
-  return new Promise((resolve, reject) => {
-    ffmpeg(inputPath)
-      .toFormat('mp3') // Convert to mp3 or another supported format
-      .on('error', (err) => {
-        console.error('An error occurred: ' + err.message);
-        reject(err);
-      })
-      .on('end', () => {
-        console.log('Processing finished !');
-        resolve(outputPath);
-      })
-      .save(outputPath);
-  });
-};
+async function processAudioInBackground(filePath, convertedFilePath, requestId, session) {
+  try {
+    // Convert the audio file to a supported format
+    await convertAudioFormat(filePath, convertedFilePath);
+
+    // Now use convertedFilePath instead of filePath for the transcription
+    const transcriptionResponse = await openai.audio.transcriptions.create({
+      file: fs.createReadStream(convertedFilePath),
+      model: "whisper-1",
+    });
+
+    // Log the transcription and sanitize it
+    console.log("Audio transcript:", transcriptionResponse.text);
+    const sanitizedTranscript = sanitizeHtml(transcriptionResponse.text, {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+
+    // Update the requestQueue with the completed status and transcription data
+    session.requestQueue[requestId] = { status: 'completed', data: { transcription: sanitizedTranscript } };
+  } catch (error) {
+    console.error('Error processing audio:', error);
+    session.requestQueue[requestId] = { status: 'failed', data: error.message };
+  } finally {
+    // Clean up: delete the original and converted files
+    fs.unlink(filePath, err => { if (err) console.error(err); });
+    fs.unlink(convertedFilePath, err => { if (err) console.error(err); });
+  }
+}
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
@@ -484,50 +497,20 @@ app.post('/login', [
   }
 });
 
-app.post('/upload-audio', upload.single('audioFile'), async (req, res) => {
+app.post('/upload-audio', upload.single('audioFile'), (req, res) => {
   const filePath = req.file.path;
-  const convertedFilePath = filePath + ".mp3"; // Define the output file path
+  const convertedFilePath = `${filePath}.mp3`; // Define the output file path
+  const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
 
-  try {
-    // Convert the audio file to a supported format
-    await convertAudioFormat(filePath, convertedFilePath);
+  // Initialize session variables and add to the request queue as 'processing'
+  initializeSessionVariables(req.session);
+  req.session.requestQueue[requestId] = { status: 'processing', data: null };
 
-    // Now use convertedFilePath instead of filePath for the transcription
-    const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(convertedFilePath),
-      model: "whisper-1",
-    });
-    
-    console.log("Audio transcript:", transcription.text);
-    // Immediately use the transcription as a prompt
-    const sanitizedTranscript = sanitizeHtml(transcription.text, {
-      allowedTags: [],
-      allowedAttributes: {},
-    });
-    const requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+  // Immediately respond with the requestId for status checking
+  res.json({ requestId });
 
-    // Initialize session variables if not already done for this session
-    initializeSessionVariables(req.session);
-
-    // Add to the request queue
-    req.session.requestQueue[requestId] = { status: 'processing', data: null };
-
-    // Send the transcription as a prompt
-    respond(sanitizedTranscript, requestId, sensei.target, req.session).then(() => {
-      req.session.save((err) => {
-        if (err) console.error('Session save error:', err);
-        // Respond with transcription and requestId for status checking
-        res.json({ transcription: sanitizedTranscript, requestId });
-      });
-    });
-  } catch (error) {
-    console.error('Error transcribing audio:', error);
-    res.status(500).json({ error: 'Error processing your audio file.' });
-  } finally {
-    // Clean up: delete the original and converted files
-    fs.unlink(filePath, (err) => { if (err) console.error(err); });
-    fs.unlink(convertedFilePath, (err) => { if (err) console.error(err); });
-  }
+  // Process audio in the background
+  processAudioInBackground(filePath, convertedFilePath, requestId, req.session);
 });
 
 const port = process.env.PORT || 3000;
