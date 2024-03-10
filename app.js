@@ -368,31 +368,41 @@ const convertAudioFormat = (inputPath, outputPath) => {
 
 async function processAudioInBackground(filePath, convertedFilePath, requestId, session) {
   try {
-    // Convert the audio file to a supported format
+    // Convert the audio file format (this function needs to return a promise)
     await convertAudioFormat(filePath, convertedFilePath);
 
-    // Now use convertedFilePath instead of filePath for the transcription
+    // Transcribe the audio file
     const transcriptionResponse = await openai.audio.transcriptions.create({
       file: fs.createReadStream(convertedFilePath),
       model: "whisper-1",
     });
 
-    // Log the transcription and sanitize it
+    // Log and sanitize the transcription
     console.log("Audio transcript:", transcriptionResponse.text);
     const sanitizedTranscript = sanitizeHtml(transcriptionResponse.text, {
       allowedTags: [],
       allowedAttributes: {},
     });
 
-    // Update the requestQueue with the completed status and transcription data
+    // Update the session's requestQueue with the transcription data
     session.requestQueue[requestId] = { status: 'completed', data: { transcription: sanitizedTranscript } };
+
+    // Since this is an async function, returning here resolves the promise
+    return;
   } catch (error) {
     console.error('Error processing audio:', error);
+    // Update the session's requestQueue to reflect the error
     session.requestQueue[requestId] = { status: 'failed', data: error.message };
+    // Re-throw the error to be caught by the caller
+    throw error;
   } finally {
-    // Clean up: delete the original and converted files
-    fs.unlink(filePath, err => { if (err) console.error(err); });
-    fs.unlink(convertedFilePath, err => { if (err) console.error(err); });
+    // Clean up: delete the original and converted files regardless of success or failure
+    try {
+      await fs.promises.unlink(filePath);
+      await fs.promises.unlink(convertedFilePath);
+    } catch (cleanupError) {
+      console.error('Error cleaning up files:', cleanupError);
+    }
   }
 }
 
@@ -525,8 +535,18 @@ app.post('/upload-audio', upload.single('audioFile'), (req, res) => {
   // Immediately respond with the requestId for status checking
   res.json({ requestId });
 
-  // Process audio in the background
-  processAudioInBackground(filePath, convertedFilePath, requestId, req.session);
+  // Process audio in the background and save session afterwards
+  processAudioInBackground(filePath, convertedFilePath, requestId, req.session)
+    .then(() => {
+      req.session.save(err => {
+        if (err) {
+          console.error('Session save error:', err);
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Error processing audio: ', error);
+    });
 });
 
 const port = process.env.PORT || 3000;
