@@ -350,6 +350,22 @@ async function callAssistant(prompt, session) {
   };
 }
 
+const convertAudioFormat = (inputPath, outputPath) => {
+  return new Promise((resolve, reject) => {
+    ffmpeg(inputPath)
+      .toFormat('mp3') // Convert to mp3 or another supported format
+      .on('error', (err) => {
+        console.error('An error occurred: ' + err.message);
+        reject(err);
+      })
+      .on('end', () => {
+        console.log('Processing finished !');
+        resolve(outputPath);
+      })
+      .save(outputPath);
+  });
+};
+
 async function processAudioInBackground(filePath, convertedFilePath, requestId, session) {
   try {
     // Convert the audio file to a supported format
