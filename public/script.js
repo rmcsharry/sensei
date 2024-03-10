@@ -3,41 +3,6 @@ const startRecordingButton = document.getElementById("startRecording");
 const stopRecordingButton = document.getElementById("stopRecording");
 const audioElement = document.getElementById("audioPrompt");
 
-function pollStatus(requestId, onSuccess, onError) {
-  const intervalId = setInterval(() => {
-    fetch(`/status/${requestId}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log('Polling response:', data);
-        console.log('Success callback:', onSuccess);
-        if (data.status === 'completed') {
-          clearInterval(intervalId);
-          console.log('Polling completed:', data);
-          onSuccess(data); // Call onSuccess handler with the received data
-        } else if (data.status === 'failed') {
-          clearInterval(intervalId);
-          onError(data); // Call onError handler with the error data
-        }
-        // If still processing, keep polling
-      })
-      .catch(error => {
-        console.error('Polling error:', error);
-        clearInterval(intervalId);
-        onError(error); // Handle fetch errors
-      });
-  }, 2000); // Adjust polling interval as needed
-}
-
-function playAudioFromURL(audioUrl) {
-  console.log("Attempting to play audio from URL:", audioUrl);
-  const audioResponseElement = document.getElementById("audioResponse");
-  audioResponseElement.src = audioUrl;
-  audioResponseElement.hidden = false;
-  audioResponseElement.play().catch(error => {
-    console.error('Error playing audio:', error);
-  });
-}
-
 document.addEventListener('DOMContentLoaded', (event) => {
   const chatForm = document.getElementById('chatForm');
   const registerForm = document.getElementById('registerForm');
@@ -165,6 +130,47 @@ startRecordingButton.addEventListener("click", async () => {
   stopRecordingButton.disabled = false; // Enable the stop recording button
 });
 
+stopRecordingButton.addEventListener("click", () => {
+  recorder.stop();
+  audioStream.getTracks().forEach(track => track.stop());
+  stopRecordingButton.disabled = true; // Disable the stop recording button again
+});
+
+function pollStatus(requestId, onSuccess, onError) {
+  const intervalId = setInterval(() => {
+    fetch(`/status/${requestId}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Polling response:', data);
+        console.log('Success callback:', onSuccess);
+        if (data.status === 'completed') {
+          clearInterval(intervalId);
+          console.log('Polling completed:', data);
+          onSuccess(data); // Call onSuccess handler with the received data
+        } else if (data.status === 'failed') {
+          clearInterval(intervalId);
+          onError(data); // Call onError handler with the error data
+        }
+        // If still processing, keep polling
+      })
+      .catch(error => {
+        console.error('Polling error:', error);
+        clearInterval(intervalId);
+        onError(error); // Handle fetch errors
+      });
+  }, 2000); // Adjust polling interval as needed
+}
+
+function playAudioFromURL(audioUrl) {
+  console.log("Attempting to play audio from URL:", audioUrl);
+  const audioResponseElement = document.getElementById("audioResponse");
+  audioResponseElement.src = audioUrl;
+  audioResponseElement.hidden = false;
+  audioResponseElement.play().catch(error => {
+    console.error('Error playing audio:', error);
+  });
+}
+
 function handleTranscriptionResult(data) {
   // This function will be called once the transcription is successfully retrieved
   displayTranscription(data.data.transcription);
@@ -224,9 +230,3 @@ function handleError(error) {
   console.error("Polling error or processing error: ", error);
   // Implement UI feedback for errors, e.g., displaying an error message to the user
 }
-
-stopRecordingButton.addEventListener("click", () => {
-  recorder.stop();
-  audioStream.getTracks().forEach(track => track.stop());
-  stopRecordingButton.disabled = true; // Disable the stop recording button again
-});
