@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 document.getElementById('chatForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const prompt = document.getElementById('prompt').value;
+  displayPrompt(prompt);
   sendPromptToBackend(prompt);
 });
 
@@ -156,7 +157,7 @@ function playAudioFromURL(audioUrl) {
 
 function handleTranscriptionResult(data) {
   // This function will be called once the transcription is successfully retrieved
-  displayTranscription(data.data.transcription);
+  displayPrompt(data.data.transcription);
 
   // Next, send the transcription as a prompt to get the guide's response
   sendPromptToBackend(data.data.transcription);
@@ -167,11 +168,11 @@ function handleTextPrompt(value) {
   sendPromptToBackend(value);
 }
 
-function displayTranscription(transcription) {
-  const transcriptionElement = document.createElement("pre");
-  transcriptionElement.classList.add("jsonResponse");
-  transcriptionElement.textContent = JSON.stringify({ role: "user", content: transcription }, null, 2);
-  threadContainer.insertBefore(transcriptionElement, threadContainer.firstChild);
+function displayPrompt(prompt) {
+  const promptElement = document.createElement("pre");
+  promptElement.classList.add("jsonResponse");
+  promptElement.textContent = JSON.stringify({ role: "user", content: prompt }, null, 2);
+  threadContainer.insertBefore(promptElement, threadContainer.firstChild);
 }
 
 function sendPromptToBackend(prompt) {
