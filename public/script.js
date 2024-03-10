@@ -34,42 +34,42 @@ document.getElementById('chatForm').addEventListener('submit', function(e) {
   sendPromptToBackend(prompt);
 });
 
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const username = document.getElementById('registerUsername').value;
   const password = document.getElementById('registerPassword').value;
-  fetch('/register', {
+  try {
+    const response = await fetch('/register', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name: username, password }),
-  })
-  .then(response => response.json())
-  .then(data => {
-      console.log('Registration successful', data);
-      // Handle successful registration, e.g., displaying a success message or redirecting
-  })
-  .catch(error => console.error('Error:', error));
+    });
+    const data = await response.json();
+    console.log('Registration successful', data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
 });
 
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const username = document.getElementById('loginUsername').value;
   const password = document.getElementById('loginPassword').value;
-  fetch('/login', {
+  try {
+    const response = await fetch('/login', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name: username, password }),
-  })
-  .then(response => response.json())
-  .then(data => {
-      console.log('Login successful', data);
-      // Handle successful login
-  })
-  .catch(error => console.error('Error:', error));
+    });
+    const data = await response.json();
+    console.log('Login successful', data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
 });
   
 startRecordingButton.addEventListener("click", async () => {
