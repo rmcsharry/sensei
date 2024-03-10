@@ -178,29 +178,33 @@ function displayTranscription(transcription) {
 
 function sendPromptToBackend(transcription) {
   fetch('/prompt', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt: transcription }),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ prompt: transcription }),
   })
   .then(response => response.json())
   .then(data => {
-      if (data.requestId) {
-          pollStatus(data.requestId, handleGuideResponse, handleError);
-      }
+    if (data.requestId) {
+      pollStatus(data.requestId, handleGuideResponse, handleError);
+    }
   })
   .catch(error => console.error('Error sending prompt:', error));
 }
 
 function handleGuideResponse(data) {
-  // Assuming the guide's response might include text and potentially an audio URL
-  if (data.data.audioUrl) {
-    // If there's an audio URL, play it
-    playAudioFromURL(data.data.audioUrl);
-  } if (data.data.text) {
-    // If there's text, display it (you might want to modify this part based on your actual data structure)
+  // Check if the response has the expected structure with 'role', 'content', and 'audioUrl'
+  if (data.data && data.data.role && data.data.content) {
+    // Display the guide's text response
     displayTextResponse(data.data.content);
+
+    // If there's also an audio URL, play it
+    if (data.data.audioUrl) {
+      playAudioFromURL(data.data.audioUrl);
+    }
+  } else {
+    console.error("Unexpected data structure from backend:", data);
   }
 }
 
