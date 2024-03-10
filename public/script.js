@@ -194,6 +194,7 @@ function sendPromptToBackend(transcription) {
 }
 
 function handleGuideResponse(data) {
+  console.log("handling guide response:", data);
   // Check if the response has the expected structure with 'role', 'content', and 'audioUrl'
   if (data.data && data.data.role && data.data.content) {
     // Display the guide's text response
