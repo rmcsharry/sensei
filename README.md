@@ -56,7 +56,7 @@ One of the main goals of Sensei is to make it easy to create _networks of guides
 
 _Annoying sidenote:_ [No hyphens allowed](https://devcenter.heroku.com/articles/config-vars#config-var-policies) for Heroku config variables, and, therefore, no hyphens allowed for guide names.
 
-Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets. To use the Chat Completions API, change the value for `target` to `chat`.
+Both the [Chat Completions API](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) and the [Assistants API](https://platform.openai.com/docs/assistants/overview) are supported as targets, but only the Assistants API is being actively tested right now. To use the Chat Completions API, change the value for `target` to `chat`.
 
 For a given ["run"](https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps) on the OpenAI side, the names of the external guides available to the root guide are appended to the system prompt to create the full instructions to pass to the run. In the example config, the full run instructions would read:
 
