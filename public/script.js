@@ -8,10 +8,14 @@ function pollStatus(requestId, onSuccess, onError) {
     fetch(`/status/${requestId}`)
       .then(response => response.json())
       .then(data => {
-        clearInterval(intervalId);
+        console.log('Polling response:', data);
+        console.log('Success callback:', onSuccess);
         if (data.status === 'completed') {
+          clearInterval(intervalId);
+          console.log('Polling completed:', data);
           onSuccess(data); // Call onSuccess handler with the received data
         } else if (data.status === 'failed') {
+          clearInterval(intervalId);
           onError(data); // Call onError handler with the error data
         }
         // If still processing, keep polling
