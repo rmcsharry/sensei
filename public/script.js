@@ -33,24 +33,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 document.getElementById('chatForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const prompt = document.getElementById('prompt').value;
-  fetch('/prompt', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    const userPromptElement = document.createElement("pre");
-    userPromptElement.classList.add("jsonResponse");
-    userPromptElement.textContent = JSON.stringify({ role: "user", content: prompt }, null, 2);
-    threadContainer.insertBefore(userPromptElement, threadContainer.firstChild);
-    if (data.requestId) {
-        pollStatus(data.requestId);
-    }
-  })
-  .catch(error => console.error('Error:', error));
+  sendPromptToBackend(prompt);
 });
 
 document.getElementById('registerForm').addEventListener('submit', function(e) {
@@ -179,6 +162,11 @@ function handleTranscriptionResult(data) {
   sendPromptToBackend(data.data.transcription);
 }
 
+function handleTextPrompt(value) {
+  // Send the text prompt to get the guide's response
+  sendPromptToBackend(value);
+}
+
 function displayTranscription(transcription) {
   const transcriptionElement = document.createElement("pre");
   transcriptionElement.classList.add("jsonResponse");
@@ -186,13 +174,13 @@ function displayTranscription(transcription) {
   threadContainer.insertBefore(transcriptionElement, threadContainer.firstChild);
 }
 
-function sendPromptToBackend(transcription) {
+function sendPromptToBackend(prompt) {
   fetch('/prompt', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ prompt: transcription }),
+    body: JSON.stringify({ prompt: prompt }),
   })
   .then(response => response.json())
   .then(data => {
