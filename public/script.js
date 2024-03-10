@@ -13,21 +13,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
   registerForm.style.display = 'none';
   loginForm.style.display = 'none';
 
-  const showChatFormButton = document.getElementById('showChatForm');
-  const showRegisterFormButton = document.getElementById('showRegisterForm');
-  const showLoginFormButton = document.getElementById('showLoginForm');
-
-  showChatFormButton.addEventListener('click', () => {
-      chatForm.style.display = chatForm.style.display === 'none' ? 'block' : 'none';
-  });
-
-  showRegisterFormButton.addEventListener('click', () => {
-      registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
-  });
-
-  showLoginFormButton.addEventListener('click', () => {
-      loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
-  });
+  function toggleFormVisibility(buttonId, formId) {
+    const button = document.getElementById(buttonId);
+    const form = document.getElementById(formId);
+  
+    button.addEventListener('click', () => {
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  }
+  
+  toggleFormVisibility('showChatForm', 'chatForm');
+  toggleFormVisibility('showRegisterForm', 'registerForm');
+  toggleFormVisibility('showLoginForm', 'loginForm');
 });
 
 document.getElementById('chatForm').addEventListener('submit', function(e) {
