@@ -134,6 +134,7 @@ async function respond(prompt, requestId, target, session) {
       if (updatedGuide) session.guide = updatedGuide;
       if (updatedThread) session.thread = updatedThread;
       result = returnValue;
+      console.log("result before audio conversion:", result);
     }
 
     // Call OpenAI's TTS API
@@ -145,6 +146,7 @@ async function respond(prompt, requestId, target, session) {
 
     const audioUrl = await handleTTSResponse(ttsResponse, requestId);
     result.audioUrl = audioUrl;
+    console.log("result after audio conversion:", result);
     
     session.requestQueue[requestId] = { status: 'completed', data: result };
   } catch (error) {

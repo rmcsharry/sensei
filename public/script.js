@@ -196,11 +196,11 @@ function sendPromptToBackend(transcription) {
 function handleGuideResponse(data) {
   // Assuming the guide's response might include text and potentially an audio URL
   if (data.data.audioUrl) {
-      // If there's an audio URL, play it
-      playAudioFromURL(data.data.audioUrl);
-  } else if (data.data.text) {
-      // If there's text, display it (you might want to modify this part based on your actual data structure)
-      displayTextResponse(data.data.text);
+    // If there's an audio URL, play it
+    playAudioFromURL(data.data.audioUrl);
+  } if (data.data.text) {
+    // If there's text, display it (you might want to modify this part based on your actual data structure)
+    displayTextResponse(data.data.content);
   }
 }
 
@@ -210,7 +210,6 @@ function displayTextResponse(text) {
   responseElement.textContent = JSON.stringify({ role: "guide", content: text }, null, 2);
   threadContainer.insertBefore(responseElement, threadContainer.firstChild);
 }
-
 
 function handleError(error) {
   console.error("Polling error or processing error: ", error);
