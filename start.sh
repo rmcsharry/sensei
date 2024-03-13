@@ -54,6 +54,9 @@ echo "Copied specified files to the files directory."
 # Create a new Heroku app
 heroku create "$PROJECT_NAME"
 
+# Add the Node.js buildpack to your Heroku application
+heroku buildpacks:add --index 1 heroku/nodejs --app "$PROJECT_NAME"
+
 # Add the FFmpeg buildpack to your Heroku application
 heroku buildpacks:add --index 1 https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git --app "$PROJECT_NAME"
 
