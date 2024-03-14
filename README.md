@@ -16,7 +16,7 @@ You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Hero
 An easy way to create and deploy multiple AIs with different behavior is to create a new branch from `main` and then modify the `sensei.json` config and application code to suit your needs.
 
 From the root of the directory:
-1. `chmod +x branch.sh`
+1. `chmod +x branch.sh` (if you haven't done this already for an earlier branch)
 2. `./branch.sh --name branchname --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files "path/to/file1,path/to/file2"`
 
 This will create and check out a new branch with that name, deploy it to Heroku, set it up with your OpenAI API key, add logging with the Logtail free plan, and a Heroku Postgres database under the Basic plan. Note: This will fail if the branch name is not unique.
