@@ -22,7 +22,7 @@ From the root of the directory:
 This will create and check out a new branch with that name, deploy it to Heroku, set it up with your OpenAI API key, add logging with the Logtail free plan, and a Heroku Postgres database under the Basic plan. Note: This will fail if the branch name is not unique.
 
 To deploy changes to Heroku:
-`git push projectname branchname:main`
+`git push branchname branchname:main`
 
 To open the app from the command line:
 `heroku open --app branchname`.
@@ -94,9 +94,9 @@ A few pointers:
 
 If you need to call external APIs as part of your function, you need to add your API key as a an environment variable in Heroku. This is done for you automatically by `start.sh` for your OpenAI API key. For other API keys, set it in the web interface, or run this:
 
-`heroku config:set NEW_API_KEY="{NEW_API_KEY}" --app "{projectname}"`
+`heroku config:set NEW_API_KEY="{NEW_API_KEY}" --app "branchname"`
 
-Your `projectname` was set when you created the project. If you forget what it is, you can find it in `sensei.json` as the value for `branch`.
+Your `branchname` was set when you created the branch. If you forget what it is, you can find it in `sensei.json` as the value for `branch`.
 
 ## Use GitHub workflows
 
