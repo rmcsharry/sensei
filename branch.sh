@@ -28,6 +28,12 @@ if [ -z "$BRANCH_NAME" ] || [ -z "$OPENAI_API_KEY" ] || [ -z "$SESSION_SECRET" ]
     usage
 fi
 
+# Install dependencies
+yarn
+
+# Login to Heroku
+heroku login
+
 # Create a new branch
 git checkout -b $BRANCH_NAME
 
