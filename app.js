@@ -215,6 +215,8 @@ async function uploadFiles() {
         name: "Files", // Replace with your vector store name
         file_ids: fileIds
       });
+      console.log("filestreams:", fileStreams);
+      console.log("vector store:", vectorStore);
       await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, fileStreams)
 
       return fileIds;
