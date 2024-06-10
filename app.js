@@ -282,7 +282,12 @@ async function callAssistant(prompt, session) {
         "code_interpreter": {
           "file_ids": fileIds
         }
-      }
+      },
+      description: sensei.description,
+      metadata: sensei.metadata,
+      temperature: sensei.temperature,
+      top_p: sensei.top_p,
+      response_format: sensei.response_format
     });
     console.log("local guide created");
     session.guide = localGuide;

@@ -12,5 +12,10 @@
       "name": "secretnumberexample",
       "description": "This guide knows the secret number."
     }
-  ]
+  ],
+  "description": "",
+  "metadata": {},
+  "temperature": 1,
+  "top_p": 1,
+  "response_format": "auto"
 }

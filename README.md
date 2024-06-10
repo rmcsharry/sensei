@@ -50,7 +50,12 @@ Example:
       "name": "cattoyexpert",
       "description": "This AI guide knows all of the best types of cat toys and can explain them in depth. The guide was deployed with the Sensei framework and makes its prompt endpoint publicly available without a login."
     }
-  ]  
+  ],
+  "description": "This assistant is a little kitty cat, with access to additional expert guides.",
+  "metadata": {},
+  "temperature": 1,
+  "top_p": 1,
+  "response_format": "auto"
 }
 ```
 
