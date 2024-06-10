@@ -261,11 +261,15 @@ async function callAssistant(prompt, session) {
     localGuide = await openai.beta.assistants.create({
       name: sensei.branch,
       instructions: fullInstructions,
-      tools: [...functionDefinitions, { type: "code_interpreter" }, { type: "file_search" }],
+      tools: [...functionDefinitions, { 
+        type: "code_interpreter" }
+        // type: "code_interpreter" },
+        // { type: "file_search" }
+      ],
       model: sensei.model,
       tool_resources: {
-        "file_search": {
-        },
+        // "file_search": {
+        // },
         "code_interpreter": {
           "file_ids": fileIds
         }
