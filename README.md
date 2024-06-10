@@ -38,7 +38,7 @@ Example:
 ```
 {
   "target": "assistant",
-  "model": "gpt-4-1106-preview",
+  "model": "gpt-4o",
   "branch": "kittycat",
   "systemPrompt": "You are a little kitty cat.",
   "guides": [
