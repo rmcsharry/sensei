@@ -263,7 +263,13 @@ async function callAssistant(prompt, session) {
       instructions: fullInstructions,
       tools: [...functionDefinitions, { type: "code_interpreter" }, { type: "file_search" }],
       model: sensei.model,
-      file_ids: fileIds
+      tool_resources: {
+        "file_search": {
+        },
+        "code_interpreter": {
+          "file_ids": fileIds
+        }
+      }
     });
     console.log("local guide created");
     session.guide = localGuide;
