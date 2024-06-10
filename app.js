@@ -59,6 +59,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 // Global variables
 let functions = {}; // Will store function modules
 let fullInstructions = ''; // Compiled instructions from 'sensei.json'
+let vectorStore = null; // Will store the vector store for file search
 
 if (sensei.systemPrompt) {
   if (sensei.guides) {
@@ -210,8 +211,9 @@ async function uploadFiles() {
       }
 
       // Create a vector store for file search
-      let vectorStore = await openai.beta.vectorStores.create({
+      vectorStore = await openai.beta.vectorStores.create({
         name: "Files", // Replace with your vector store name
+        file_ids: fileIds
       });
       await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, fileStreams)
 
