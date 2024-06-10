@@ -214,7 +214,6 @@ async function uploadFiles() {
         name: "Files", // Replace with your vector store name
         file_ids: fileIds
       });
-      console.log("vector store:", vectorStore);
 
       return fileIds;
     } catch (error) {
