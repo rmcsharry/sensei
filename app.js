@@ -194,18 +194,17 @@ async function uploadFiles() {
     try {
       const files = await fs.promises.readdir(filesDir);
       const fileIds = [];
-      const fileStreams = [];
 
       for (const fileName of files) {
         const filePath = path.join(filesDir, fileName);
         const fileStream = fs.createReadStream(filePath);
-        fileStreams.push(fileStream);
         const file = await openai.files.create({
           file: fileStream,
           purpose: 'assistants',
         });
         fileIds.push(file.id);
       }
+
       if (fileIds.length === 0) {
         console.log("No files were uploaded.");
       }
@@ -215,9 +214,7 @@ async function uploadFiles() {
         name: "Files", // Replace with your vector store name
         file_ids: fileIds
       });
-      console.log("filestreams:", fileStreams);
       console.log("vector store:", vectorStore);
-      await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, fileStreams)
 
       return fileIds;
     } catch (error) {
