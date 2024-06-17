@@ -17,3 +17,8 @@
   font-size: 75%;
   padding: 7.5px;
 }
+
+.errorMessage {
+  color: red;
+  font-weight: bold;
+}

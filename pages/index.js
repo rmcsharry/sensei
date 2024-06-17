@@ -10,6 +10,7 @@ const Home = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [visibleForm, setVisibleForm] = useState(''); // Track which form is visible
+  const [errorMessage, setErrorMessage] = useState(''); // Track the error message
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -86,10 +87,18 @@ const Home = () => {
         },
         body: JSON.stringify({ name: username, password }),
       });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Registration failed');
+      }
+
       const data = await response.json();
       console.log('Registration successful', data);
+      setErrorMessage('');
     } catch (error) {
       console.error('Error:', error);
+      setErrorMessage(error.message);
     }
   };
 
@@ -103,16 +112,24 @@ const Home = () => {
         },
         body: JSON.stringify({ name: username, password }),
       });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Login failed');
+      }
+
       const data = await response.json();
       console.log('Login successful', data);
+      setErrorMessage('');
     } catch (error) {
       console.error('Error:', error);
+      setErrorMessage(error.message);
     }
   };
 
   const showForm = (form) => {
     setVisibleForm(form);
-    console.log("Visible form:", form);
+    setErrorMessage(''); // Clear any existing error message when switching forms
   };
 
   const pollStatus = (requestId, onSuccess, onError) => {
@@ -217,6 +234,8 @@ const Home = () => {
       <div id="threadContainer" ref={threadContainerRef}></div>
 
       <br /><br />
+
+      {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
       <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
         <label htmlFor="prompt">Enter your prompt:</label>
