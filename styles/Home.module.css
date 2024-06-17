@@ -1,22 +1,4 @@
-body, input, button, textarea {
-  font-family: Arial, sans-serif;
-}
-
-form {
-  margin-bottom: 20px;
-}
-
-input[type="text"], input[type="password"], textarea {
-  box-sizing: border-box;
-  width: calc(100% - 16px);
-  padding: 8px;
-  margin-bottom: 10px;
-}
-
-button {
-  padding: 10px;
-  cursor: pointer;
-}
+/* styles/Home.module.css */
 
 .jsonResponse {
   white-space: pre-wrap;
