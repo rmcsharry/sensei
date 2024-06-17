@@ -74,8 +74,8 @@ heroku config:set SESSION_SECRET="$SESSION_SECRET" --app "$BRANCH_NAME"
 # Add logging with Logtail free plan
 heroku addons:create logtail:free --app $BRANCH_NAME
 
-# Deploy a Postgres database under the basic plan
-heroku addons:create heroku-postgresql:basic --app $BRANCH_NAME
+# Deploy a Postgres database under the Essentials 0 plan
+heroku addons:create heroku-postgresql:essential-0 --app $BRANCH_NAME
 
 # Create a database table to store messages
 heroku pg:psql --app "$BRANCH_NAME" <<EOF
