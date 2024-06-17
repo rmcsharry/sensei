@@ -1,0 +1,37 @@
+body, input, button, textarea {
+  font-family: Arial, sans-serif;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input[type="text"], input[type="password"], textarea {
+  box-sizing: border-box;
+  width: calc(100% - 16px);
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.jsonResponse {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-family: 'Courier New', monospace;
+}
+
+#chatForm, #registerForm, #loginForm {
+  display: none;
+}
+
+#showChatForm, #showRegisterForm, #showLoginForm {
+  font-size: 75%;
+  padding: 7.5px;
+}
