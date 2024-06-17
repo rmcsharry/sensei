@@ -517,21 +517,21 @@ nextApp.prepare().then(() => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
+  
     const { name, password } = req.body;
     const hashedpassword = await bcrypt.hash(password, 10);
-
+  
     try {
-      await pool.query(
-        "INSERT INTO companions (name, hashedpassword, created_at) VALUES ($1, $2, NOW())",
-        [name, hashedpassword]
-      );
-      res.status(201).send("Companion registered successfully");
+        await pool.query(
+            "INSERT INTO companions (name, hashedpassword, created_at) VALUES ($1, $2, NOW())",
+            [name, hashedpassword]
+        );
+        res.status(201).json({ message: "Companion registered successfully" });
     } catch (error) {
-      console.error(error);
-      res.status(500).send("Server error");
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
     }
-  });
+  });  
 
   app.post('/login', [
     body('name').trim().escape(),
@@ -541,9 +541,9 @@ nextApp.prepare().then(() => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
+  
     const { name, password } = req.body;
-
+  
     try {
       const result = await pool.query("SELECT * FROM companions WHERE name = $1", [name]);
       if (result.rows.length > 0) {
@@ -551,18 +551,18 @@ nextApp.prepare().then(() => {
         const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
         if (match) {
           req.session.companionId = foundCompanion.id;
-          res.send({ message: "Logged in successfully" });
+          res.json({ message: "Logged in successfully" });
         } else {
-          res.status(401).send("Password is incorrect");
+          res.status(401).json({ message: "Password is incorrect" });
         }
       } else {
-        res.status(404).send("Companion not found");
+        res.status(404).json({ message: "Companion not found" });
       }
     } catch (error) {
       console.error(error);
-      res.status(500).send("Server error");
+      res.status(500).json({ message: "Server error" });
     }
-  });
+  });  
 
   app.post('/upload-audio', upload.single('audioFile'), (req, res) => {
     const filePath = req.file.path;

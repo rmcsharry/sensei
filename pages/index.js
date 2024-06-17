@@ -87,12 +87,17 @@ const Home = () => {
         },
         body: JSON.stringify({ name: username, password }),
       });
-
+  
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Registration failed');
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          const data = await response.json();
+          throw new Error(data.message || 'Registration failed');
+        } else {
+          throw new Error('Server error');
+        }
       }
-
+  
       const data = await response.json();
       console.log('Registration successful', data);
       setErrorMessage('');
@@ -112,12 +117,17 @@ const Home = () => {
         },
         body: JSON.stringify({ name: username, password }),
       });
-
+  
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Login failed');
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          const data = await response.json();
+          throw new Error(data.message || 'Login failed');
+        } else {
+          throw new Error('Server error');
+        }
       }
-
+  
       const data = await response.json();
       console.log('Login successful', data);
       setErrorMessage('');
@@ -125,7 +135,7 @@ const Home = () => {
       console.error('Error:', error);
       setErrorMessage(error.message);
     }
-  };
+  };  
 
   const showForm = (form) => {
     setVisibleForm(form);
