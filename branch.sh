@@ -77,6 +77,9 @@ heroku addons:create logtail:free --app $BRANCH_NAME
 # Deploy a Postgres database under the Essentials 0 plan
 heroku addons:create heroku-postgresql:essential-0 --app $BRANCH_NAME
 
+# Wait five minutes for the database to be provisioned
+sleep 300
+
 # Create a database table to store messages
 heroku pg:psql --app "$BRANCH_NAME" <<EOF
 CREATE TABLE messages (
