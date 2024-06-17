@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 
@@ -9,7 +9,7 @@ const Home = () => {
   const [prompt, setPrompt] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [formVisible, setFormVisible] = useState('none');
+  const [visibleForm, setVisibleForm] = useState('');
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -111,7 +111,7 @@ const Home = () => {
   };
 
   const showForm = (form) => {
-    setFormVisible(formVisible === form ? 'none' : form);
+    setVisibleForm(visibleForm === form ? '' : form);
   };
 
   const pollStatus = (requestId, onSuccess, onError) => {
@@ -217,7 +217,7 @@ const Home = () => {
 
       <br /><br />
 
-      {formVisible === 'chat' && (
+      {visibleForm === 'chat' && (
         <form id="chatForm" onSubmit={handleSubmitPrompt}>
           <label htmlFor="prompt">Enter your prompt:</label>
           <br />
@@ -227,7 +227,7 @@ const Home = () => {
         </form>
       )}
 
-      {formVisible === 'register' && (
+      {visibleForm === 'register' && (
         <form id="registerForm" onSubmit={handleRegister}>
           <label htmlFor="username">Username:</label>
           <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -237,7 +237,7 @@ const Home = () => {
         </form>
       )}
 
-      {formVisible === 'login' && (
+      {visibleForm === 'login' && (
         <form id="loginForm" onSubmit={handleLogin}>
           <label htmlFor="username">Username:</label>
           <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
