@@ -112,6 +112,7 @@ const Home = () => {
 
   const showForm = (form) => {
     setVisibleForm(form);
+    console.log("Visible form:", form);
   };
 
   const pollStatus = (requestId, onSuccess, onError) => {
