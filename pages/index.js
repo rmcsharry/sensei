@@ -9,7 +9,7 @@ const Home = () => {
   const [prompt, setPrompt] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [visibleForm, setVisibleForm] = useState('');
+  const [visibleForm, setVisibleForm] = useState(''); // Track which form is visible
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -111,7 +111,7 @@ const Home = () => {
   };
 
   const showForm = (form) => {
-    setVisibleForm(visibleForm === form ? '' : form);
+    setVisibleForm(form);
   };
 
   const pollStatus = (requestId, onSuccess, onError) => {
@@ -217,35 +217,29 @@ const Home = () => {
 
       <br /><br />
 
-      {visibleForm === 'chat' && (
-        <form id="chatForm" onSubmit={handleSubmitPrompt}>
-          <label htmlFor="prompt">Enter your prompt:</label>
-          <br />
-          <textarea id="prompt" name="prompt" rows="10" cols="60" value={prompt} onChange={(e) => setPrompt(e.target.value)}></textarea>
-          <br />
-          <button type="submit">Send</button>
-        </form>
-      )}
+      <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
+        <label htmlFor="prompt">Enter your prompt:</label>
+        <br />
+        <textarea id="prompt" name="prompt" rows="10" cols="60" value={prompt} onChange={(e) => setPrompt(e.target.value)}></textarea>
+        <br />
+        <button type="submit">Send</button>
+      </form>
 
-      {visibleForm === 'register' && (
-        <form id="registerForm" onSubmit={handleRegister}>
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button type="submit">Register</button>
-        </form>
-      )}
+      <form id="registerForm" className={visibleForm === 'register' ? '' : styles.hidden} onSubmit={handleRegister}>
+        <label htmlFor="username">Username:</label>
+        <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        <label htmlFor="password">Password:</label>
+        <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Register</button>
+      </form>
 
-      {visibleForm === 'login' && (
-        <form id="loginForm" onSubmit={handleLogin}>
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button type="submit">Log in</button>
-        </form>
-      )}
+      <form id="loginForm" className={visibleForm === 'login' ? '' : styles.hidden} onSubmit={handleLogin}>
+        <label htmlFor="username">Username:</label>
+        <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        <label htmlFor="password">Password:</label>
+        <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Log in</button>
+      </form>
 
       <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
       <button type="button" onClick={() => showForm('register')}>Show Register Form</button>

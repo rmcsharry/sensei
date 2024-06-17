@@ -9,7 +9,7 @@
   font-family: 'Courier New', monospace;
 }
 
-#chatForm, #registerForm, #loginForm {
+.hidden {
   display: none;
 }
 
