@@ -1,7 +1,7 @@
 {
   "target": "assistant",
   "model": "gpt-4o",
-  "branch": "oya-bundler-3",
+  "branch": "sensei-prod",
   "systemPrompt": "You are a helpful guide.",
   "guides": [
     {
