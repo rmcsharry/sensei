@@ -3,11 +3,12 @@
 BRANCH_NAME=""
 OPENAI_API_KEY=""
 SESSION_SECRET=""
+NEXT_PUBLIC_PRIVY_APP_ID=""
 FILE_PATHS=""
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 --name branch-name --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files \"path1 path2 path3\""
+    echo "Usage: $0 --name branch-name --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --privy PRIVY-APP-ID --files \"path1 path2 path3\""
     exit 1
 }
 
@@ -17,6 +18,7 @@ while [[ "$#" -gt 0 ]]; do
         --name) BRANCH_NAME="$2"; shift ;;
         --openai-key) OPENAI_API_KEY="$2"; shift ;;
         --session-secret) SESSION_SECRET="$2"; shift ;;
+        --privy) NEXT_PUBLIC_PRIVY_APP_ID="$2"; shift ;;
         --files) FILE_PATHS="$2"; shift ;;
         *) echo "Unknown parameter passed: $1"; usage; exit 1 ;;
     esac
@@ -24,7 +26,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Verify required arguments
-if [ -z "$BRANCH_NAME" ] || [ -z "$OPENAI_API_KEY" ] || [ -z "$SESSION_SECRET" ]; then
+if [ -z "$BRANCH_NAME" ] || [ -z "$OPENAI_API_KEY" ] || [ -z "$SESSION_SECRET" ] || [ -z "$NEXT_PUBLIC_PRIVY_APP_ID" ]; then
     usage
 fi
 
@@ -70,6 +72,7 @@ heroku buildpacks:add --index 1 https://github.com/jonathanong/heroku-buildpack-
 # Set Heroku config variables
 heroku config:set OPENAI_API_KEY="$OPENAI_API_KEY" --app "$BRANCH_NAME"
 heroku config:set SESSION_SECRET="$SESSION_SECRET" --app "$BRANCH_NAME"
+heroku config:set NEXT_PUBLIC_PRIVY_APP_ID="$NEXT_PUBLIC_PRIVY_APP_ID" --app "$BRANCH_NAME"
 
 # Add logging with Logtail free plan
 heroku addons:create logtail:free --app $BRANCH_NAME

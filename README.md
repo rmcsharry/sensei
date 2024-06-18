@@ -3,7 +3,7 @@ Framework for quickly developing and deploying AI guides. Geared toward rapid de
 
 ## Prerequisites
 
-You have an [OpenAI API account](https://openai.com/blog/openai-api) and a [Heroku](https://signup.heroku.com/) account, and you have the `yarn`, `node`, and `heroku` packages installed on your machine. You will also need to have Postgres [installed locally](https://devcenter.heroku.com/articles/local-setup-heroku-postgres) and [Postgres CLI tools](https://postgresapp.com/documentation/cli-tools.html) set up.
+You have an [OpenAI API account](https://openai.com/blog/openai-api) a [Heroku](https://signup.heroku.com/) account, and a [Privy](https://docs.privy.io/guide/dashboard/api-keys) app ID, and you have the `yarn`, `node`, and `heroku` packages installed on your machine. You will also need to have Postgres [installed locally](https://devcenter.heroku.com/articles/local-setup-heroku-postgres) and [Postgres CLI tools](https://postgresapp.com/documentation/cli-tools.html) set up.
 
 ## Getting started
 
@@ -17,7 +17,7 @@ An easy way to create and deploy multiple AIs with different behavior is to crea
 
 From the root of the directory:
 1. `chmod +x branch.sh` (if you haven't done this already for an earlier branch)
-2. `./branch.sh --name branchname --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --files "path/to/file1,path/to/file2"`
+2. `./branch.sh --name branchname --openai-key YOUR-OPENAI-API-KEY --session-secret YOUR-SESSION-SECRET --privy YOUR-PRIVY-APP-ID --files "path/to/file1,path/to/file2"`
 
 This will create and check out a new branch with that name, deploy it to Heroku, set it up with your OpenAI API key, add logging with the Logtail free plan, and a Heroku Postgres database under the Basic plan. Note: This will fail if the branch name is not unique.
 
