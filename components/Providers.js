@@ -4,7 +4,8 @@ import React from 'react';
 const Providers = ({ children }) => {
   return (
     <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
+      // appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
+      appId="clxjfwh3d005bcewwp6vvtfm6"
       config={{
         appearance: {
           theme: 'light',
