@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { usePrivy } from '@privy-io/react-auth';
-import e from 'express';
 
 const Home = () => {
   const { login, logout, user, ready, authenticated } = usePrivy();
