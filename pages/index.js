@@ -167,16 +167,16 @@ const Home = () => {
 
   const handleSignMessage = async (e) => {
     e.preventDefault();
-    const message = 'Transfer 1 ETH to alice.eth on Ethereum';
+    const message = 'Your intention message here';
     const uiConfig = {
       title: 'Sign Intention',
-      description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
+      description: 'Please sign this intention to proceed.',
       buttonText: 'Sign and Continue',
     };
-
+  
     try {
       const signature = await signMessage(message, uiConfig);
-      const response = await fetch(`${process.env.BUNDLER_SERVER}/intention`, {
+      const response = await fetch('/api/send-signed-intention', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -187,11 +187,11 @@ const Home = () => {
           from: user.address,
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to send intention to bundler server');
       }
-
+  
       const result = await response.json();
       console.log('Intention processed:', result);
       setErrorMessage('');
@@ -199,7 +199,7 @@ const Home = () => {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
     }
-  };
+  };  
 
   const showForm = (form) => {
     setVisibleForm(form);

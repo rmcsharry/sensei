@@ -568,6 +568,30 @@ nextApp.prepare().then(() => {
       });
   });
 
+  app.post('/api/send-signed-intention', async (req, res) => {
+    const { intention, signature, from } = req.body;
+  
+    try {
+      const response = await fetch(`${process.env.BUNDLER_SERVER}/intention`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ intention, signature, from }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to send intention to bundler server');
+      }
+  
+      const result = await response.json();
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('Error sending signed intention:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // All other routes handled by Next.js
   app.get('*', (req, res) => {
     return handle(req, res);
