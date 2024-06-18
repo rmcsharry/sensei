@@ -4,7 +4,7 @@ import styles from '../styles/Home.module.css';
 import { usePrivy } from '@privy-io/react-auth';
 
 const Home = () => {
-  const { login, logout, user, ready, authenticated } = usePrivy();
+  const { login, logout, signMessage, user, ready, authenticated } = usePrivy();
   const [isRecording, setIsRecording] = useState(false);
   const [audioPromptUrl, setAudioPromptUrl] = useState('');
   const [audioResponseUrl, setAudioResponseUrl] = useState('');
@@ -165,6 +165,25 @@ const Home = () => {
     }
   };
 
+  const handleSignMessage = async (e) => {
+    e.preventDefault();
+    const message = 'Hello, Oya!';
+    const uiConfig = {
+      title: 'Sign Message',
+      description: 'Please sign this message to say hello to Oya.',
+      buttonText: 'Sign and Continue',
+    };
+
+    try {
+      const signature = await signMessage(message, uiConfig);
+      console.log('Signature:', signature);
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Sign message error:', error);
+      setErrorMessage(error.message);
+    }
+  };
+
   const showForm = (form) => {
     setVisibleForm(form);
     setErrorMessage(''); // Clear any existing error message when switching forms
@@ -305,6 +324,7 @@ const Home = () => {
 
       <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
       <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
+      <button type="button" onClick={handleSignMessage}>Sign Message</button>
     </div>
   );
 };
