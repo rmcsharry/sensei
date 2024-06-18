@@ -1,9 +1,12 @@
-// pages/_app.js
-
 import '../styles/globals.css';
+import Providers from '../components/Providers';
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return (
+    <Providers>
+      <Component {...pageProps} />
+    </Providers>
+  );
 }
 
 export default MyApp;

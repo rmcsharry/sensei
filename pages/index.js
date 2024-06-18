@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import { usePrivy } from '@privy-io/react-auth';
 
 const Home = () => {
+  const { login, logout, user } = usePrivy();
   const [isRecording, setIsRecording] = useState(false);
   const [audioPromptUrl, setAudioPromptUrl] = useState('');
   const [audioResponseUrl, setAudioResponseUrl] = useState('');
