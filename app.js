@@ -533,7 +533,16 @@ nextApp.prepare().then(() => {
     }
   });  
 
-  app.post('/login', [
+  app.post('/login', async (req, res) => {
+    try {
+      // something
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  app.post('/login-privy', [
     body('name').trim().escape(),
     body('password').trim(),
   ], async (req, res) => {

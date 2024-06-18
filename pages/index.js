@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { usePrivy } from '@privy-io/react-auth';
+import e from 'express';
 
 const Home = () => {
   const { login, logout, user } = usePrivy();
@@ -137,7 +138,36 @@ const Home = () => {
       console.error('Error:', error);
       setErrorMessage(error.message);
     }
-  };  
+  };
+
+  const handlePrivyLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/login-privy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+  
+      if (!response.ok) {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          const data = await response.json();
+          throw new Error(data.message || 'Privy login failed');
+        } else {
+          throw new Error('Server error');
+        }
+      }
+  
+      const data = await response.json();
+      console.log('Login successful', data);
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage(error.message);
+    }
+  };
 
   const showForm = (form) => {
     setVisibleForm(form);
