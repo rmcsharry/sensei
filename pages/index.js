@@ -5,7 +5,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import e from 'express';
 
 const Home = () => {
-  const { login, logout, user } = usePrivy();
+  const { login, logout, user, ready, authenticated } = usePrivy();
   const [isRecording, setIsRecording] = useState(false);
   const [audioPromptUrl, setAudioPromptUrl] = useState('');
   const [audioResponseUrl, setAudioResponseUrl] = useState('');
@@ -142,29 +142,13 @@ const Home = () => {
 
   const handlePrivyLogin = async (e) => {
     e.preventDefault();
+    if (!ready || (ready && authenticated)) return;
+
     try {
-      const response = await fetch('/login-privy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-  
-      if (!response.ok) {
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-          const data = await response.json();
-          throw new Error(data.message || 'Privy login failed');
-        } else {
-          throw new Error('Server error');
-        }
-      }
-  
-      const data = await response.json();
-      console.log('Login successful', data);
+      await login();
       setErrorMessage('');
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Privy login error:', error);
       setErrorMessage(error.message);
     }
   };
@@ -306,6 +290,8 @@ const Home = () => {
       <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
       <button type="button" onClick={() => showForm('register')}>Show Register Form</button>
       <button type="button" onClick={() => showForm('login')}>Show Login Form</button>
+
+      <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
     </div>
   );
 };
