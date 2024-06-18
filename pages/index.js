@@ -152,6 +152,19 @@ const Home = () => {
     }
   };
 
+  const handlePrivyLogout = async (e) => {
+    e.preventDefault();
+    if (!ready || (ready && !authenticated)) return;
+
+    try {
+      await logout();
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Privy logout error:', error);
+      setErrorMessage(error.message);
+    }
+  };
+
   const showForm = (form) => {
     setVisibleForm(form);
     setErrorMessage(''); // Clear any existing error message when switching forms
@@ -291,6 +304,7 @@ const Home = () => {
       <button type="button" onClick={() => showForm('login')}>Show Login Form</button>
 
       <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
+      <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
     </div>
   );
 };
