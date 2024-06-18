@@ -169,8 +169,8 @@ const Home = () => {
     e.preventDefault();
     const message = 'Transfer 1 ETH to alice.eth on Ethereum';
     const uiConfig = {
-      title: 'Sign Message',
-      description: 'Please sign this message if it matches what you want to do.',
+      title: 'Sign Intention',
+      description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
       buttonText: 'Sign and Continue',
     };
 
