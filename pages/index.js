@@ -167,10 +167,10 @@ const Home = () => {
 
   const handleSignMessage = async (e) => {
     e.preventDefault();
-    const message = 'Hello, Oya!';
+    const message = 'Transfer 1 ETH to alice.eth on Ethereum';
     const uiConfig = {
       title: 'Sign Message',
-      description: 'Please sign this message to say hello to Oya.',
+      description: 'Please sign this message if it matches what you want to do.',
       buttonText: 'Sign and Continue',
     };
 
