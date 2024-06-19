@@ -193,7 +193,7 @@ const Home = () => {
         },
         body: JSON.stringify({
           intention: message,
-          signature,
+          signature: signature,
           from: wallet.address,
         }),
       });
