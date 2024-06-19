@@ -184,7 +184,7 @@ const Home = () => {
         body: JSON.stringify({
           intention: message,
           signature,
-          from: user.address,
+          from: user.wallet.address,
         }),
       });
   

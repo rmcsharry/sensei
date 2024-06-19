@@ -572,9 +572,7 @@ nextApp.prepare().then(() => {
     const { intention, signature, from } = req.body;
   
     try {
-      const server = process.env.BUNDLER_SERVER;
-      console.log('Sending signed intention to bundler server:', server, intention, signature, from);
-      const response = await fetch(`${server}/intention`, {
+      const response = await fetch(`${process.env.BUNDLER_SERVER}/intention`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
