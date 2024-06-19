@@ -176,14 +176,9 @@ const Home = () => {
     };
     console.info("Wallets:", wallets);
     const wallet = wallets[0];
-    const provider = await wallet.getEthereumProvider();
   
     try {
-      // const signature = await signMessage(message, uiConfig);
-      const signature = await provider.request({
-        method: 'personal_sign',
-        params: [message, wallet.address],
-      });
+      const signature = await signMessage(message, uiConfig);
       console.log('Signature:', signature);
       const response = await fetch('/api/send-signed-intention', {
         method: 'POST',
