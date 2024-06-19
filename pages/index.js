@@ -168,7 +168,13 @@ const Home = () => {
 
   const handleSignMessage = async (e) => {
     e.preventDefault();
-    const message = 'Transfer 1 ETH to alice.eth on Ethereum';
+    const message = {
+      action: "Transfer 1 ETH to alice.eth on Ethereum",
+      from: accountHolderAddress,
+      bundler: bundlerAddress,
+      expiry: 2346265198,
+      nonce: 1
+    };
     const uiConfig = {
       title: 'Sign Intention',
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
