@@ -179,8 +179,8 @@ const Home = () => {
     };
     const swapMessage = {
       action: "Swap 500 cUSDC for USDC",
-      from: accountHolderAddress,
-      bundler: bundlerAddress,
+      from: wallet.address,
+      bundler: '0x42fA5d9E5b0B1c039b08853cF62f8E869e8E5bAf',
       expiry: 2346265198,
       nonce: 1
     };
