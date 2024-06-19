@@ -4,8 +4,8 @@ import styles from '../styles/Home.module.css';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 
 const Home = () => {
-  const { login, logout, signMessage, user, ready, authenticated } = usePrivy();
-  const { wallets } = useWallets();
+  const { login, logout, signMessage, user, authenticated } = usePrivy();
+  const { ready, wallets } = useWallets();
   const [isRecording, setIsRecording] = useState(false);
   const [audioPromptUrl, setAudioPromptUrl] = useState('');
   const [audioResponseUrl, setAudioResponseUrl] = useState('');
@@ -174,7 +174,7 @@ const Home = () => {
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
       buttonText: 'Sign and Continue',
     };
-    const embeddedWallet = getEmbeddedConnectedWallet(wallets);
+    const wallet = wallets[0];
   
     try {
       const signature = await signMessage(message, uiConfig);
@@ -187,7 +187,7 @@ const Home = () => {
         body: JSON.stringify({
           intention: message,
           signature,
-          from: embeddedWallet.address,
+          from: wallet.address,
         }),
       });
   
