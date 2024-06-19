@@ -203,7 +203,7 @@ const Home = () => {
       }
   
       const result = await response.json();
-      console.log('Intention processed:', result);
+      console.log('Intention processed:\n', result);
       setErrorMessage('');
     } catch (error) {
       console.error('Sign message error:', error);
