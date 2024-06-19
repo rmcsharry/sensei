@@ -570,30 +570,46 @@ nextApp.prepare().then(() => {
 
   app.post('/api/send-signed-intention', async (req, res) => {
     const { intention, signature, from } = req.body;
-    console.log('Received signed intention:', intention, signature, from);
+    const server = process.env.BUNDLER_SERVER;
+  
+    if (!server) {
+      console.error('Bundler server URL not configured');
+      return res.status(500).json({ error: 'Bundler server URL not configured' });
+    }
+  
+    const sendIntention = async (retryCount = 3) => {
+      try {
+        const response = await fetch(`${server}/intention`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ intention, signature, from }),
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Failed to send intention to bundler server: ${response.statusText}`);
+        }
+  
+        return await response.json();
+      } catch (error) {
+        if (retryCount === 0) {
+          throw error;
+        }
+        console.log(`Retrying... Attempts left: ${retryCount}`);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
+        return sendIntention(retryCount - 1);
+      }
+    };
   
     try {
-      const response = await fetch(`${process.env.BUNDLER_SERVER}/intention`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ intention, signature, from }),
-      });
-
-      console.log('Response:', response);
-  
-      if (!response.ok) {
-        throw new Error('Failed to send intention to bundler server');
-      }
-  
-      const result = await response.json();
+      const result = await sendIntention();
       res.status(200).json(result);
     } catch (error) {
       console.error('Error sending signed intention:', error);
       res.status(500).json({ error: error.message });
     }
-  });
+  });  
 
   // All other routes handled by Next.js
   app.get('*', (req, res) => {
