@@ -177,6 +177,13 @@ const Home = () => {
       expiry: 2346265198,
       nonce: 1
     };
+    const swapMessage = {
+      action: "Swap 500 cUSDC for USDC",
+      from: accountHolderAddress,
+      bundler: bundlerAddress,
+      expiry: 2346265198,
+      nonce: 1
+    };
     const uiConfig = {
       title: 'Sign Intention',
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
@@ -184,19 +191,31 @@ const Home = () => {
     };
   
     try {
-      const signature = await signMessage(JSON.stringify(message), uiConfig);
+      // const signature = await signMessage(JSON.stringify(message), uiConfig);
+      // const response = await fetch('/api/send-signed-intention', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     intention: message,
+      //     signature: signature,
+      //     from: wallet.address,
+      //   }),
+      // });
+      const signature = await signMessage(JSON.stringify(swapMessage), uiConfig);
       const response = await fetch('/api/send-signed-intention', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          intention: message,
+          intention: swapMessage,
           signature: signature,
           from: wallet.address,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to send intention to bundler server');
       }
