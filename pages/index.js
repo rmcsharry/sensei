@@ -191,11 +191,11 @@ const Home = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: {
+        body: JSON.stringify({
           intention: message,
           signature: signature,
           from: wallet.address,
-        },
+        }),
       });
   
       if (!response.ok) {
