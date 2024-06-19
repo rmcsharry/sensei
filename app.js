@@ -570,6 +570,7 @@ nextApp.prepare().then(() => {
 
   app.post('/api/send-signed-intention', async (req, res) => {
     const { intention, signature, from } = req.body;
+    console.log('Received signed intention:', intention, signature, from);
   
     try {
       const response = await fetch(`${process.env.BUNDLER_SERVER}/intention`, {
@@ -579,6 +580,8 @@ nextApp.prepare().then(() => {
         },
         body: JSON.stringify({ intention, signature, from }),
       });
+
+      console.log('Response:', response);
   
       if (!response.ok) {
         throw new Error('Failed to send intention to bundler server');
