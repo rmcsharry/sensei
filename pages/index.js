@@ -185,7 +185,6 @@ const Home = () => {
   
     try {
       const signature = await signMessage(JSON.stringify(message), uiConfig);
-      console.log('Signature:', signature);
       const response = await fetch('/api/send-signed-intention', {
         method: 'POST',
         headers: {
