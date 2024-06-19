@@ -168,10 +168,12 @@ const Home = () => {
 
   const handleSignMessage = async (e) => {
     e.preventDefault();
+    console.info("Wallets:", wallets);
+    const wallet = wallets[0];
     const message = JSON.stringify({
       action: "Transfer 1 ETH to alice.eth on Ethereum",
-      from: accountHolderAddress,
-      bundler: bundlerAddress,
+      from: wallet.address,
+      bundler: '0x42fA5d9E5b0B1c039b08853cF62f8E869e8E5bAf',
       expiry: 2346265198,
       nonce: 1
     });
@@ -180,8 +182,6 @@ const Home = () => {
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
       buttonText: 'Sign and Continue',
     };
-    console.info("Wallets:", wallets);
-    const wallet = wallets[0];
   
     try {
       const signature = await signMessage(message, uiConfig);
