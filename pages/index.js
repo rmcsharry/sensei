@@ -174,6 +174,7 @@ const Home = () => {
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
       buttonText: 'Sign and Continue',
     };
+    console.info("Wallets:", wallets);
     const wallet = wallets[0];
   
     try {
