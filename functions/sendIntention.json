@@ -10,5 +10,5 @@
     },
     "required": ["action"]
   },
-  "description": "This function allows the AI assistant to send a specified action intention to be signed and sent to the Oya protocol bundler server for execution on Oya's virtual chain."
+  "description": "This function allows the AI assistant to create an intention object to be signed and sent to the Oya protocol bundler server for execution on Oya's virtual chain. For now, you can display the object to the account holder for confirmation."
 }
