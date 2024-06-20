@@ -11,4 +11,4 @@ async function sendIntention(action) {
   return intention;
 }
 
-export default sendIntention;
+module.exports = sendIntention;
