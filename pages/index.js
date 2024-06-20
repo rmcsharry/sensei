@@ -170,19 +170,20 @@ const Home = () => {
     e.preventDefault();
     console.info("Wallets:", wallets);
     const wallet = wallets[0];
+    // Can we pass messages in as parameters?
     const message = {
       action: "Transfer 1 ETH to alice.eth on Ethereum",
       from: wallet.address,
       bundler: '0x42fA5d9E5b0B1c039b08853cF62f8E869e8E5bAf',
       expiry: 2346265198,
-      nonce: 1
+      nonce: 1 // wallet.nonce ?
     };
     const swapMessage = {
       action: "Swap 0.5 ETH for USDC on Ethereum",
       from: wallet.address,
       bundler: '0x42fA5d9E5b0B1c039b08853cF62f8E869e8E5bAf',
       expiry: 2346265198,
-      nonce: 1
+      nonce: 1 // wallet.nonce ?
     };
     const uiConfig = {
       title: 'Sign Intention',

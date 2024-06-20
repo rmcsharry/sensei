@@ -1,0 +1,18 @@
+{
+  "name": "sendIntention",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The name of the external guide."
+      },
+      "prompt": {
+        "type": "string",
+        "description": "The prompt to send to the external guide. This is the question or request for help that the external guide will respond to."
+      }
+    },
+    "required": ["name", "prompt"]
+  },
+  "description": "This function allows an AI guide to call another, external AI guide that has specialized knowledge or skills, to help answer a question."
+}
