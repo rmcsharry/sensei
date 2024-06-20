@@ -18,6 +18,8 @@ const Home = () => {
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
   let recorder, audioStream;
+  const transferAction = "Transfer 1 ETH to alice.eth on Ethereum";
+  const swapAction = "Swap 0.5 ETH for USDC on Ethereum";
 
   const handleStartRecording = async () => {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -166,25 +168,28 @@ const Home = () => {
     }
   };
 
-  const handleSignMessage = async (e) => {
+  // Wrapper function to randomly select an action and call handleSignMessage
+  const handleRandomSignMessage = (e) => {
+    const actions = [transferAction, swapAction];
+    const randomAction = actions[Math.floor(Math.random() * actions.length)];
+    handleSignMessage(e, randomAction);
+  };
+
+  // Function to sign an intention with the embedded Privy wallet
+  const handleSignMessage = async (e, action) => {
     e.preventDefault();
     console.info("Wallets:", wallets);
     const wallet = wallets[0];
-    // Can we pass messages in as parameters?
+  
+    // Construct the message object using the action parameter and environment variables
     const message = {
-      action: "Transfer 1 ETH to alice.eth on Ethereum",
+      action: action,
       from: wallet.address,
       bundler: process.env.BUNDLER_ADDRESS,
       expiry: process.env.EXPIRY,
       nonce: process.env.NONCE // need to track this internally, in the database
     };
-    const swapMessage = {
-      action: "Swap 0.5 ETH for USDC on Ethereum",
-      from: wallet.address,
-      bundler: process.env.BUNDLER_ADDRESS,
-      expiry: process.env.EXPIRY,
-      nonce: process.env.NONCE
-    };
+  
     const uiConfig = {
       title: 'Sign Intention',
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
@@ -192,31 +197,19 @@ const Home = () => {
     };
   
     try {
-      // const signature = await signMessage(JSON.stringify(message), uiConfig);
-      // const response = await fetch('/api/send-signed-intention', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     intention: message,
-      //     signature: signature,
-      //     from: wallet.address,
-      //   }),
-      // });
-      const signature = await signMessage(JSON.stringify(swapMessage), uiConfig);
+      const signature = await signMessage(JSON.stringify(message), uiConfig);
       const response = await fetch('/api/send-signed-intention', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          intention: swapMessage,
+          intention: message,
           signature: signature,
           from: wallet.address,
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to send intention to bundler server');
       }
@@ -370,7 +363,7 @@ const Home = () => {
 
       <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
       <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
-      <button type="button" onClick={handleSignMessage}>Sign Message</button>
+      <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
     </div>
   );
 };
