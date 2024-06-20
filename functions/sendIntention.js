@@ -1,85 +1,61 @@
-import { handleIntention } from './index.js';
+import dotenv from 'dotenv';
+dotenv.config(); // Ensure that environment variables are loaded
 
 async function sendIntention(action) {
-  // This needs to call handleSignMessage from the index.js
-  // I put some values in the .env that can be used to compose the message
-  // Check index.js for example messages
+  // Create a mock event object since handleSignMessage expects an event
+  const mockEvent = {
+    preventDefault: () => {}
+  };
 
-  const fetch = (await import('node-fetch')).default;
-  const guide = sensei.guides.find(g => g.name === name);
-  if (!guide) {
-    console.log("Guide not found.");
-    return "Wrong name.";
-  }
+  const handleSignMessage = async (e, action) => {
+    e.preventDefault();
+    console.info("Wallets:", wallets);
+    const wallet = wallets[0];
 
-  // Dynamically get the bundler server URI from environment variables
-  const uri = process.env.BUNDLER_SERVER;
+    // Construct the message object using the action parameter and environment variables
+    const message = {
+      action: action,
+      from: wallet.address,
+      bundler: process.env.BUNDLER_ADDRESS,
+      expiry: process.env.EXPIRY,
+      nonce: process.env.NONCE // need to track this internally, in the database, in the future
+    };
 
-  if (!uri) {
-    console.log("URI for the guide not found in environment variables.");
-    return "URI not set for " + name;
-  }
+    const uiConfig = {
+      title: 'Sign Intention',
+      description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
+      buttonText: 'Sign and Continue',
+    };
 
-  console.log(`Calling the guide called ${name} at ${uri}/prompt with the prompt: ${prompt}...`);
-
-  try {
-    // Initial POST request to the /prompt endpoint
-    const promptResponse = await fetch(`${uri}/prompt`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt })
-    });
-
-    if (!promptResponse.ok) {
-      // Attempt to read the response body, which might contain more details about the error
-      let errMsg = `Failed to submit prompt. Status: ${promptResponse.status} (${promptResponse.statusText})`;
-      try {
-        const errorBody = await promptResponse.json(); // Assuming the error body is JSON-formatted
-        if (errorBody.error) {
-          errMsg += `; Error: ${errorBody.error}`;
-        } else if (errorBody.message) { // Some APIs might use a different field to convey error messages
-          errMsg += `; Message: ${errorBody.message}`;
-        }
-      } catch (bodyError) {
-        // If reading the body or parsing JSON fails, include a generic message
-        errMsg += `. Additionally, there was an error parsing the error response: ${bodyError.message}`;
-      }
-      throw new Error(errMsg);
-    }
-
-    // Capture the 'Set-Cookie' header from the response
-    const sessionCookie = promptResponse.headers.get('set-cookie');
-
-    const { requestId } = await promptResponse.json();
-
-    // Function to delay for polling
-    const delay = time => new Promise(resolve => setTimeout(resolve, time));
-
-    // Initialize statusResponse and statusData outside of the do-while loop
-    let statusResponse, statusData;
-    do {
-      await delay(2000); // Wait for 2 seconds before polling again
-      // Include the sessionCookie in the subsequent request to maintain the session
-      statusResponse = await fetch(`${uri}/status/${requestId}`, {
+    try {
+      const signature = await signMessage(JSON.stringify(message), uiConfig);
+      const response = await fetch('/api/send-signed-intention', {
+        method: 'POST',
         headers: {
-          'Cookie': sessionCookie
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          intention: message,
+          signature: signature,
+          from: wallet.address,
+        }),
       });
-      if (!statusResponse.ok) throw new Error('Failed to fetch status');
-      statusData = await statusResponse.json();
-    } while (statusData.status !== 'completed' && statusData.status !== 'failed');
 
-    if (statusData.status === 'failed') {
-      throw new Error('Guide processing failed.');
+      if (!response.ok) {
+        throw new Error('Failed to send intention to bundler server');
+      }
+
+      const result = await response.json();
+      console.log('Intention processed:\n', result);
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Sign message error:', error);
+      setErrorMessage(error.message);
     }
+  };
 
-    return statusData.data; // Final result from the guide
-  } catch (error) {
-    console.error("Failed to call the guide:", error);
-    return "Failed to fetch guide response.";
-  }
+  // Call handleSignMessage with the mock event and the action
+  await handleSignMessage(mockEvent, action);
 }
 
-module.exports = callGuide;
+export default sendIntention;

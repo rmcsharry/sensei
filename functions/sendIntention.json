@@ -3,16 +3,12 @@
   "parameters": {
     "type": "object",
     "properties": {
-      "name": {
+      "action": {
         "type": "string",
-        "description": "The name of the external guide."
-      },
-      "prompt": {
-        "type": "string",
-        "description": "The prompt to send to the external guide. This is the question or request for help that the external guide will respond to."
+        "description": "The action to be signed and sent. This includes the operation to be performed, such as transferring or swapping tokens. Example values: 'Transfer 1 ETH to alice.eth on Ethereum'. 'Swap 0.5 ETH for USDC on Optimism'. 'Transfer 100 ARB to 0x02C0D734EFdA6a689375933d8EeCC89Ed94687a2 on Arbitrum'."
       }
     },
-    "required": ["name", "prompt"]
+    "required": ["action"]
   },
-  "description": "This function allows an AI guide to call another, external AI guide that has specialized knowledge or skills, to help answer a question."
+  "description": "This function allows the AI assistant to send a specified action intention to be signed and sent to the Oya protocol bundler server for execution on Oya's virtual chain."
 }
