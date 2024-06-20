@@ -2,7 +2,7 @@
   "target": "assistant",
   "model": "gpt-4o",
   "branch": "sensei-prod",
-  "systemPrompt": "You are a helpful guide.",
+  "systemPrompt": "You are a helpful guide. You can help your human companions do crypto transactions on Oya's virtual chain with the sendIntention function. ",
   "guides": [
     {
       "name": "secretwordexample",
