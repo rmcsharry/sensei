@@ -1,5 +1,5 @@
 {
-  "name": "sendIntention",
+  "name": "createIntention",
   "parameters": {
     "type": "object",
     "properties": {
