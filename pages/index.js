@@ -174,16 +174,16 @@ const Home = () => {
     const message = {
       action: "Transfer 1 ETH to alice.eth on Ethereum",
       from: wallet.address,
-      bundler: '0x42fA5d9E5b0B1c039b08853cF62f8E869e8E5bAf',
-      expiry: 2346265198,
-      nonce: 1 // wallet.nonce ?
+      bundler: process.env.BUNDLER_ADDRESS,
+      expiry: process.env.EXPIRY,
+      nonce: process.env.NONCE // need to track this internally, in the database
     };
     const swapMessage = {
       action: "Swap 0.5 ETH for USDC on Ethereum",
       from: wallet.address,
-      bundler: '0x42fA5d9E5b0B1c039b08853cF62f8E869e8E5bAf',
-      expiry: 2346265198,
-      nonce: 1 // wallet.nonce ?
+      bundler: process.env.BUNDLER_ADDRESS,
+      expiry: process.env.EXPIRY,
+      nonce: process.env.NONCE
     };
     const uiConfig = {
       title: 'Sign Intention',
