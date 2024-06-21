@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 // External dependencies
+const WebSocket = require('ws');
 const express = require('express');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
@@ -17,7 +18,6 @@ const { Pool } = require('pg');
 const ffmpeg = require('fluent-ffmpeg');
 const { OpenAI } = require("openai");
 const next = require('next');
-const WebSocket = require('ws');
 
 // Application-specific imports
 const sensei = require('./sensei.json');
