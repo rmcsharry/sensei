@@ -301,7 +301,7 @@ const Home = () => {
       }
   
       // Extract intention and action from the content
-      const regex = /{\s*(?:\\"|")intention(?:\\"|")\s*:\s*(?:\\"|')([^"']+)(?:\\"|')\s*}/;
+      const regex = /{\s*(?:"intention"|'intention')\s*:\s*(?:"([^"]+)"|'([^']+)')\s*}/;
       const match = data.data.content.match(regex);
       if (match && match[1]) {
         const action = match[1];
