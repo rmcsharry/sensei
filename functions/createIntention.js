@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
-
 const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
 
 async function createIntention(action) {
+  const fetch = (await import('node-fetch')).default;
+
   const response = await fetch(`${baseUrl}/create-intention`, {
     method: 'POST',
     headers: {
