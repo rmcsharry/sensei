@@ -53,7 +53,7 @@ const Home = () => {
     return () => {
       ws.close();
     };
-  }, []);  
+  }, []);
 
   const handleStartRecording = async () => {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
