@@ -17,13 +17,15 @@ const Home = () => {
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
-  let recorder, audioStream;
+  const recorderRef = useRef(null); // useRef for recorder
+  const audioStreamRef = useRef(null); // useRef for audio stream
+  
   const transferAction = "Transfer 1 ETH to alice.eth on Ethereum";
   const swapAction = "Swap 0.5 ETH for USDC on Ethereum";
 
   const handleStartRecording = async () => {
-    audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    recorder = new MediaRecorder(audioStream);
+    const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(audioStream);
     let audioChunks = [];
 
     recorder.ondataavailable = e => {
@@ -53,12 +55,18 @@ const Home = () => {
     };
 
     recorder.start();
+    recorderRef.current = recorder;
+    audioStreamRef.current = audioStream;
     setIsRecording(true);
   };
 
   const handleStopRecording = () => {
-    recorder.stop();
-    audioStream.getTracks().forEach(track => track.stop());
+    if (recorderRef.current) {
+      recorderRef.current.stop();
+    }
+    if (audioStreamRef.current) {
+      audioStreamRef.current.getTracks().forEach(track => track.stop());
+    }
     setIsRecording(false);
   };
 
