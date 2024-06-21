@@ -259,9 +259,13 @@ const Home = () => {
   const playAudioFromURL = (audioUrl) => {
     setAudioResponseUrl(audioUrl);
     if (audioResponseRef.current) {
-      audioResponseRef.current.play().catch(error => {
-        console.error('Error playing audio:', error);
-      });
+      try {
+        audioResponseRef.current.play().catch(error => {
+          console.error('Error playing audio:', error);
+        });
+      } catch (error) {
+        console.error('Error in playAudioFromURL:', error);
+      }
     } else {
       console.error('Audio element is not available.');
     }
