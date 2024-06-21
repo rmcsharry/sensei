@@ -193,13 +193,13 @@ const Home = () => {
     const message = {
       action: action,
       from: wallet.address,
-      bundler: process.env.BUNDLER_ADDRESS,
-      expiry: process.env.EXPIRY,
-      nonce: process.env.NONCE // need to track this internally, in the database
+      bundler: '0x42fA5d9E5b0B1c039b08853cF62f8E869e8E5bAf',
+      expiry: 1734752013,
+      nonce: 0 // need to track this internally, in the database
     };
   
     const uiConfig = {
-      title: 'Sign Intention',
+      title: 'Intention Check',
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
       buttonText: 'Sign and Continue',
     };
