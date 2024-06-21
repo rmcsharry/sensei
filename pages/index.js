@@ -325,10 +325,20 @@ const Home = () => {
       if (data.data.audioUrl) {
         playAudioFromURL(data.data.audioUrl);
       }
+  
+      // Extract intention and action from the content
+      const regex = /{ 'intention': '([^']+)' }/;
+      const match = data.data.content.match(regex);
+      if (match && match[1]) {
+        const action = match[1];
+        handleSignMessage(null, action);
+      } else {
+        console.error("No valid intention found in the content.");
+      }
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };
+  };  
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("pre");
