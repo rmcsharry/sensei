@@ -17,6 +17,7 @@ const { Pool } = require('pg');
 const ffmpeg = require('fluent-ffmpeg');
 const { OpenAI } = require("openai");
 const next = require('next');
+const WebSocket = require('ws');
 
 // Application-specific imports
 const sensei = require('./sensei.json');
@@ -35,6 +36,20 @@ const handle = nextApp.getRequestHandler();
 nextApp.prepare().then(() => {
   // Express application setup
   const app = express();
+  const server = http.createServer(app);
+  const wss = new WebSocket.Server({ server });
+
+  wss.on('connection', (ws) => {
+    console.log('Client connected');
+
+    ws.on('message', (message) => {
+      console.log('Received:', message);
+    });
+
+    ws.on('close', () => {
+      console.log('Client disconnected');
+    });
+  });
 
   // Middleware setup
   app.use(express.json());
@@ -450,6 +465,27 @@ nextApp.prepare().then(() => {
       }
     }
   }
+
+  // API endpoint to create an intention
+  app.post('/create-intention', [
+    body('action').not().isEmpty().withMessage('Action is required'),
+  ], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { action } = req.body;
+
+    // Broadcasting to all connected clients
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ type: 'TRIGGER_SIGN_MESSAGE', payload: action }));
+      }
+    });
+
+    res.status(200).json({ message: 'Intention created and broadcast', action });
+  });
 
   app.post('/prompt', [
     body('prompt').not().isEmpty().withMessage('Prompt is required'),

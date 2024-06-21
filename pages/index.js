@@ -206,7 +206,7 @@ const Home = () => {
 
   // Function to sign an intention with the embedded Privy wallet
   const handleSignMessage = async (e, action) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     console.info("Wallets:", wallets);
     const wallet = wallets[0];
   
