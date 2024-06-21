@@ -210,7 +210,7 @@ nextApp.prepare().then(() => {
   async function uploadFiles() {
     const filesDir = path.join(__dirname, 'files');
     const retryDelay = 1000; // Delay in milliseconds
-    const maxRetries = 3; // Maximum number of retries
+    const maxRetries = 5; // Maximum number of retries
     let retries = 0;
 
     while (retries < maxRetries) {
@@ -625,7 +625,7 @@ nextApp.prepare().then(() => {
       return res.status(500).json({ error: 'Bundler server URL not configured' });
     }
   
-    const sendIntention = async (retryCount = 3) => {
+    const sendIntention = async (retryCount = 5) => {
       try {
         const response = await fetch(`${server}/intention`, {
           method: 'POST',

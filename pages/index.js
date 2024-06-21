@@ -21,9 +21,6 @@ const Home = () => {
   const transferAction = "Transfer 1 ETH to alice.eth on Ethereum";
   const swapAction = "Swap 0.5 ETH for USDC on Ethereum";
 
-  console.log('Environment:', process.env.NODE_ENV);
-  console.log('Port:', process.env.PORT);
-
   useEffect(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const wsUrl = process.env.NODE_ENV === 'production'
