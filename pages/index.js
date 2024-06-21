@@ -301,10 +301,10 @@ const Home = () => {
       }
   
       // Extract intention and action from the content
-      const regex = /{\s*(?:"intention"|'intention')\s*:\s*(?:"([^"]+)"|'([^']+)')\s*}/;
+      const regex = /{\s*(?:"intention"|'intention'|"intention"|\'intention\')\s*:\s*(?:"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)')\s*}/;
       const match = data.data.content.match(regex);
-      if (match && match[1]) {
-        const action = match[1];
+      const action = match ? (match[1] || match[2]) : null;
+      if (action) {
         console.log("Intention found:", action);
         handleSignMessage(null, action);
       } else {
