@@ -478,23 +478,23 @@ nextApp.prepare().then(() => {
 
     const { action } = req.body;
 
-    // Check if there are any connected WebSocket clients
-    const hasConnectedClients = Array.from(wss.clients).some(client => client.readyState === WebSocket.OPEN);
+    // // Check if there are any connected WebSocket clients
+    // const hasConnectedClients = Array.from(wss.clients).some(client => client.readyState === WebSocket.OPEN);
 
-    if (!hasConnectedClients) {
-      return res.status(500).json({ message: 'No WebSocket clients connected.' });
-    }
+    // if (!hasConnectedClients) {
+    //   return res.status(500).json({ message: 'No WebSocket clients connected.' });
+    // }
 
-    // Broadcast message to all connected clients
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ type: 'TRIGGER_SIGN_MESSAGE', payload: action }), (err) => {
-          if (err) {
-            console.error('Failed to send message to WebSocket client:', err);
-          }
-        });
-      }
-    });
+    // // Broadcast message to all connected clients
+    // wss.clients.forEach((client) => {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     client.send(JSON.stringify({ type: 'TRIGGER_SIGN_MESSAGE', payload: action }), (err) => {
+    //       if (err) {
+    //         console.error('Failed to send message to WebSocket client:', err);
+    //       }
+    //     });
+    //   }
+    // });
 
     res.status(200).json({ message: 'Intention created and broadcast', action });
   });
