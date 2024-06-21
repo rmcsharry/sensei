@@ -258,9 +258,13 @@ const Home = () => {
 
   const playAudioFromURL = (audioUrl) => {
     setAudioResponseUrl(audioUrl);
-    audioResponseRef.current.play().catch(error => {
-      console.error('Error playing audio:', error);
-    });
+    if (audioResponseRef.current) {
+      audioResponseRef.current.play().catch(error => {
+        console.error('Error playing audio:', error);
+      });
+    } else {
+      console.error('Audio element is not available.');
+    }
   };
 
   const handleTranscriptionResult = (data) => {
@@ -343,15 +347,15 @@ const Home = () => {
           <audio ref={audioResponseRef} src={audioResponseUrl} controls hidden={!audioResponseUrl} />
         )}
       </div>
-
+  
       <br /><br />
-
+  
       <div id="threadContainer" ref={threadContainerRef}></div>
-
+  
       <br /><br />
-
+  
       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-
+  
       <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
         <label htmlFor="prompt">Enter your prompt:</label>
         <br />
@@ -359,7 +363,7 @@ const Home = () => {
         <br />
         <button type="submit">Send</button>
       </form>
-
+  
       <form id="registerForm" className={visibleForm === 'register' ? '' : styles.hidden} onSubmit={handleRegister}>
         <label htmlFor="username">Username:</label>
         <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -367,7 +371,7 @@ const Home = () => {
         <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit">Register</button>
       </form>
-
+  
       <form id="loginForm" className={visibleForm === 'login' ? '' : styles.hidden} onSubmit={handleLogin}>
         <label htmlFor="username">Username:</label>
         <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -375,11 +379,11 @@ const Home = () => {
         <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit">Log in</button>
       </form>
-
+  
       <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
       <button type="button" onClick={() => showForm('register')}>Show Register Form</button>
       <button type="button" onClick={() => showForm('login')}>Show Login Form</button>
-
+  
       <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
       <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
       <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
