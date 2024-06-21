@@ -475,44 +475,28 @@ nextApp.prepare().then(() => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-  
+
     const { action } = req.body;
-  
-    const broadcastAction = new Promise((resolve, reject) => {
-      let acknowledged = false;
-      const timeout = setTimeout(() => {
-        if (!acknowledged) {
-          reject(new Error('No WebSocket clients acknowledged the message.'));
-        }
-      }, 5000); // Set the timeout period (e.g., 5000 ms)
-  
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({ type: 'TRIGGER_SIGN_MESSAGE', payload: action }), (err) => {
-            if (err) {
-              reject(new Error('Failed to send message to WebSocket client.'));
-            } else {
-              acknowledged = true;
-              clearTimeout(timeout);
-              resolve();
-            }
-          });
-        }
-      });
-  
-      if (wss.clients.size === 0) {
-        clearTimeout(timeout);
-        reject(new Error('No WebSocket clients connected.'));
+
+    // Check if there are any connected WebSocket clients
+    const hasConnectedClients = Array.from(wss.clients).some(client => client.readyState === WebSocket.OPEN);
+
+    if (!hasConnectedClients) {
+      return res.status(500).json({ message: 'No WebSocket clients connected.' });
+    }
+
+    // Broadcast message to all connected clients
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ type: 'TRIGGER_SIGN_MESSAGE', payload: action }), (err) => {
+          if (err) {
+            console.error('Failed to send message to WebSocket client:', err);
+          }
+        });
       }
     });
-  
-    broadcastAction
-      .then(() => {
-        res.status(200).json({ message: 'Intention created and broadcast', action });
-      })
-      .catch((error) => {
-        res.status(500).json({ message: error.message });
-      });
+
+    res.status(200).json({ message: 'Intention created and broadcast', action });
   });
 
   app.post('/prompt', [
