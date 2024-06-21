@@ -331,6 +331,7 @@ const Home = () => {
       const match = data.data.content.match(regex);
       if (match && match[1]) {
         const action = match[1];
+        console.log("Intention found:", action);
         handleSignMessage(null, action);
       } else {
         console.error("No valid intention found in the content.");
