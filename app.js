@@ -34,24 +34,24 @@ const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
-nextApp.prepare().then(() => {
-  // Express application setup
-  const app = express();
-  const server = http.createServer(app);
-  const wss = new WebSocket.Server({ server });
+// Express application setup
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
-  wss.on('connection', (ws) => {
-    console.log('Client connected');
+wss.on('connection', (ws) => {
+  console.log('Client connected');
 
-    ws.on('message', (message) => {
-      console.log('Received:', message);
-    });
-
-    ws.on('close', () => {
-      console.log('Client disconnected');
-    });
+  ws.on('message', (message) => {
+    console.log('Received:', message);
   });
 
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
+
+nextApp.prepare().then(() => {
   // Middleware setup
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
