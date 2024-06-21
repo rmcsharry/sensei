@@ -4,7 +4,6 @@ require('dotenv').config();
 // Core modules
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
 
 // External dependencies
 const WebSocket = require('ws');
@@ -37,20 +36,6 @@ const handle = nextApp.getRequestHandler();
 nextApp.prepare().then(() => {
   // Express application setup
   const app = express();
-  const server = http.createServer(app);
-  const wss = new WebSocket.Server({ server });
-
-  wss.on('connection', (ws) => {
-    console.log('Client connected');
-
-    ws.on('message', (message) => {
-      console.log('Received:', message);
-    });
-
-    ws.on('close', () => {
-      console.log('Client disconnected');
-    });
-  });
 
   // Middleware setup
   app.use(express.json());

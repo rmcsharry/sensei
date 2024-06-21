@@ -21,40 +21,6 @@ const Home = () => {
   const transferAction = "Transfer 1 ETH to alice.eth on Ethereum";
   const swapAction = "Swap 0.5 ETH for USDC on Ethereum";
 
-  useEffect(() => {
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const wsUrl = process.env.NODE_ENV === 'production'
-      ? `${protocol}://${window.location.host}`
-      : 'ws://localhost:3000';
-  
-    console.log(`Attempting to connect to WebSocket server at ${wsUrl}`);
-    const ws = new WebSocket(wsUrl);
-  
-    ws.onopen = () => {
-      console.log('Connected to WebSocket server');
-    };
-  
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-  
-      if (message.type === 'TRIGGER_SIGN_MESSAGE') {
-        handleSignMessage(null, message.payload);
-      }
-    };
-  
-    ws.onclose = (event) => {
-      console.log(`Disconnected from WebSocket server. Code: ${event.code}, Reason: ${event.reason}`);
-    };
-  
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-  
-    return () => {
-      ws.close();
-    };
-  }, []);
-
   const handleStartRecording = async () => {
     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     recorder = new MediaRecorder(audioStream);
