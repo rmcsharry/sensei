@@ -310,22 +310,32 @@ const Home = () => {
       }
   
       // Extract intention and action from the content using the regex patterns from config
-      const action = regexPatterns.reduce((foundAction, pattern) => {
-        if (foundAction) return foundAction;
+      const matchedPattern = regexPatterns.find(pattern => {
         const match = data.data.content.match(pattern.regex);
-        return match ? (match[1] || match[2]) : null;
-      }, null);
+        return match;
+      });
 
-      if (action) {
-        console.log("Intention found:", action);
-        handleSignMessage(null, action);
+      if (matchedPattern) {
+        const match = data.data.content.match(matchedPattern.regex);
+        const action = match ? (match[1] || match[2]) : null;
+        if (action) {
+          const functionName = matchedPattern.functionName;
+          if (functionName === 'handleSignMessage') {
+            console.log("Intention found:", action);
+          }
+          if (typeof window[functionName] === 'function') {
+            window[functionName](null, action);
+          } else {
+            console.error(`Function ${functionName} not found.`);
+          }
+        }
       } else {
-        console.error("No valid intention found in the content.");
+        console.error("No matching pattern found in the content.");
       }
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };  
+  };
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("pre");
