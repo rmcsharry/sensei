@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
+import regexPatterns from '../regex';  // Import the regex patterns
 
 const Home = () => {
   const { login, logout, signMessage, user, authenticated } = usePrivy();
@@ -308,10 +309,13 @@ const Home = () => {
         playAudioFromURL(data.data.audioUrl);
       }
   
-      // Extract intention and action from the content
-      const regex = /{\s*(?:"intention"|'intention'|"intention"|\'intention\')\s*:\s*(?:"([^"\\]*(?:\\.[^"\\]*)*)"|'([^'\\]*(?:\\.[^'\\]*)*)')\s*}/;
-      const match = data.data.content.match(regex);
-      const action = match ? (match[1] || match[2]) : null;
+      // Extract intention and action from the content using the regex patterns from config
+      const action = regexPatterns.reduce((foundAction, pattern) => {
+        if (foundAction) return foundAction;
+        const match = data.data.content.match(pattern.regex);
+        return match ? (match[1] || match[2]) : null;
+      }, null);
+
       if (action) {
         console.log("Intention found:", action);
         handleSignMessage(null, action);
