@@ -28,7 +28,11 @@ const Home = () => {
   useEffect(() => {
     window.handleSignMessage = handleSignMessage;
     // Add other functions here as needed
-  }, []);  
+  }, []);
+
+  useEffect(() => {
+    console.log("Wallets state updated:", wallets);
+  }, [wallets]);
 
   const handleStartRecording = async () => {
     const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -192,8 +196,8 @@ const Home = () => {
 
   // Function to sign an intention with the embedded Privy wallet
   const handleSignMessage = async (e, action) => {
-    console.log("handleSignMessage called with action:", action);
     if (e) e.preventDefault();
+    console.log("handleSignMessage called with action:", action);
     if (!wallets || wallets.length === 0) {
       console.error("No wallets available.");
       setErrorMessage("No wallets available.");
@@ -242,7 +246,7 @@ const Home = () => {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
     }
-  };
+  };  
 
   const showForm = (form) => {
     setVisibleForm(form);
@@ -326,7 +330,7 @@ const Home = () => {
         const match = data.data.content.match(pattern.regex);
         return match;
       });
-  
+
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
         const action = match ? (match[1] || match[2]) : null;
@@ -347,7 +351,7 @@ const Home = () => {
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };  
+  };
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("pre");
