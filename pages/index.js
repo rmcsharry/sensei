@@ -198,11 +198,11 @@ const Home = () => {
   const handleSignMessage = async (e, action) => {
     if (e) e.preventDefault();
     console.log("handleSignMessage called with action:", action);
-    if (!wallets || wallets.length === 0) {
-      console.error("No wallets available.");
-      setErrorMessage("No wallets available.");
-      return;
-    }
+    // if (!wallets || wallets.length === 0) {
+    //   console.error("No wallets available.");
+    //   setErrorMessage("No wallets available.");
+    //   return;
+    // }
     console.info("Wallets:", wallets);
     const wallet = wallets[0];
   
