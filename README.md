@@ -55,7 +55,8 @@ Example:
   "metadata": {},
   "temperature": 1,
   "top_p": 1,
-  "response_format": "auto"
+  "response_format": "auto",
+  "regex": []
 }
 ```
 
