@@ -24,6 +24,12 @@ const Home = () => {
   const transferAction = "Transfer 1 ETH to alice.eth on Ethereum";
   const swapAction = "Swap 0.5 ETH for USDC on Ethereum";
 
+  // Assign the functions to the window object
+  useEffect(() => {
+    window.handleSignMessage = handleSignMessage;
+    // Add other functions here as needed
+  }, []);
+
   const handleStartRecording = async () => {
     const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(audioStream);
