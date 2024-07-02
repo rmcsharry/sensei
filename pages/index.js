@@ -30,9 +30,9 @@ const Home = () => {
     // Add other functions here as needed
   }, []);
 
-  useEffect(() => {
-    console.log("Wallets state updated:", wallets);
-  }, [wallets]);
+  // useEffect(() => {
+  //   console.log("Wallets state updated:", wallets);
+  // }, [wallets]);
 
   const handleStartRecording = async () => {
     const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
