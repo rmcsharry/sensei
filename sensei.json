@@ -18,7 +18,10 @@
   "temperature": 1,
   "top_p": 1,
   "response_format": "auto",
-  "regex": [
-    "\\{\\s*(?:\"intention\"|'intention'|\"intention\"|'intention')\\s*:\\s*(?:\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)')\\s*\\}"
+  "regexPatterns": [
+    {
+      "name": "intention",
+      "pattern": "\\{\\s*(?:\"intention\"|'intention'|\"intention\"|'intention')\\s*:\\s*(?:\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)')\\s*\\}"
+    }
   ]
 }
