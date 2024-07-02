@@ -26,13 +26,8 @@ const Home = () => {
 
   // Assign the functions to the window object
   useEffect(() => {
-    window.handleSignMessage = handleSignMessage;
-    // Add other functions here as needed
-  }, []);
-
-  // useEffect(() => {
-  //   console.log("Wallets state updated:", wallets);
-  // }, [wallets]);
+    window.handleSignMessage = (e, action) => handleSignMessage(e, action, wallets);
+  }, [wallets]);
 
   const handleStartRecording = async () => {
     const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -191,18 +186,18 @@ const Home = () => {
   const handleRandomSignMessage = (e) => {
     const actions = [transferAction, swapAction];
     const randomAction = actions[Math.floor(Math.random() * actions.length)];
-    handleSignMessage(e, randomAction);
+    handleSignMessage(e, randomAction, wallets);
   };
 
   // Function to sign an intention with the embedded Privy wallet
-  const handleSignMessage = async (e, action) => {
+  const handleSignMessage = async (e, action, wallets) => {
     if (e) e.preventDefault();
     console.log("handleSignMessage called with action:", action);
-    // if (!wallets || wallets.length === 0) {
-    //   console.error("No wallets available.");
-    //   setErrorMessage("No wallets available.");
-    //   return;
-    // }
+    if (!wallets || wallets.length === 0) {
+      console.error("No wallets available.");
+      setErrorMessage("No wallets available.");
+      return;
+    }
     console.info("Wallets:", wallets);
     const wallet = wallets[0];
   
