@@ -56,7 +56,7 @@ Example:
   "temperature": 1,
   "top_p": 1,
   "response_format": "auto",
-  "regexPatterns": [
+  "regex": [
     {
       "name": "intention",
       "pattern": "\\{\\s*(?:\"intention\"|'intention'|\"intention\"|'intention')\\s*:\\s*(?:\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)')\\s*\\}"
