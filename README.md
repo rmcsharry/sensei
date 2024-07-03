@@ -59,7 +59,8 @@ Example:
   "regex": [
     {
       "name": "intention",
-      "pattern": "\\{\\s*(?:\"intention\"|'intention'|\"intention\"|'intention')\\s*:\\s*(?:\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)')\\s*\\}"
+      "pattern": "\\{\\s*(?:\"intention\"|'intention'|\"intention\"|'intention')\\s*:\\s*(?:\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)')\\s*\\}",
+      "function": "handleSignMessage"
     }
   ]
 }
