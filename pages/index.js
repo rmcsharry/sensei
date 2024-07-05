@@ -361,6 +361,12 @@ const Home = () => {
           if (functionName === 'handleSignMessage') {
             console.log("Intention found:", action);
           }
+          if (functionName = 'updateContact') {
+            displayTextResponse(data.data.content);
+            if (data.data.audioUrl) {
+              playAudioFromURL(data.data.audioUrl);
+            }
+          }
           if (typeof window[functionName] === 'function') {
             window[functionName](null, action);
           } else {
