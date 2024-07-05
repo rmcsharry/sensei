@@ -615,7 +615,7 @@ nextApp.prepare().then(() => {
     const { contact } = req.body;
     try {
       const result = await pool.query(
-        "INSERT INTO contacts (name, address) VALUES ($1, $2) ON CONFLICT (address) DO UPDATE SET name = EXCLUDED.name RETURNING *",
+        "INSERT INTO contacts (contact, address) VALUES ($1, $2) ON CONFLICT (address) DO UPDATE SET contact = EXCLUDED.contact RETURNING *",
         [contact.contact, contact.address]
       );
       res.status(200).json(result.rows[0]);
