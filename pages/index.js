@@ -347,7 +347,6 @@ const Home = () => {
 
   const handleGuideResponse = (data) => {
     if (data.data && data.data.role && data.data.content) {
-      // Extract intention and action from the content using the regex patterns from config
       const matchedPattern = regexPatterns.find(pattern => {
         const match = data.data.content.match(pattern.regex);
         return match;
@@ -355,22 +354,14 @@ const Home = () => {
   
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
-        const input = match ? (match[0]) : null; // Capture the whole JSON object
+        const input = match ? (match[0]) : null;
   
         if (input) {
           let functionName = matchedPattern.functionName;
   
           try {
-            // Transform single-quoted JSON to double-quoted JSON if necessary
             const validJsonString = input.replace(/'/g, '"');
-            const parsedObject = JSON.parse(validJsonString);  // Parse the input to create the object
-  
-            displayTextResponse(data.data.content);
-  
-            if (data.data.audioUrl) {
-              playAudioFromURL(data.data.audioUrl);
-            }
-  
+            const parsedObject = JSON.parse(validJsonString);
             if (functionName === 'handleSignMessage') {
               const action = parsedObject.intention;
               if (typeof window[functionName] === 'function') {
@@ -383,6 +374,11 @@ const Home = () => {
               if (typeof window[functionName] === 'function') {
                 console.log("Calling function:", functionName, "with input:", parsedObject);
                 window[functionName](null, parsedObject);
+                displayTextResponse(data.data.content);
+  
+                if (data.data.audioUrl) {
+                  playAudioFromURL(data.data.audioUrl);
+                }
               } else {
                 console.error(`Function ${functionName} not found.`);
               }
@@ -403,7 +399,6 @@ const Home = () => {
       console.error("Unexpected data structure from backend:", data);
     }
   };
-  
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("pre");

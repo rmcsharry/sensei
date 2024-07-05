@@ -612,11 +612,16 @@ nextApp.prepare().then(() => {
   });
 
   app.post('/api/update-contact', async (req, res) => {
-    const { contact } = req.body;
+    const { contact, address } = req.body; // Destructure contact and address directly from req.body
+  
+    if (!contact || !address) {
+      return res.status(400).json({ message: 'Contact and address are required' });
+    }
+  
     try {
       const result = await pool.query(
         "INSERT INTO contacts (contact, address) VALUES ($1, $2) ON CONFLICT (address) DO UPDATE SET contact = EXCLUDED.contact RETURNING *",
-        [contact.contact, contact.address]
+        [contact, address]
       );
       res.status(200).json(result.rows[0]);
     } catch (error) {
