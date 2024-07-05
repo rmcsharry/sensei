@@ -247,6 +247,8 @@ const Home = () => {
   const updateContact = async (e, contact, wallets) => {
     if (e) e.preventDefault();
     console.log("updateContact called with contact information:", contact);
+    // contact should be saved to database
+    // existing contacts in database should be added to system prompt on startup
   };
 
   const showForm = (form) => {
