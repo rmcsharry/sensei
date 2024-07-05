@@ -335,7 +335,7 @@ const Home = () => {
           }
         }
       } else {
-        console.error("No matching pattern found in the content.");
+        console.error("No matching pattern found in the content that would trigger a function call. Returning guide response.");
         displayTextResponse(data.data.content);
         if (data.data.audioUrl) {
           playAudioFromURL(data.data.audioUrl);
