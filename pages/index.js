@@ -262,7 +262,7 @@ const Home = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ contact: contactObject }),
+        body: JSON.stringify(contactObject),
       });
       if (!response.ok) {
         throw new Error('Failed to update contact');
@@ -360,17 +360,21 @@ const Home = () => {
           if (functionName === 'handleSignMessage') {
             console.log("Intention found:", input);
           } else if (functionName === 'updateContact') {
-            // Parse the input to create the contact object
-            const contactObject = JSON.parse(input);
-            displayTextResponse(data.data.content);
-            if (data.data.audioUrl) {
-              playAudioFromURL(data.data.audioUrl);
-            }
-            if (typeof window[functionName] === 'function') {
-              console.log("Calling function:", functionName, "with input:", contactObject);
-              window[functionName](null, contactObject);
-            } else {
-              console.error(`Function ${functionName} not found.`);
+            try {
+              const contactObject = JSON.parse(input);  // Parse the input to create the contact object
+              displayTextResponse(data.data.content);
+              if (data.data.audioUrl) {
+                playAudioFromURL(data.data.audioUrl);
+              }
+              if (typeof window[functionName] === 'function') {
+                console.log("Calling function:", functionName, "with input:", contactObject);
+                window[functionName](null, contactObject);
+              } else {
+                console.error(`Function ${functionName} not found.`);
+              }
+            } catch (error) {
+              console.error("Failed to parse contact information:", error);
+              setErrorMessage("Failed to parse contact information");
             }
           }
         }
