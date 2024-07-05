@@ -360,8 +360,7 @@ const Home = () => {
           const functionName = matchedPattern.functionName;
           if (functionName === 'handleSignMessage') {
             console.log("Intention found:", action);
-          }
-          if (functionName = 'updateContact') {
+          } else if (functionName = 'updateContact') {
             displayTextResponse(data.data.content);
             if (data.data.audioUrl) {
               playAudioFromURL(data.data.audioUrl);
