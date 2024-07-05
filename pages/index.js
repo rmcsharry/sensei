@@ -355,11 +355,11 @@ const Home = () => {
       });
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
-        const action = match ? (match[1] || match[2]) : null;
-        if (action) {
+        const input = match ? (match[1] || match[2]) : null;
+        if (input) {
           let functionName = matchedPattern.functionName;
           if (functionName === 'handleSignMessage') {
-            console.log("Intention found:", action);
+            console.log("Intention found:", input);
           } else if (functionName = 'updateContact') {
             displayTextResponse(data.data.content);
             if (data.data.audioUrl) {
@@ -367,7 +367,8 @@ const Home = () => {
             }
           }
           if (typeof window[functionName] === 'function') {
-            window[functionName](null, action);
+            console.log("Calling function:", functionName, "with input:", input);
+            window[functionName](null, input);
           } else {
             console.error(`Function ${functionName} not found.`);
           }
