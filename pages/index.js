@@ -238,10 +238,12 @@ const Home = () => {
       console.log('Intention processed:\n', result);
       setErrorMessage('');
       // Try creating a system prompt and calling sendPromptToBackend
+      displayPrompt("Thank you, I signed and sent the intention to the Oya bundler.");
       sendPromptToBackend("Thank you, I signed and sent the intention to the Oya bundler.");
     } catch (error) {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
+      displayPrompt("I'm sorry, I was unable to sign and send the intention to the Oya bundler. Either the intention did not match what I wanted to do, or there was a technical issue.");
       sendPromptToBackend("I'm sorry, I was unable to sign and send the intention to the Oya bundler. Either the intention did not match what I wanted to do, or there was a technical issue.")
     }
   };  
