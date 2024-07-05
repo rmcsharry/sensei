@@ -244,7 +244,11 @@ const Home = () => {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
       displayPrompt(error.message);
-      sendPromptToBackend(error.message)
+      if (error.message == 'The user rejected the request.') {
+        sendPromptToBackend(error.message + ' Please ask clarifying questions instead of returning an intention object.');
+      } else {
+        sendPromptToBackend(error.message);
+      }
     }
   };  
 
