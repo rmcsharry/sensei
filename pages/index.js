@@ -315,17 +315,11 @@ const Home = () => {
 
   const handleGuideResponse = (data) => {
     if (data.data && data.data.role && data.data.content) {
-      displayTextResponse(data.data.content);
-      if (data.data.audioUrl) {
-        playAudioFromURL(data.data.audioUrl);
-      }
-  
       // Extract intention and action from the content using the regex patterns from config
       const matchedPattern = regexPatterns.find(pattern => {
         const match = data.data.content.match(pattern.regex);
         return match;
       });
-
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
         const action = match ? (match[1] || match[2]) : null;
@@ -342,6 +336,10 @@ const Home = () => {
         }
       } else {
         console.error("No matching pattern found in the content.");
+        displayTextResponse(data.data.content);
+        if (data.data.audioUrl) {
+          playAudioFromURL(data.data.audioUrl);
+        }
       }
     } else {
       console.error("Unexpected data structure from backend:", data);
