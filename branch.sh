@@ -111,7 +111,7 @@ EOF
 heroku pg:psql --app "$BRANCH_NAME" <<EOF
 CREATE TABLE contacts (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255),
+    contact VARCHAR(255),
     address VARCHAR(255) UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
