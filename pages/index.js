@@ -352,32 +352,44 @@ const Home = () => {
         const match = data.data.content.match(pattern.regex);
         return match;
       });
+  
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
         const input = match ? (match[0]) : null; // Capture the whole JSON object
+  
         if (input) {
           let functionName = matchedPattern.functionName;
-          if (functionName === 'handleSignMessage') {
-            console.log("Intention found:", input);
-          } else if (functionName === 'updateContact') {
-            try {
-              // Transform single-quoted JSON to double-quoted JSON
-              const validJsonString = input.replace(/'/g, '"');
-              const contactObject = JSON.parse(validJsonString);  // Parse the input to create the contact object
-              displayTextResponse(data.data.content);
-              if (data.data.audioUrl) {
-                playAudioFromURL(data.data.audioUrl);
-              }
+  
+          try {
+            // Transform single-quoted JSON to double-quoted JSON if necessary
+            const validJsonString = input.replace(/'/g, '"');
+            const parsedObject = JSON.parse(validJsonString);  // Parse the input to create the object
+  
+            displayTextResponse(data.data.content);
+  
+            if (data.data.audioUrl) {
+              playAudioFromURL(data.data.audioUrl);
+            }
+  
+            if (functionName === 'handleSignMessage') {
+              const action = parsedObject.intention;
               if (typeof window[functionName] === 'function') {
-                console.log("Calling function:", functionName, "with input:", contactObject);
-                window[functionName](null, contactObject);
+                console.log("Calling function:", functionName, "with action:", action);
+                window[functionName](null, action, wallets);
               } else {
                 console.error(`Function ${functionName} not found.`);
               }
-            } catch (error) {
-              console.error("Failed to parse contact information:", error);
-              setErrorMessage("Failed to parse contact information");
+            } else if (functionName === 'updateContact') {
+              if (typeof window[functionName] === 'function') {
+                console.log("Calling function:", functionName, "with input:", parsedObject);
+                window[functionName](null, parsedObject);
+              } else {
+                console.error(`Function ${functionName} not found.`);
+              }
             }
+          } catch (error) {
+            console.error("Failed to parse JSON information:", error);
+            setErrorMessage("Failed to parse JSON information");
           }
         }
       } else {
@@ -390,7 +402,8 @@ const Home = () => {
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };  
+  };
+  
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("pre");
