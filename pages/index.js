@@ -27,7 +27,7 @@ const Home = () => {
   // Assign the functions to the window object
   useEffect(() => {
     window.handleSignMessage = (e, action) => handleSignMessage(e, action, wallets);
-    window.updateContact = (e, contact) => updateContact(e, contact, wallets);
+    window.updateContact = (e, contactObject) => updateContact(e, contactObject);
   }, [wallets]);
 
   const handleStartRecording = async () => {
@@ -254,16 +254,16 @@ const Home = () => {
   };  
 
   // Add function to create a new contact, matching a name to an Ethereum address
-  const updateContact = async (e, contact, wallets) => {
+  const updateContact = async (e, contactObject) => {
     if (e) e.preventDefault();
-    console.log("updateContact called with contact information:", contact);
+    console.log("updateContact called with contact information:", contactObject);
     try {
       const response = await fetch('/api/update-contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ contact }),
+        body: JSON.stringify({ contactObject }),
       });
       if (!response.ok) {
         throw new Error('Failed to update contact');
