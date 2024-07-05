@@ -354,14 +354,16 @@ const Home = () => {
       });
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
-        const input = match ? (match[1] || match[2]) : null;
+        const input = match ? (match[0]) : null; // Capture the whole JSON object
         if (input) {
           let functionName = matchedPattern.functionName;
           if (functionName === 'handleSignMessage') {
             console.log("Intention found:", input);
           } else if (functionName === 'updateContact') {
             try {
-              const contactObject = JSON.parse(input);  // Parse the input to create the contact object
+              // Transform single-quoted JSON to double-quoted JSON
+              const validJsonString = input.replace(/'/g, '"');
+              const contactObject = JSON.parse(validJsonString);  // Parse the input to create the contact object
               displayTextResponse(data.data.content);
               if (data.data.audioUrl) {
                 playAudioFromURL(data.data.audioUrl);
