@@ -609,6 +609,20 @@ nextApp.prepare().then(() => {
       console.error('Error sending signed intention:', error);
       res.status(500).json({ error: error.message });
     }
+  });
+
+  app.post('/api/update-contact', async (req, res) => {
+    const { contact } = req.body;
+    try {
+      const result = await pool.query(
+        "INSERT INTO contacts (name, address) VALUES ($1, $2) ON CONFLICT (address) DO UPDATE SET name = EXCLUDED.name RETURNING *",
+        [contact.contact, contact.address]
+      );
+      res.status(200).json(result.rows[0]);
+    } catch (error) {
+      console.error('Error updating contact:', error);
+      res.status(500).json({ message: "Server error" });
+    }
   });  
 
   // All other routes handled by Next.js

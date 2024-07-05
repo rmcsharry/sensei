@@ -27,6 +27,7 @@ const Home = () => {
   // Assign the functions to the window object
   useEffect(() => {
     window.handleSignMessage = (e, action) => handleSignMessage(e, action, wallets);
+    window.updateContact = (e, contact) => updateContact(e, contact, wallets);
   }, [wallets]);
 
   const handleStartRecording = async () => {
@@ -256,8 +257,23 @@ const Home = () => {
   const updateContact = async (e, contact, wallets) => {
     if (e) e.preventDefault();
     console.log("updateContact called with contact information:", contact);
-    // contact should be saved to database
-    // existing contacts in database should be added to system prompt on startup
+    try {
+      const response = await fetch('/api/update-contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ contact }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update contact');
+      }
+      const result = await response.json();
+      console.log('Contact updated:\n', result);
+    } catch (error) {
+      console.error('Error updating contact:', error);
+      setErrorMessage(error.message);
+    }
   };
 
   const showForm = (form) => {

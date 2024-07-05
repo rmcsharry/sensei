@@ -107,6 +107,16 @@ CREATE TABLE companions (
 );
 EOF
 
+# Create a database table to store contacts
+heroku pg:psql --app "$BRANCH_NAME" <<EOF
+CREATE TABLE contacts (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    address VARCHAR(255) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+EOF
+
 # Index messages by guide, companion, and thread for easy retrieval
 heroku pg:psql --app "$BRANCH_NAME" <<EOF
 CREATE INDEX idx_messages_guide ON messages(guide);
