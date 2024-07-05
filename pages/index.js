@@ -253,7 +253,6 @@ const Home = () => {
     }
   };  
 
-  // Add function to create a new contact, matching a name to an Ethereum address
   const updateContact = async (e, contactObject) => {
     if (e) e.preventDefault();
     console.log("updateContact called with contact information:", contactObject);
@@ -263,7 +262,7 @@ const Home = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ contactObject }),
+        body: JSON.stringify({ contact: contactObject }),
       });
       if (!response.ok) {
         throw new Error('Failed to update contact');
@@ -360,17 +359,19 @@ const Home = () => {
           let functionName = matchedPattern.functionName;
           if (functionName === 'handleSignMessage') {
             console.log("Intention found:", input);
-          } else if (functionName = 'updateContact') {
+          } else if (functionName === 'updateContact') {
+            // Parse the input to create the contact object
+            const contactObject = JSON.parse(input);
             displayTextResponse(data.data.content);
             if (data.data.audioUrl) {
               playAudioFromURL(data.data.audioUrl);
             }
-          }
-          if (typeof window[functionName] === 'function') {
-            console.log("Calling function:", functionName, "with input:", input);
-            window[functionName](null, input);
-          } else {
-            console.error(`Function ${functionName} not found.`);
+            if (typeof window[functionName] === 'function') {
+              console.log("Calling function:", functionName, "with input:", contactObject);
+              window[functionName](null, contactObject);
+            } else {
+              console.error(`Function ${functionName} not found.`);
+            }
           }
         }
       } else {
@@ -383,7 +384,7 @@ const Home = () => {
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };
+  };  
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("pre");
