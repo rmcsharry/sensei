@@ -243,6 +243,12 @@ const Home = () => {
     }
   };  
 
+  // Add function to create a new contact, matching a name to an Ethereum address
+  const updateContact = async (e, contact, wallets) => {
+    if (e) e.preventDefault();
+    console.log("updateContact called with contact information:", contact);
+  };
+
   const showForm = (form) => {
     setVisibleForm(form);
     setErrorMessage(''); // Clear any existing error message when switching forms
