@@ -357,7 +357,7 @@ const Home = () => {
         const match = data.data.content.match(matchedPattern.regex);
         const action = match ? (match[1] || match[2]) : null;
         if (action) {
-          const functionName = matchedPattern.functionName;
+          let functionName = matchedPattern.functionName;
           if (functionName === 'handleSignMessage') {
             console.log("Intention found:", action);
           } else if (functionName = 'updateContact') {
