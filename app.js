@@ -650,17 +650,30 @@ async function main() {
 
     app.post('/api/update-contact', async (req, res) => {
       const { contact, address } = req.body; // Destructure contact and address directly from req.body
-
+    
       if (!contact || !address) {
         return res.status(400).json({ message: 'Contact and address are required' });
       }
-
+    
       try {
-        const result = await pool.query(
-          "INSERT INTO contacts (contact, address) VALUES ($1, $2) ON CONFLICT (address) DO UPDATE SET contact = EXCLUDED.contact RETURNING *",
-          [contact, address]
-        );
-        res.status(200).json(result.rows[0]);
+        // Check if the contact name already exists
+        const existingContact = await pool.query("SELECT * FROM contacts WHERE contact = $1", [contact]);
+        
+        if (existingContact.rows.length > 0) {
+          // If contact name exists, update the address
+          const result = await pool.query(
+            "UPDATE contacts SET address = $2 WHERE contact = $1 RETURNING *",
+            [contact, address]
+          );
+          res.status(200).json(result.rows[0]);
+        } else {
+          // If contact name does not exist, insert a new contact
+          const result = await pool.query(
+            "INSERT INTO contacts (contact, address) VALUES ($1, $2) RETURNING *",
+            [contact, address]
+          );
+          res.status(200).json(result.rows[0]);
+        }
       } catch (error) {
         console.error('Error updating contact:', error);
         res.status(500).json({ message: "Server error" });
