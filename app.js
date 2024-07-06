@@ -533,12 +533,34 @@ nextApp.prepare().then(() => {
     }
   });  
 
-  app.post('/login', async (req, res) => {
+  app.post('/login', [
+    body('name').trim().escape(),
+    body('password').trim(),
+  ], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, password } = req.body;
+
     try {
-      // something
+      const result = await pool.query("SELECT * FROM companions WHERE name = $1", [name]);
+      if (result.rows.length > 0) {
+        const foundCompanion = result.rows[0];
+        const match = await bcrypt.compare(password, foundCompanion.hashedpassword);
+        if (match) {
+          req.session.companionId = foundCompanion.id;
+          res.send({ message: "Logged in successfully" });
+        } else {
+          res.status(401).send("Password is incorrect");
+        }
+      } else {
+        res.status(404).send("Companion not found");
+      }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Server error" });
+      res.status(500).send("Server error");
     }
   });
 
