@@ -462,8 +462,6 @@ const Home = () => {
       </form>
   
       <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
-      <button type="button" onClick={() => showForm('register')}>Show Register Form</button>
-      <button type="button" onClick={() => showForm('login')}>Show Login Form</button>
   
       <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
       <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
