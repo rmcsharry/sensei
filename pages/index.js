@@ -3,6 +3,7 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import regexPatterns from '../regex';  // Import the regex patterns
+import { marked } from 'marked';  // Import marked
 
 const Home = () => {
   const { login, logout, signMessage, user, authenticated } = usePrivy();
@@ -323,7 +324,7 @@ const Home = () => {
   const displayPrompt = (prompt) => {
     const promptElement = document.createElement("div");
     promptElement.classList.add(styles.chatBox);
-    promptElement.innerHTML = `<div class="${styles.chatRole}">Companion</div><div class="${styles.chatContent}">${formatTextContent(prompt)}</div>`;
+    promptElement.innerHTML = `<div class="${styles.chatRole}">Companion</div><div class="${styles.chatContent}">${marked(prompt)}</div>`;
     threadContainerRef.current.insertBefore(promptElement, threadContainerRef.current.firstChild);
   };
 
@@ -403,7 +404,7 @@ const Home = () => {
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
     responseElement.classList.add(styles.chatBox);
-    responseElement.innerHTML = `<div class="${styles.chatRole}">Oya Guide</div><div class="${styles.chatContent}">${formatTextContent(text)}</div>`;
+    responseElement.innerHTML = `<div class="${styles.chatRole}">Oya Guide</div><div class="${styles.chatContent}">${marked(text)}</div>`;
     threadContainerRef.current.insertBefore(responseElement, threadContainerRef.current.firstChild);
   };
 
@@ -468,10 +469,6 @@ const Home = () => {
       <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
     </div>
   );
-};
-
-const formatTextContent = (text) => {
-  return text.replace(/\\n/g, '<br />').replace(/```/g, '<code>').replace(/```/g, '</code>');
 };
 
 export default Home;
