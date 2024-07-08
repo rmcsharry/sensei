@@ -323,7 +323,7 @@ const Home = () => {
   const displayPrompt = (prompt) => {
     const promptElement = document.createElement("div");
     promptElement.classList.add(styles.chatBox);
-    promptElement.innerHTML = `<div class="${styles.chatRole}">Account Holder</div><div class="${styles.chatContent}">${formatTextContent(prompt)}</div>`;
+    promptElement.innerHTML = `<div class="${styles.chatRole}">Companion</div><div class="${styles.chatContent}">${formatTextContent(prompt)}</div>`;
     threadContainerRef.current.insertBefore(promptElement, threadContainerRef.current.firstChild);
   };
 
@@ -403,7 +403,7 @@ const Home = () => {
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
     responseElement.classList.add(styles.chatBox);
-    responseElement.innerHTML = `<div class="${styles.chatRole}">Guide</div><div class="${styles.chatContent}">${formatTextContent(text)}</div>`;
+    responseElement.innerHTML = `<div class="${styles.chatRole}">Oya Guide</div><div class="${styles.chatContent}">${formatTextContent(text)}</div>`;
     threadContainerRef.current.insertBefore(responseElement, threadContainerRef.current.firstChild);
   };
 
