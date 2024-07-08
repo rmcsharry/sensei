@@ -320,7 +320,7 @@ const Home = () => {
     sendPromptToBackend(data.data.transcription);
   };
 
-  // Custom function to convert basic Markdown to HTML
+  // Custom function to convert basic Markdown to HTML, this should be improved
   const convertMarkdownToHtml = (markdown) => {
     let html = markdown
       // Convert headers
