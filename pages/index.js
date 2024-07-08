@@ -3,7 +3,6 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import regexPatterns from '../regex';  // Import the regex patterns
-import { marked } from 'marked';  // Import marked
 
 const Home = () => {
   const { login, logout, signMessage, user, authenticated } = usePrivy();
@@ -246,7 +245,7 @@ const Home = () => {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
       displayPrompt(error.message);
-      if (error.message == 'The account holder rejected the request.') {
+      if (error.message == 'The user rejected the request.') {
         sendPromptToBackend(error.message + ' Please ask clarifying questions instead of returning an intention object.');
       } else {
         sendPromptToBackend(error.message);
@@ -321,10 +320,30 @@ const Home = () => {
     sendPromptToBackend(data.data.transcription);
   };
 
+  // Custom function to convert basic Markdown to HTML
+  const convertMarkdownToHtml = (markdown) => {
+    let html = markdown
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+      .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+      .replace(/\*(.*)\*/gim, '<i>$1</i>')
+      .replace(/\n$/gim, '<br />')
+      .replace(/^\s*\n\*/gm, '<ul>\n*')
+      .replace(/^(\*.+)\s*\n([^\*])/gm, '$1\n</ul>\n\n$2')
+      .replace(/^\*(.+)/gm, '<li>$1</li>')
+      .replace(/^\s*\n\d\./gm, '<ol>\n1.')
+      .replace(/^(\d\..+)\s*\n([^\d\.])/gm, '$1\n</ol>\n\n$2')
+      .replace(/^\d\.(.+)/gm, '<li>$1</li>');
+
+    return html.trim();
+  };
+
   const displayPrompt = (prompt) => {
     const promptElement = document.createElement("div");
     promptElement.classList.add(styles.chatBox);
-    promptElement.innerHTML = `<div class="${styles.chatRole}">Companion</div><div class="${styles.chatContent}">${marked(prompt)}</div>`;
+    promptElement.innerHTML = `<div class="${styles.chatRole}">User</div><div class="${styles.chatContent}">${convertMarkdownToHtml(prompt)}</div>`;
     threadContainerRef.current.insertBefore(promptElement, threadContainerRef.current.firstChild);
   };
 
@@ -404,7 +423,7 @@ const Home = () => {
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
     responseElement.classList.add(styles.chatBox);
-    responseElement.innerHTML = `<div class="${styles.chatRole}">Oya Guide</div><div class="${styles.chatContent}">${marked(text)}</div>`;
+    responseElement.innerHTML = `<div class="${styles.chatRole}">Guide</div><div class="${styles.chatContent}">${convertMarkdownToHtml(text)}</div>`;
     threadContainerRef.current.insertBefore(responseElement, threadContainerRef.current.firstChild);
   };
 

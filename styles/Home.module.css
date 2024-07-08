@@ -43,6 +43,48 @@
   white-space: pre-wrap;
 }
 
+.chatContent h1 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+.chatContent h2 {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.chatContent h3 {
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.chatContent p {
+  margin-bottom: 0.5em;
+}
+
+.chatContent ul, .chatContent ol {
+  margin-bottom: 0.5em;
+  padding-left: 1.5em;
+}
+
+.chatContent blockquote {
+  margin: 0;
+  padding: 1em;
+  background-color: #f9f9f9;
+  border-left: 0.25em solid #dfe2e5;
+}
+
+.chatContent code {
+  background-color: #f4f4f4;
+  padding: 0.2em;
+  border-radius: 3px;
+}
+
+.chatContent pre code {
+  display: block;
+  padding: 1em;
+}
+
 .errorMessage {
   color: red;
 }
