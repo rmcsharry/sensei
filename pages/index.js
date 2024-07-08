@@ -323,22 +323,41 @@ const Home = () => {
   // Custom function to convert basic Markdown to HTML
   const convertMarkdownToHtml = (markdown) => {
     let html = markdown
+      // Convert headers
+      .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
       .replace(/^### (.*$)/gim, '<h3>$1</h3>')
       .replace(/^## (.*$)/gim, '<h2>$1</h2>')
       .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      // Convert blockquotes
       .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+      // Convert bold and italics
+      .replace(/\*\*\*(.*)\*\*\*/gim, '<b><i>$1</i></b>')
       .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
       .replace(/\*(.*)\*/gim, '<i>$1</i>')
-      .replace(/\n$/gim, '<br />')
+      // Convert lists
       .replace(/^\s*\n\*/gm, '<ul>\n*')
       .replace(/^(\*.+)\s*\n([^\*])/gm, '$1\n</ul>\n\n$2')
       .replace(/^\*(.+)/gm, '<li>$1</li>')
       .replace(/^\s*\n\d\./gm, '<ol>\n1.')
       .replace(/^(\d\..+)\s*\n([^\d\.])/gm, '$1\n</ol>\n\n$2')
-      .replace(/^\d\.(.+)/gm, '<li>$1</li>');
-
+      .replace(/^\d\.(.+)/gm, '<li>$1</li>')
+      // Convert links
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank">$1</a>')
+      // Convert images
+      .replace(/\!\[([^\]]+)\]\(([^)]+)\)/gim, '<img src="$2" alt="$1" />')
+      // Convert line breaks
+      .replace(/\n$/gim, '<br />')
+      // Convert tables
+      .replace(/^\|(.+)\|\n\|([\s\S]+?)\|$/gm, (match, header, body) => {
+        const headerHtml = header.split('|').map(cell => `<th>${cell.trim()}</th>`).join('');
+        const bodyHtml = body.split('\n').map(row => {
+          return `<tr>${row.split('|').map(cell => `<td>${cell.trim()}</td>`).join('')}</tr>`;
+        }).join('');
+        return `<table><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>`;
+      });
+  
     return html.trim();
-  };
+  };  
 
   const displayPrompt = (prompt) => {
     const promptElement = document.createElement("div");
