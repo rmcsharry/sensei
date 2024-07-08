@@ -330,14 +330,15 @@ const Home = () => {
       .replace(/^# (.*$)/gim, '<h1>$1</h1>')
       // Convert blockquotes
       .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
-      // Convert bold and italics
+      // Convert bold and italic
       .replace(/\*\*\*(.*)\*\*\*/gim, '<b><i>$1</i></b>')
       .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
       .replace(/\*(.*)\*/gim, '<i>$1</i>')
-      // Convert lists
+      // Convert unordered lists
       .replace(/^\s*\n\*/gm, '<ul>\n*')
       .replace(/^(\*.+)\s*\n([^\*])/gm, '$1\n</ul>\n\n$2')
       .replace(/^\*(.+)/gm, '<li>$1</li>')
+      // Convert ordered lists
       .replace(/^\s*\n\d\./gm, '<ol>\n1.')
       .replace(/^(\d\..+)\s*\n([^\d\.])/gm, '$1\n</ol>\n\n$2')
       .replace(/^\d\.(.+)/gm, '<li>$1</li>')
@@ -345,8 +346,6 @@ const Home = () => {
       .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank">$1</a>')
       // Convert images
       .replace(/\!\[([^\]]+)\]\(([^)]+)\)/gim, '<img src="$2" alt="$1" />')
-      // Convert line breaks
-      .replace(/\n$/gim, '<br />')
       // Convert tables
       .replace(/^\|(.+)\|\n\|([\s\S]+?)\|$/gm, (match, header, body) => {
         const headerHtml = header.split('|').map(cell => `<th>${cell.trim()}</th>`).join('');
@@ -354,7 +353,9 @@ const Home = () => {
           return `<tr>${row.split('|').map(cell => `<td>${cell.trim()}</td>`).join('')}</tr>`;
         }).join('');
         return `<table><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>`;
-      });
+      })
+      // Convert line breaks
+      .replace(/\n/g, '<br />');
   
     return html.trim();
   };  

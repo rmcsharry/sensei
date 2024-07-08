@@ -58,6 +58,11 @@
   margin-bottom: 0.5em;
 }
 
+.chatContent h4 {
+  font-size: 1em;
+  margin-bottom: 0.5em;
+}
+
 .chatContent p {
   margin-bottom: 0.5em;
 }
@@ -83,6 +88,22 @@
 .chatContent pre code {
   display: block;
   padding: 1em;
+}
+
+.chatContent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+.chatContent th, .chatContent td {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+  text-align: left;
+}
+
+.chatContent img {
+  max-width: 100%;
 }
 
 .errorMessage {
