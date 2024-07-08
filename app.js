@@ -211,12 +211,20 @@ async function main() {
       const retryDelay = 1000; // Delay in milliseconds
       const maxRetries = 5; // Maximum number of retries
       let retries = 0;
-
+    
+      // Ensure the directory exists
+      try {
+        await fs.promises.mkdir(filesDir, { recursive: true });
+      } catch (err) {
+        console.error("Error creating files directory:", err);
+        throw err;
+      }
+    
       while (retries < maxRetries) {
         try {
           const files = await fs.promises.readdir(filesDir);
           const fileIds = [];
-
+    
           for (const fileName of files) {
             const filePath = path.join(filesDir, fileName);
             const fileStream = fs.createReadStream(filePath);
@@ -226,18 +234,18 @@ async function main() {
             });
             fileIds.push(file.id);
           }
-
+    
           if (fileIds.length === 0) {
             console.log("No files were uploaded.");
             return []; // Return an empty array if no files were uploaded
           }
-
+    
           // Create a vector store for file search
           vectorStore = await openai.beta.vectorStores.create({
             name: "Files", // Replace with your vector store name
             file_ids: fileIds
           });
-
+    
           return fileIds;
         } catch (error) {
           console.error("Error uploading files, attempt #" + (retries + 1), error);
@@ -251,7 +259,7 @@ async function main() {
           }
         }
       }
-    }
+    }    
 
     async function callChat(messages, prompt) {
       messages.push({
