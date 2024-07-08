@@ -245,7 +245,7 @@ const Home = () => {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
       displayPrompt(error.message);
-      if (error.message == 'The user rejected the request.') {
+      if (error.message == 'The account holder rejected the request.') {
         sendPromptToBackend(error.message + ' Please ask clarifying questions instead of returning an intention object.');
       } else {
         sendPromptToBackend(error.message);
@@ -362,7 +362,7 @@ const Home = () => {
   const displayPrompt = (prompt) => {
     const promptElement = document.createElement("div");
     promptElement.classList.add(styles.chatBox);
-    promptElement.innerHTML = `<div class="${styles.chatRole}">User</div><div class="${styles.chatContent}">${convertMarkdownToHtml(prompt)}</div>`;
+    promptElement.innerHTML = `<div class="${styles.chatRole}">Companion</div><div class="${styles.chatContent}">${convertMarkdownToHtml(prompt)}</div>`;
     threadContainerRef.current.insertBefore(promptElement, threadContainerRef.current.firstChild);
   };
 
@@ -442,7 +442,7 @@ const Home = () => {
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
     responseElement.classList.add(styles.chatBox);
-    responseElement.innerHTML = `<div class="${styles.chatRole}">Guide</div><div class="${styles.chatContent}">${convertMarkdownToHtml(text)}</div>`;
+    responseElement.innerHTML = `<div class="${styles.chatRole}">Oya Guide</div><div class="${styles.chatContent}">${convertMarkdownToHtml(text)}</div>`;
     threadContainerRef.current.insertBefore(responseElement, threadContainerRef.current.firstChild);
   };
 
