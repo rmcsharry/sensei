@@ -229,6 +229,7 @@ async function main() {
 
           if (fileIds.length === 0) {
             console.log("No files were uploaded.");
+            return []; // Return an empty array if no files were uploaded
           }
 
           // Create a vector store for file search
@@ -289,18 +290,27 @@ async function main() {
       if (!localGuide) {
         const functionDefinitions = await initializeFunctions(session);
         const fileIds = await uploadFiles();
+        
+        // If no files are uploaded, skip file_search tool
+        const tools = [...functionDefinitions,
+          { type: "code_interpreter" }];
+        if (fileIds.length > 0) {
+          tools.push({ type: "file_search" });
+        }
+
         localGuide = await openai.beta.assistants.create({
           name: sensei.branch,
           instructions: fullInstructions,
-          tools: [...functionDefinitions,
-          { type: "code_interpreter" },
-          { type: "file_search" }
-          ],
+          tools: tools,
           model: sensei.model,
-          tool_resources: {
+          tool_resources: fileIds.length > 0 ? {
             "file_search": {
               vector_store_ids: [vectorStore.id]
             },
+            "code_interpreter": {
+              "file_ids": fileIds
+            }
+          } : {
             "code_interpreter": {
               "file_ids": fileIds
             }
