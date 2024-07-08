@@ -323,7 +323,7 @@ const Home = () => {
   const displayPrompt = (prompt) => {
     const promptElement = document.createElement("div");
     promptElement.classList.add(styles.chatBox);
-    promptElement.innerHTML = `<div class="${styles.chatRole}">User</div><div class="${styles.chatContent}">${formatTextContent(prompt)}</div>`;
+    promptElement.innerHTML = `<div class="${styles.chatRole}">Account Holder</div><div class="${styles.chatContent}">${formatTextContent(prompt)}</div>`;
     threadContainerRef.current.insertBefore(promptElement, threadContainerRef.current.firstChild);
   };
 
