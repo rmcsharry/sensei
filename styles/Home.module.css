@@ -22,3 +22,31 @@
   color: red;
   font-weight: bold;
 }
+
+.container {
+  padding: 20px;
+}
+
+.chatBox {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.chatRole {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.chatContent {
+  white-space: pre-wrap;
+}
+
+.errorMessage {
+  color: red;
+}
+
+.hidden {
+  display: none;
+}

@@ -321,9 +321,9 @@ const Home = () => {
   };
 
   const displayPrompt = (prompt) => {
-    const promptElement = document.createElement("pre");
-    promptElement.classList.add(styles.jsonResponse);
-    promptElement.textContent = JSON.stringify({ role: "user", content: prompt }, null, 2);
+    const promptElement = document.createElement("div");
+    promptElement.classList.add(styles.chatBox);
+    promptElement.innerHTML = `<div class="${styles.chatRole}">User</div><div class="${styles.chatContent}">${formatTextContent(prompt)}</div>`;
     threadContainerRef.current.insertBefore(promptElement, threadContainerRef.current.firstChild);
   };
 
@@ -401,9 +401,9 @@ const Home = () => {
   };
 
   const displayTextResponse = (text) => {
-    const responseElement = document.createElement("pre");
-    responseElement.classList.add(styles.jsonResponse);
-    responseElement.textContent = JSON.stringify({ role: "guide", content: text }, null, 2);
+    const responseElement = document.createElement("div");
+    responseElement.classList.add(styles.chatBox);
+    responseElement.innerHTML = `<div class="${styles.chatRole}">Guide</div><div class="${styles.chatContent}">${formatTextContent(text)}</div>`;
     threadContainerRef.current.insertBefore(responseElement, threadContainerRef.current.firstChild);
   };
 
@@ -468,6 +468,10 @@ const Home = () => {
       <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
     </div>
   );
+};
+
+const formatTextContent = (text) => {
+  return text.replace(/\\n/g, '<br />').replace(/```/g, '<code>').replace(/```/g, '</code>');
 };
 
 export default Home;
