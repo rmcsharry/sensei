@@ -425,7 +425,7 @@ const Home = () => {
                 console.error(`Function ${functionName} not found.`);
               }
             } else if (functionName === 'toggleDashboard') {
-              const dashboardType = parsedObject.dashboardType;
+              const dashboardType = parsedObject.toggleDashboard;
               if (typeof window[functionName] === 'function') {
                 console.log("Calling function:", functionName, "with dashboardType:", dashboardType);
                 window[functionName](null, dashboardType);
