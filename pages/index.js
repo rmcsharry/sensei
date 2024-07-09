@@ -403,6 +403,7 @@ const Home = () => {
           try {
             const validJsonString = input.replace(/'/g, '"');
             const parsedObject = JSON.parse(validJsonString);
+  
             if (functionName === 'handleSignMessage') {
               const action = parsedObject.intention;
               if (typeof window[functionName] === 'function') {
@@ -424,7 +425,8 @@ const Home = () => {
                 console.error(`Function ${functionName} not found.`);
               }
             } else if (functionName === 'toggleDashboard') {
-              toggleDashboard(parsedObject);
+              const dashboardType = parsedObject.toggleDashboard;
+              toggleDashboard(dashboardType);
             }
           } catch (error) {
             console.error("Failed to parse JSON information:", error);
@@ -441,8 +443,7 @@ const Home = () => {
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };
-  
+  };  
   
   const toggleDashboard = (dashboardType) => {
     setIsDashboardVisible(dashboardType);
