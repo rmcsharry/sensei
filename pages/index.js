@@ -29,6 +29,7 @@ const Home = () => {
   useEffect(() => {
     window.handleSignMessage = (e, action) => handleSignMessage(e, action, wallets);
     window.updateContact = (e, contactObject) => updateContact(e, contactObject);
+    window.toggleDashboard = (e, dashboardType) => toggleDashboard(e, dashboardType);
   }, [wallets]);
 
   const handleStartRecording = async () => {
@@ -427,7 +428,7 @@ const Home = () => {
               const dashboardType = parsedObject.dashboardType;
               if (typeof window[functionName] === 'function') {
                 console.log("Calling function:", functionName, "with dashboardType:", dashboardType);
-                window[functionName](dashboardType);
+                window[functionName](null, dashboardType);
               } else {
                 console.error(`Function ${functionName} not found.`);
               }
@@ -449,7 +450,9 @@ const Home = () => {
     }
   };
   
-  const toggleDashboard = (dashboardType) => {
+  const toggleDashboard = (e, dashboardType) => {
+    if (e) e.preventDefault();
+    console.log("toggleDashboard called with dashboard type:", dashboardType);
     setIsDashboardVisible(dashboardType);
   };
 
