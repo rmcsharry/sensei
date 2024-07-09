@@ -15,6 +15,7 @@ const Home = () => {
   const [password, setPassword] = useState('');
   const [visibleForm, setVisibleForm] = useState(''); // Track which form is visible
   const [errorMessage, setErrorMessage] = useState(''); // Track the error message
+  const [isDashboardVisible, setIsDashboardVisible] = useState(''); // Track the dashboard visibility and type
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
