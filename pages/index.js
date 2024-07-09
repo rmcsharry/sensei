@@ -29,6 +29,7 @@ const Home = () => {
   useEffect(() => {
     window.handleSignMessage = (e, action) => handleSignMessage(e, action, wallets);
     window.updateContact = (e, contactObject) => updateContact(e, contactObject);
+    window.toggleDashboard = (dashboardType) => toggleDashboard(dashboardType);
   }, [wallets]);
 
   const handleStartRecording = async () => {
@@ -398,31 +399,29 @@ const Home = () => {
         const input = match ? (match[0]) : null;
   
         if (input) {
-          let functionName = matchedPattern.functionName;
+          let functionName = matchedPattern.function;
   
           try {
             const validJsonString = input.replace(/'/g, '"');
             const parsedObject = JSON.parse(validJsonString);
-            if (functionName === 'handleSignMessage') {
-              const action = parsedObject.intention;
-              if (typeof window[functionName] === 'function') {
-                console.log("Calling function:", functionName, "with action:", action);
+  
+            if (typeof window[functionName] === 'function') {
+              console.log("Calling function:", functionName, "with input:", parsedObject);
+              if (functionName === 'handleSignMessage') {
+                const action = parsedObject.intention;
                 window[functionName](null, action, wallets);
-              } else {
-                console.error(`Function ${functionName} not found.`);
-              }
-            } else if (functionName === 'updateContact') {
-              if (typeof window[functionName] === 'function') {
-                console.log("Calling function:", functionName, "with input:", parsedObject);
+              } else if (functionName === 'updateContact') {
                 window[functionName](null, parsedObject);
                 displayTextResponse(data.data.content);
-  
                 if (data.data.audioUrl) {
                   playAudioFromURL(data.data.audioUrl);
                 }
-              } else {
-                console.error(`Function ${functionName} not found.`);
+              } else if (functionName === 'toggleDashboard') {
+                const dashboardType = parsedObject.toggleDashboard;
+                window[functionName](dashboardType);
               }
+            } else {
+              console.error(`Function ${functionName} not found.`);
             }
           } catch (error) {
             console.error("Failed to parse JSON information:", error);

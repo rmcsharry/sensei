@@ -679,6 +679,7 @@ async function main() {
         
         if (existingContact.rows.length > 0) {
           // If contact name exists, update the address
+          console.log("Trying to update contact...");
           const result = await pool.query(
             "UPDATE contacts SET address = $2 WHERE contact = $1 RETURNING *",
             [contact, address]
@@ -686,6 +687,7 @@ async function main() {
           res.status(200).json(result.rows[0]);
         } else {
           // If contact name does not exist, insert a new contact
+          console.log("Trying to create new contact...");
           const result = await pool.query(
             "INSERT INTO contacts (contact, address) VALUES ($1, $2) RETURNING *",
             [contact, address]
