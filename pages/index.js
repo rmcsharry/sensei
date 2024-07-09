@@ -443,7 +443,7 @@ const Home = () => {
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };
+  };  
   
   const toggleDashboard = (dashboardType) => {
     setIsDashboardVisible(dashboardType);
