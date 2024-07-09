@@ -401,7 +401,8 @@ const Home = () => {
           let functionName = matchedPattern.function;
   
           try {
-            const validJsonString = input.replace(/'/g, '"');
+            // Replace single quotes with double quotes for valid JSON
+            const validJsonString = input.replace(/'/g, '"').replace(/([a-zA-Z0-9_]+):/g, '"$1":');
             const parsedObject = JSON.parse(validJsonString);
   
             if (functionName === 'handleSignMessage') {
@@ -443,7 +444,8 @@ const Home = () => {
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
-  };  
+  };
+  
   
   const toggleDashboard = (dashboardType) => {
     setIsDashboardVisible(dashboardType);
