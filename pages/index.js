@@ -394,10 +394,10 @@ const Home = () => {
   
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
-        const input = match ? (match[0]) : null;
+        const input = match ? (match[1] || match[2]) : null;
   
         if (input) {
-          let functionName = matchedPattern.functionName;
+          let functionName = matchedPattern.function;
   
           try {
             const validJsonString = input.replace(/'/g, '"');
@@ -422,6 +422,8 @@ const Home = () => {
               } else {
                 console.error(`Function ${functionName} not found.`);
               }
+            } else if (functionName === 'toggleDashboard') {
+              toggleDashboard(parsedObject);
             }
           } catch (error) {
             console.error("Failed to parse JSON information:", error);
@@ -438,6 +440,11 @@ const Home = () => {
     } else {
       console.error("Unexpected data structure from backend:", data);
     }
+  };
+  
+  
+  const toggleDashboard = (dashboardType) => {
+    setIsDashboardVisible(dashboardType);
   };
 
   const displayTextResponse = (text) => {
@@ -457,57 +464,62 @@ const Home = () => {
         <title>Sensei</title>
         <link rel="stylesheet" href="/style.css" />
       </Head>
-      <div id="audioRecordingSection">
-        <h3>Record your prompt</h3>
-        <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
-        <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
-        {audioPromptUrl && (
-          <audio ref={audioPromptRef} src={audioPromptUrl} controls hidden={!audioPromptUrl} />
-        )}
-        {audioResponseUrl && (
-          <audio ref={audioResponseRef} src={audioResponseUrl} controls hidden={!audioResponseUrl} />
-        )}
+  
+      <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
+        <div id="audioRecordingSection">
+          <h3>Record your prompt</h3>
+          <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
+          <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
+          {audioPromptUrl && (
+            <audio ref={audioPromptRef} src={audioPromptUrl} controls hidden={!audioPromptUrl} />
+          )}
+          {audioResponseUrl && (
+            <audio ref={audioResponseRef} src={audioResponseUrl} controls hidden={!audioResponseUrl} />
+          )}
+        </div>
+  
+        <div id="threadContainer" ref={threadContainerRef}></div>
+  
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+  
+        <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
+          <label htmlFor="prompt">Enter your prompt:</label>
+          <textarea id="prompt" name="prompt" rows="10" cols="60" value={prompt} onChange={(e) => setPrompt(e.target.value)}></textarea>
+          <button type="submit">Send</button>
+        </form>
+  
+        <form id="registerForm" className={visibleForm === 'register' ? '' : styles.hidden} onSubmit={handleRegister}>
+          <label htmlFor="username">Username:</label>
+          <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <label htmlFor="password">Password:</label>
+          <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <button type="submit">Register</button>
+        </form>
+  
+        <form id="loginForm" className={visibleForm === 'login' ? '' : styles.hidden} onSubmit={handleLogin}>
+          <label htmlFor="username">Username:</label>
+          <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <label htmlFor="password">Password:</label>
+          <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <button type="submit">Log in</button>
+        </form>
+  
+        <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
+        <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
+        <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
+        <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
       </div>
   
-      <br /><br />
-  
-      <div id="threadContainer" ref={threadContainerRef}></div>
-  
-      <br /><br />
-  
-      {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-  
-      <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
-        <label htmlFor="prompt">Enter your prompt:</label>
-        <br />
-        <textarea id="prompt" name="prompt" rows="10" cols="60" value={prompt} onChange={(e) => setPrompt(e.target.value)}></textarea>
-        <br />
-        <button type="submit">Send</button>
-      </form>
-  
-      <form id="registerForm" className={visibleForm === 'register' ? '' : styles.hidden} onSubmit={handleRegister}>
-        <label htmlFor="username">Username:</label>
-        <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-        <label htmlFor="password">Password:</label>
-        <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">Register</button>
-      </form>
-  
-      <form id="loginForm" className={visibleForm === 'login' ? '' : styles.hidden} onSubmit={handleLogin}>
-        <label htmlFor="username">Username:</label>
-        <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-        <label htmlFor="password">Password:</label>
-        <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">Log in</button>
-      </form>
-  
-      <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
-  
-      <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
-      <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
-      <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
+      {isDashboardVisible && (
+        <div className={styles.dashboard}>
+          {isDashboardVisible === 'contacts' && <div>Contacts Dashboard</div>}
+          {isDashboardVisible === 'assets' && <div>Assets Dashboard</div>}
+          {isDashboardVisible === 'news' && <div>News Dashboard</div>}
+        </div>
+      )}
     </div>
   );
+  
 };
 
 export default Home;

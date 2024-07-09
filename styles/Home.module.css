@@ -25,6 +25,7 @@
 
 .container {
   padding: 20px;
+  display: flex;
 }
 
 .chatBox {
@@ -112,4 +113,18 @@
 
 .hidden {
   display: none;
+}
+
+.mainContent {
+  width: 100%;
+}
+
+.mainContentWithDashboard {
+  width: 60%;
+}
+
+.dashboard {
+  width: 40%;
+  border-left: 1px solid #ccc;
+  padding: 20px;
 }
