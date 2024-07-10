@@ -17,6 +17,7 @@ const Home = () => {
   const [errorMessage, setErrorMessage] = useState(''); // Track the error message
   const [isDashboardVisible, setIsDashboardVisible] = useState(''); // Track the dashboard visibility and type
   const [systemPrompt, setSystemPrompt] = useState(''); // Track the system prompt
+  const [contacts, setContacts] = useState({}); // Track the contacts
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -31,6 +32,10 @@ const Home = () => {
         const data = await response.json();
         if (response.ok) {
           setSystemPrompt(data.prompt);
+          const contactsString = data.prompt.match(/"Here are the contacts and their Ethereum addresses: (.+)"/);
+          if (contactsString && contactsString[1]) {
+            setContacts(JSON.parse(contactsString[1]));
+          }
           console.log('data.prompt:', data.prompt);
         } else {
           console.error('Error fetching system prompt:', data.error);
@@ -539,7 +544,16 @@ const Home = () => {
 
       {isDashboardVisible && (
         <div className={styles.dashboard}>
-          {isDashboardVisible === 'contacts' && <div>Contacts Dashboard</div>}
+          {isDashboardVisible === 'contacts' && (
+            <div>
+              <h3>Contacts Dashboard</h3>
+              <ul>
+                {Object.keys(contacts).map(contact => (
+                  <li key={contact}>{contact}: {contacts[contact]}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           {isDashboardVisible === 'assets' && <div>Assets Dashboard</div>}
           {isDashboardVisible === 'news' && <div>News Dashboard</div>}
         </div>
