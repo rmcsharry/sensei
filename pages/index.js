@@ -438,6 +438,7 @@ const Home = () => {
               if (typeof window[functionName] === 'function') {
                 console.log("Calling function:", functionName, "with action:", action);
                 window[functionName](null, action, wallets);
+                setIsDashboardVisible('intentions'); // Automatically show the intentions dashboard
               } else {
                 console.error(`Function ${functionName} not found.`);
               }
@@ -562,6 +563,7 @@ const Home = () => {
           )}
           {isDashboardVisible === 'assets' && <div>Assets Dashboard</div>}
           {isDashboardVisible === 'news' && <div>News Dashboard</div>}
+          {isDashboardVisible === 'intentions' && <div>Intentions Dashboard</div>}
         </div>
       )}
     </div>
