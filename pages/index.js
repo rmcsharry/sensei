@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
@@ -16,14 +16,32 @@ const Home = () => {
   const [visibleForm, setVisibleForm] = useState(''); // Track which form is visible
   const [errorMessage, setErrorMessage] = useState(''); // Track the error message
   const [isDashboardVisible, setIsDashboardVisible] = useState(''); // Track the dashboard visibility and type
+  const [systemPrompt, setSystemPrompt] = useState(''); // Track the system prompt
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
   const recorderRef = useRef(null); // useRef for recorder
   const audioStreamRef = useRef(null); // useRef for audio stream
-  
-  const transferAction = "Transfer 1 ETH to alice.eth on Ethereum";
-  const swapAction = "Swap 0.5 ETH for USDC on Ethereum";
+
+  // Fetch the system prompt when the component mounts
+  useEffect(() => {
+    const fetchSystemPrompt = async () => {
+      try {
+        const response = await fetch('/api/system-prompt');
+        const data = await response.json();
+        if (response.ok) {
+          setSystemPrompt(data.prompt);
+          console.log('System prompt:', systemPrompt);
+        } else {
+          console.error('Error fetching system prompt:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching system prompt:', error);
+      }
+    };
+
+    fetchSystemPrompt();
+  }, []);
 
   // Assign the functions to the window object
   useEffect(() => {
@@ -109,7 +127,7 @@ const Home = () => {
         },
         body: JSON.stringify({ name: username, password }),
       });
-  
+
       if (!response.ok) {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -119,7 +137,7 @@ const Home = () => {
           throw new Error('Server error');
         }
       }
-  
+
       const data = await response.json();
       console.log('Registration successful', data);
       setErrorMessage('');
@@ -139,7 +157,7 @@ const Home = () => {
         },
         body: JSON.stringify({ name: username, password }),
       });
-  
+
       if (!response.ok) {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -149,7 +167,7 @@ const Home = () => {
           throw new Error('Server error');
         }
       }
-  
+
       const data = await response.json();
       console.log('Login successful', data);
       setErrorMessage('');
@@ -203,7 +221,7 @@ const Home = () => {
     }
     console.info("Wallets:", wallets);
     const wallet = wallets[0];
-  
+
     // Construct the message object using the action parameter and environment variables
     const message = {
       action: action,
@@ -212,13 +230,13 @@ const Home = () => {
       expiry: 1734752013,
       nonce: 0 // need to track this internally, in the database
     };
-  
+
     const uiConfig = {
       title: 'Intention Check',
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
       buttonText: 'Sign and Continue',
     };
-  
+
     try {
       const signature = await signMessage(JSON.stringify(message), uiConfig);
       const response = await fetch('/api/send-signed-intention', {
@@ -232,11 +250,11 @@ const Home = () => {
           from: wallet.address,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to send intention to bundler server');
       }
-  
+
       const result = await response.json();
       console.log('Intention processed:\n', result);
       setErrorMessage('');
@@ -253,7 +271,7 @@ const Home = () => {
         sendPromptToBackend(error.message);
       }
     }
-  };  
+  };
 
   const updateContact = async (e, contactObject) => {
     if (e) e.preventDefault();
@@ -358,9 +376,9 @@ const Home = () => {
       })
       // Convert line breaks
       .replace(/\n/g, '<br />');
-  
+
     return html.trim();
-  };  
+  };
 
   const displayPrompt = (prompt) => {
     const promptElement = document.createElement("div");
@@ -393,14 +411,14 @@ const Home = () => {
         const match = data.data.content.match(pattern.regex);
         return match;
       });
-  
+
       if (matchedPattern) {
         const match = data.data.content.match(matchedPattern.regex);
         const input = match ? (match[0]) : null;
-  
+
         if (input) {
           let functionName = matchedPattern.functionName;
-  
+
           try {
             const validJsonString = input.replace(/'/g, '"');
             const parsedObject = JSON.parse(validJsonString);
@@ -417,7 +435,7 @@ const Home = () => {
                 console.log("Calling function:", functionName, "with input:", parsedObject);
                 window[functionName](null, parsedObject);
                 displayTextResponse(data.data.content);
-  
+
                 if (data.data.audioUrl) {
                   playAudioFromURL(data.data.audioUrl);
                 }
@@ -449,7 +467,7 @@ const Home = () => {
       console.error("Unexpected data structure from backend:", data);
     }
   };
-  
+
   const toggleDashboard = (e, dashboardType) => {
     if (e) e.preventDefault();
     console.log("toggleDashboard called with dashboard type:", dashboardType);
@@ -473,7 +491,7 @@ const Home = () => {
         <title>Sensei</title>
         <link rel="stylesheet" href="/style.css" />
       </Head>
-  
+
       <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
         <div id="audioRecordingSection">
           <h3>Record your prompt</h3>
@@ -486,17 +504,17 @@ const Home = () => {
             <audio ref={audioResponseRef} src={audioResponseUrl} controls hidden={!audioResponseUrl} />
           )}
         </div>
-  
+
         <div id="threadContainer" ref={threadContainerRef}></div>
-  
+
         {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-  
+
         <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
           <label htmlFor="prompt">Enter your prompt:</label>
           <textarea id="prompt" name="prompt" rows="10" cols="60" value={prompt} onChange={(e) => setPrompt(e.target.value)}></textarea>
           <button type="submit">Send</button>
         </form>
-  
+
         <form id="registerForm" className={visibleForm === 'register' ? '' : styles.hidden} onSubmit={handleRegister}>
           <label htmlFor="username">Username:</label>
           <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -504,7 +522,7 @@ const Home = () => {
           <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <button type="submit">Register</button>
         </form>
-  
+
         <form id="loginForm" className={visibleForm === 'login' ? '' : styles.hidden} onSubmit={handleLogin}>
           <label htmlFor="username">Username:</label>
           <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
@@ -512,13 +530,13 @@ const Home = () => {
           <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <button type="submit">Log in</button>
         </form>
-  
+
         <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
         <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
         <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
         <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
       </div>
-  
+
       {isDashboardVisible && (
         <div className={styles.dashboard}>
           {isDashboardVisible === 'contacts' && <div>Contacts Dashboard</div>}
@@ -528,7 +546,7 @@ const Home = () => {
       )}
     </div>
   );
-  
+
 };
 
 export default Home;

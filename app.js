@@ -21,6 +21,9 @@ const next = require('next');
 // Application-specific imports
 const sensei = require('./sensei.json');
 
+// Placeholder variable for the full system prompt, constructed later
+let fullInstructions;
+
 // Database setup
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -697,6 +700,14 @@ async function main() {
       } catch (error) {
         console.error('Error updating contact:', error);
         res.status(500).json({ message: "Server error" });
+      }
+    });
+
+    app.get('/api/system-prompt', (req, res) => {
+      if (fullInstructions) {
+        res.status(200).json({ prompt: fullInstructions });
+      } else {
+        res.status(500).json({ error: 'System prompt not available' });
       }
     });
 
