@@ -695,6 +695,10 @@ async function main() {
             [contact, address]
           );
         }
+
+        // Re-initialize full instructions
+        await initializeFullInstructions();
+
         // Fetch the updated list of contacts
         const contactsResult = await pool.query('SELECT contact, address FROM contacts');
         const contacts = contactsResult.rows.reduce((acc, contact) => {
