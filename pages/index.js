@@ -281,8 +281,8 @@ const Home = () => {
     } catch (error) {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
-      displayPrompt(error.message);
-      if (error.message == 'The account holder rejected the request.') {
+      if (error.message == 'The user rejected the request.') {
+        displayPrompt("The account holder rejected the request.");
         sendPromptToBackend(error.message + ' Please ask clarifying questions instead of returning an intention object.');
 
         // Update the intention status to "Rejected"
@@ -290,6 +290,7 @@ const Home = () => {
           intent.message === message ? { ...intent, status: 'Rejected' } : intent
         ));
       } else {
+        displayPrompt(error.message);
         sendPromptToBackend(error.message);
 
         // Update the intention status to "Error When Signing"
