@@ -50,7 +50,7 @@ async function initializeFullInstructions() {
     console.error('Error fetching contacts from database:', err);
   }
 
-  if (sensei.systemPrompt) {
+  if (sensei.systemPromptPersonal && sensei.systemPromptFunctional) {
     if (sensei.guides) {
       // Create an object with guide names as keys and descriptions as values
       const guideDetailsObject = sensei.guides.reduce((acc, guide) => {
@@ -61,9 +61,9 @@ async function initializeFullInstructions() {
       // Stringify the guideDetailsObject
       const guideDetailsString = JSON.stringify(guideDetailsObject);
 
-      fullInstructions = `${sensei.systemPrompt} These are the specialized guides available to you through the callGuide function: ${guideDetailsString}. Here are the contacts and their Ethereum addresses: ${contactsString}`;
+      fullInstructions = `${sensei.systemPromptPersonal} ${sensei.systemPromptFunctional} These are the specialized guides available to you through the callGuide function: ${guideDetailsString}. Here are the contacts and their Ethereum addresses: ${contactsString}`;
     } else {
-      fullInstructions = `${sensei.systemPrompt} Here are the contacts and their Ethereum addresses: ${contactsString}`;
+      fullInstructions = `${sensei.systemPrompt} ${sensei.systemPromptFunctional} Here are the contacts and their Ethereum addresses: ${contactsString}`;
     }
   }
 }
