@@ -36,6 +36,8 @@ const Home = () => {
           if (contactsString && contactsString[1]) {
             setContacts(JSON.parse(contactsString[1]));
           }
+          console.log('contactsString:', contactsString);
+          console.log('contacts:', contacts);
           console.log('data.prompt:', data.prompt);
         } else {
           console.error('Error fetching system prompt:', data.error);
