@@ -32,13 +32,13 @@ const Home = () => {
         const data = await response.json();
         if (response.ok) {
           setSystemPrompt(data.prompt);
-          const contactsString = data.prompt.match(/"Here are the contacts and their Ethereum addresses: (.+)"/);
-          if (contactsString && contactsString[1]) {
-            setContacts(JSON.parse(contactsString[1]));
+          console.log('System Prompt:', data.prompt);
+          const contactsStringMatch = data.prompt.match(/Here are the contacts and their Ethereum addresses: (.+)/);
+          if (contactsStringMatch && contactsStringMatch[1]) {
+            const contactsObject = JSON.parse(contactsStringMatch[1]);
+            setContacts(contactsObject);
+            console.log('Contacts Object:', contactsObject);
           }
-          console.log('contactsString:', contactsString);
-          console.log('contacts:', contacts);
-          console.log('data.prompt:', data.prompt);
         } else {
           console.error('Error fetching system prompt:', data.error);
         }
