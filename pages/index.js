@@ -264,7 +264,7 @@ const Home = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send intention to bundler server');
+        throw new Error('Something went wrong when sending the intention to bundler server.');
       }
 
       const result = await response.json();
