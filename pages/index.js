@@ -18,6 +18,7 @@ const Home = () => {
   const [isDashboardVisible, setIsDashboardVisible] = useState(''); // Track the dashboard visibility and type
   const [systemPrompt, setSystemPrompt] = useState(''); // Track the system prompt
   const [contacts, setContacts] = useState({}); // Track the contacts
+  const [intentions, setIntentions] = useState([]);
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -221,6 +222,7 @@ const Home = () => {
   const handleSignMessage = async (e, action, wallets) => {
     if (e) e.preventDefault();
     console.log("handleSignMessage called with action:", action);
+    setIsDashboardVisible('intentions'); // Automatically show the intentions dashboard
     if (!wallets || wallets.length === 0) {
       console.error("No wallets available.");
       setErrorMessage("No wallets available.");
@@ -243,6 +245,9 @@ const Home = () => {
       description: 'Please sign this message if it matches what you want to do. After you sign, it will be sent to the bundler to be executed on the Oya virtual chain.',
       buttonText: 'Sign and Continue',
     };
+    
+    // Add the initial message with a "Pending" status
+    setIntentions(prevIntentions => [...prevIntentions, { message, status: 'Pending' }]);
 
     try {
       const signature = await signMessage(JSON.stringify(message), uiConfig);
@@ -268,14 +273,29 @@ const Home = () => {
       const thanks = "Thank you, I signed and sent the intention to the Oya bundler.";
       displayPrompt(thanks);
       sendPromptToBackend(thanks);
+
+      // Update the intention status to "Signed and Sent"
+      setIntentions(prevIntentions => prevIntentions.map(intent => 
+        intent.message === message ? { ...intent, status: 'Signed and Sent' } : intent
+      ));
     } catch (error) {
       console.error('Sign message error:', error);
       setErrorMessage(error.message);
       displayPrompt(error.message);
       if (error.message == 'The account holder rejected the request.') {
         sendPromptToBackend(error.message + ' Please ask clarifying questions instead of returning an intention object.');
+
+        // Update the intention status to "Rejected"
+        setIntentions(prevIntentions => prevIntentions.map(intent => 
+          intent.message === message ? { ...intent, status: 'Rejected' } : intent
+        ));
       } else {
         sendPromptToBackend(error.message);
+
+        // Update the intention status to "Error When Signing"
+        setIntentions(prevIntentions => prevIntentions.map(intent => 
+          intent.message === message ? { ...intent, status: 'Error When Signing' } : intent
+        ));
       }
     }
   };
@@ -438,7 +458,6 @@ const Home = () => {
               if (typeof window[functionName] === 'function') {
                 console.log("Calling function:", functionName, "with action:", action);
                 window[functionName](null, action, wallets);
-                setIsDashboardVisible('intentions'); // Automatically show the intentions dashboard
               } else {
                 console.error(`Function ${functionName} not found.`);
               }
@@ -561,9 +580,22 @@ const Home = () => {
               </ul>
             </div>
           )}
+          {isDashboardVisible === 'intentions' && (
+            <div>
+              <h3>Intentions Dashboard</h3>
+              <ul>
+                {intentions.map((intention, index) => (
+                  <li key={index}>
+                    <strong>Message:</strong> {JSON.stringify(intention.message)}
+                    <br />
+                    <strong>Status:</strong> {intention.status}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {isDashboardVisible === 'assets' && <div>Assets Dashboard</div>}
           {isDashboardVisible === 'news' && <div>News Dashboard</div>}
-          {isDashboardVisible === 'intentions' && <div>Intentions Dashboard</div>}
         </div>
       )}
     </div>
