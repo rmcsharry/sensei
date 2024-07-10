@@ -687,7 +687,6 @@ async function main() {
             "UPDATE contacts SET address = $2 WHERE contact = $1 RETURNING *",
             [contact, address]
           );
-          res.status(200).json(result.rows[0]);
         } else {
           // If contact name does not exist, insert a new contact
           console.log("Trying to create new contact...");
@@ -695,13 +694,20 @@ async function main() {
             "INSERT INTO contacts (contact, address) VALUES ($1, $2) RETURNING *",
             [contact, address]
           );
-          res.status(200).json(result.rows[0]);
         }
+        // Fetch the updated list of contacts
+        const contactsResult = await pool.query('SELECT contact, address FROM contacts');
+        const contacts = contactsResult.rows.reduce((acc, contact) => {
+          acc[contact.contact] = contact.address;
+          return acc;
+        }, {});
+        
+        res.status(200).json({ message: 'Contact updated', contacts });
       } catch (error) {
         console.error('Error updating contact:', error);
         res.status(500).json({ message: "Server error" });
       }
-    });
+    });    
 
     app.get('/api/system-prompt', (req, res) => {
       if (fullInstructions) {

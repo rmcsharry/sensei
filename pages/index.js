@@ -295,12 +295,16 @@ const Home = () => {
         throw new Error('Failed to update contact');
       }
       const result = await response.json();
-      console.log('Contact updated:\n', result);
+      console.log('Contact updated:', result);
+      if (result.contacts) {
+        setContacts(result.contacts);
+        setIsDashboardVisible('contacts'); // Automatically show the contacts dashboard
+      }
     } catch (error) {
       console.error('Error updating contact:', error);
       setErrorMessage(error.message);
     }
-  };
+  };   
 
   const showForm = (form) => {
     setVisibleForm(form);
