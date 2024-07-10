@@ -31,7 +31,7 @@ const Home = () => {
         const data = await response.json();
         if (response.ok) {
           setSystemPrompt(data.prompt);
-          console.log('System prompt:', systemPrompt);
+          console.log('data.prompt:', data.prompt);
         } else {
           console.error('Error fetching system prompt:', data.error);
         }
