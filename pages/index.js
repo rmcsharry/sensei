@@ -416,7 +416,8 @@ const Home = () => {
     const promptElement = document.createElement("div");
     promptElement.classList.add(styles.chatBox);
     promptElement.innerHTML = `<div class="${styles.chatRole}">Companion</div><div class="${styles.chatContent}">${convertMarkdownToHtml(prompt)}</div>`;
-    threadContainerRef.current.insertBefore(promptElement, threadContainerRef.current.firstChild);
+    threadContainerRef.current.appendChild(promptElement);
+    threadContainerRef.current.scrollTop = threadContainerRef.current.scrollHeight;
   };
 
   const sendPromptToBackend = async (prompt) => {
@@ -510,7 +511,8 @@ const Home = () => {
     const responseElement = document.createElement("div");
     responseElement.classList.add(styles.chatBox);
     responseElement.innerHTML = `<div class="${styles.chatRole}">Oya Guide</div><div class="${styles.chatContent}">${convertMarkdownToHtml(text)}</div>`;
-    threadContainerRef.current.insertBefore(responseElement, threadContainerRef.current.firstChild);
+    threadContainerRef.current.appendChild(responseElement);
+    threadContainerRef.current.scrollTop = threadContainerRef.current.scrollHeight;
   };
 
   const handleError = (error) => {
