@@ -597,7 +597,7 @@ const Home = () => {
               </ul>
             </div>
           )}
-          {isDashboardVisible === 'assets' && <div>Assets Dashboard</div>}
+          {isDashboardVisible === 'balance' && <div>Balance Dashboard</div>}
           {isDashboardVisible === 'news' && <div>News Dashboard</div>}
         </div>
       )}
