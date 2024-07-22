@@ -246,8 +246,8 @@ const Home = () => {
       buttonText: 'Sign and Continue',
     };
     
-    // Add the initial message with a "Pending" status
-    setIntentions(prevIntentions => [...prevIntentions, { message, status: 'Pending' }]);
+    // Add the initial message with a "Signed" status
+    setIntentions(prevIntentions => [...prevIntentions, { message, status: 'Signed' }]);
 
     try {
       const signature = await signMessage(JSON.stringify(message), uiConfig);
@@ -270,13 +270,13 @@ const Home = () => {
       const result = await response.json();
       console.log('Intention processed:\n', result);
       setErrorMessage('');
-      const thanks = "Thank you, I signed and sent the intention to the Oya bundler.";
+      const thanks = "Thank you, I signed and sent the intention to the Oya bundler, and it is now pending. The bundler has reviewed it and queued it for inclusion in a bundle.";
       displayPrompt(thanks);
       sendPromptToBackend(thanks);
 
       // Update the intention status to "Signed and Sent"
       setIntentions(prevIntentions => prevIntentions.map(intent => 
-        intent.message === message ? { ...intent, status: 'Signed and Sent' } : intent
+        intent.message === message ? { ...intent, status: 'Pending' } : intent
       ));
     } catch (error) {
       console.error('Sign message error:', error);
