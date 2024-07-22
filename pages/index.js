@@ -274,7 +274,7 @@ const Home = () => {
       displayPrompt(thanks);
       sendPromptToBackend(thanks);
 
-      // Update the intention status to "Signed and Sent"
+      // Update the intention status to "Pending"
       setIntentions(prevIntentions => prevIntentions.map(intent => 
         intent.message === message ? { ...intent, status: 'Pending' } : intent
       ));
