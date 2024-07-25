@@ -530,21 +530,22 @@ const Home = () => {
         throw new Error('Failed to fetch token prices');
       }
       const data = await response.json();
-      return data.reduce((acc, token) => {
-        acc[token.symbol] = token.current_price;
+      const tokenPrices = data.reduce((acc, token) => {
+        acc[token.symbol.toLowerCase()] = token.current_price;
         return acc;
       }, {});
+      console.log('Fetched Token Prices:', tokenPrices);
+      return tokenPrices;
     } catch (error) {
       console.error('Error fetching token prices:', error);
       setErrorMessage(error.message);
     }
-  };
+  };  
 
   const toggleDashboard = async (e, dashboardType) => {
     if (e) e.preventDefault();
-    console.log("toggleDashboard called with dashboard type:", dashboardType);
     setIsDashboardVisible(dashboardType);
-
+  
     if (dashboardType === 'balance') {
       try {
         const response = await fetch(`/api/balance/${wallets[0].address}`);
@@ -553,17 +554,35 @@ const Home = () => {
         }
         const data = await response.json();
         const tokenPrices = await fetchTokenPrices();
-        setBalance(data.map(bal => ({
-          ...bal,
-          usdValue: (bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 18)) * tokenPrices[bal.symbol.toLowerCase()]
-        })));
+  
+        console.log('Balances:', data);
+        console.log('Token Prices:', tokenPrices);
+  
+        if (!data.length) {
+          console.log('No balances found');
+          return;
+        }
+  
+        const updatedBalance = data.map(bal => {
+          const tokenSymbol = Object.keys(tokenNameMap).find(key => key.toLowerCase() === bal.token.toLowerCase());
+          const tokenPrice = tokenSymbol ? tokenPrices[tokenSymbol.toLowerCase()] : null;
+          const usdValue = tokenPrice ? (bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 18)) * tokenPrice : 0;
+          return {
+            ...bal,
+            usdValue
+          };
+        });
+  
+        console.log('Updated Balance:', updatedBalance);
+  
+        setBalance(updatedBalance);
       } catch (error) {
         console.error('Error fetching balance:', error);
         setErrorMessage(error.message);
       }
     }
   };
-
+  
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
     responseElement.classList.add(styles.chatBox);
