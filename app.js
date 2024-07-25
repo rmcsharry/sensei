@@ -740,22 +740,20 @@ async function main() {
       }
     });   
     
-    // New route to get token prices
     app.get('/api/token-prices', async (req, res) => {
-      const tokenIds = encodeURIComponent('ethereum,weth,usd-coin,uma');
-      const apiKey = process.env.COINGECKO_API_KEY;
-      const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}`;
-
+      const tokenIds = 'ethereum,weth,usd-coin,uma';
+      const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${encodeURIComponent(tokenIds)}`;
+    
       try {
         const response = await axios.get(url, {
           headers: {
             'accept': 'application/json',
-            'x-cg-pro-api-key': apiKey
+            'x-cg-demo-api-key': process.env.COINGECKO_API_KEY // Ensure this matches your API key header
           }
         });
         res.status(200).json(response.data);
       } catch (error) {
-        console.error('Error fetching token prices:', error);
+        console.error('Error fetching token prices:', error.response ? error.response.data : error.message);
         res.status(500).json({ message: 'Error fetching token prices' });
       }
     });
