@@ -742,7 +742,7 @@ async function main() {
     
     // New route to get token prices
     app.get('/api/token-prices', async (req, res) => {
-      const tokenIds = 'ethereum,weth,usd-coin,uma';
+      const tokenIds = encodeURIComponent('ethereum,weth,usd-coin,uma');
       const apiKey = process.env.COINGECKO_API_KEY;
       const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}`;
 
