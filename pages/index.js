@@ -11,6 +11,13 @@ const tokenNameMap = {
   "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828": "UMA (UMA)"
 };
 
+const tokenAddressToSymbol = {
+  "0x0000000000000000000000000000000000000000": "eth",
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": "usdc",
+  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": "weth",
+  "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828": "uma"
+};
+
 const tokenDecimalMap = {
   "0x0000000000000000000000000000000000000000": 18, // ETH
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": 6,  // USDC
@@ -564,9 +571,26 @@ const Home = () => {
         }
   
         const updatedBalance = data.map(bal => {
-          const tokenSymbol = Object.keys(tokenNameMap).find(key => key.toLowerCase() === bal.token.toLowerCase());
-          const tokenPrice = tokenSymbol ? tokenPrices[tokenSymbol.toLowerCase()] : null;
-          const usdValue = tokenPrice ? (bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 18)) * tokenPrice : 0;
+          const tokenSymbol = tokenAddressToSymbol[bal.token.toLowerCase()];
+          if (!tokenSymbol) {
+            console.error('Missing token symbol for:', bal.token);
+            return { ...bal, usdValue: 0 };
+          }
+  
+          const tokenPrice = tokenPrices[tokenSymbol];
+          if (!tokenPrice) {
+            console.error('Missing token price for:', tokenSymbol);
+            if (tokenSymbol === 'usdc') {
+              return { ...bal, usdValue: bal.balance };
+            } else {
+              return { ...bal, usdValue: 'unknown' };
+            }
+          }
+  
+          const usdValue = (bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 18)) * tokenPrice;
+  
+          console.log('Token:', tokenSymbol, 'Price:', tokenPrice, 'Balance:', bal.balance, 'USD Value:', usdValue);
+  
           return {
             ...bal,
             usdValue
