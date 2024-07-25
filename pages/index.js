@@ -581,9 +581,11 @@ const Home = () => {
           if (!tokenPrice) {
             console.error('Missing token price for:', tokenSymbol);
             if (tokenSymbol === 'usdc') {
-              return { ...bal, usdValue: bal.balance };
+              // USDC is pegged to USD, so its value is the balance itself divided by the decimals
+              const usdValue = bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 6);
+              return { ...bal, usdValue };
             } else {
-              return { ...bal, usdValue: 'unknown' };
+              return { ...bal, usdValue: 0 };
             }
           }
   
