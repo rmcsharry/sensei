@@ -651,6 +651,7 @@ const Home = () => {
             </div>
           )}
           {isDashboardVisible === 'goals' && <div>Goals Dashboard</div>}
+          {isDashboardVisible === 'rewards' && <div>Rewards Dashboard</div>}
         </div>
       )}
     </div>
