@@ -703,15 +703,15 @@ const Home = () => {
             <div>
               <h3>Balance Dashboard</h3>
               {balance.length > 0 ? (
-                <ul>
+                <div>
                   {balance.map((bal, index) => (
-                    <li key={index}>
+                    <div key={index} className={styles.balanceItem}>
                       <strong>Token:</strong> {tokenNameMap[bal.token] || bal.token}<br />
                       <strong>Balance:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}<br />
                       <strong>USD Value:</strong> ${bal.usdValue.toFixed(2)}
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <p>No balance data available.</p>
               )}
