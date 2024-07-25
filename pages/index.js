@@ -571,7 +571,7 @@ const Home = () => {
         }
   
         const updatedBalance = data.map(bal => {
-          const tokenSymbol = tokenAddressToSymbol[bal.token.toLowerCase()];
+          const tokenSymbol = tokenAddressToSymbol[bal.token];
           if (!tokenSymbol) {
             console.error('Missing token symbol for:', bal.token);
             return { ...bal, usdValue: 0 };
