@@ -704,6 +704,10 @@ const Home = () => {
               <h3>Balance Dashboard</h3>
               {balance.length > 0 ? (
                 <div>
+                  <div className={styles.totalPortfolioValue}>
+                    <strong>Total Portfolio Value:</strong> $
+                    {balance.reduce((acc, bal) => acc + (bal.usdValue || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
                   {balance.map((bal, index) => (
                     <div key={index} className={styles.balanceItem}>
                       <strong>Token:</strong> {tokenNameMap[bal.token] || bal.token}<br />
