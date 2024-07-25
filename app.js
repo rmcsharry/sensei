@@ -731,6 +731,7 @@ async function main() {
       try {
         const response = await fetch(`${process.env.OYA_API_SERVER}/balance/${address}`);
         const data = await response.json();
+        console.log(data);
         res.status(200).json(data);
       } catch (error) {
         console.error('Error fetching balance:', error);
