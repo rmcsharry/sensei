@@ -4,6 +4,27 @@ import styles from '../styles/Home.module.css';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import regexPatterns from '../regex';  // Import the regex patterns
 
+const tokenNameMap = {
+  "0x0000000000000000000000000000000000000000": "Ethereum (ETH)",
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": "USD Coin (USDC)",
+  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": "Wrapped Ether (WETH)",
+  "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828": "UMA (UMA)"
+};
+
+const tokenDecimalMap = {
+  "0x0000000000000000000000000000000000000000": 18, // ETH
+  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": 6,  // USDC
+  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": 18, // WETH
+  "0x04Fa0d235C4abf4BcF4787aF4CF447DE572eF828": 18  // UMA
+};
+
+const formatBalance = (balance, decimals) => {
+  return (balance / Math.pow(10, decimals)).toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals
+  });
+};
+
 const Home = () => {
   const { login, logout, signMessage, user, authenticated } = usePrivy();
   const { ready, wallets } = useWallets();
@@ -619,8 +640,8 @@ const Home = () => {
                 <ul>
                   {balance.map((bal, index) => (
                     <li key={index}>
-                      <strong>Token:</strong> {bal.token}<br />
-                      <strong>Balance:</strong> {bal.balance}
+                      <strong>Token:</strong> {tokenNameMap[bal.token] || bal.token}<br />
+                      <strong>Balance:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}
                     </li>
                   ))}
                 </ul>
