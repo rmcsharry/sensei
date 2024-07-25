@@ -708,7 +708,7 @@ const Home = () => {
                     <div key={index} className={styles.balanceItem}>
                       <strong>Token:</strong> {tokenNameMap[bal.token] || bal.token}<br />
                       <strong>Balance:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}<br />
-                      <strong>USD Value:</strong> ${bal.usdValue.toFixed(2)}
+                      <strong>USD Value:</strong> ${bal.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   ))}
                 </div>
