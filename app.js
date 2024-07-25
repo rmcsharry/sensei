@@ -737,7 +737,27 @@ async function main() {
         console.error('Error fetching balance:', error);
         res.status(500).json({ message: 'Server error' });
       }
-    });    
+    });   
+    
+    // New route to get token prices
+    app.get('/api/token-prices', async (req, res) => {
+      const tokenIds = 'ethereum,weth,usd-coin,uma';
+      const apiKey = process.env.COINGECKO_API_KEY;
+      const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}`;
+
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            'accept': 'application/json',
+            'x-cg-pro-api-key': apiKey
+          }
+        });
+        res.status(200).json(response.data);
+      } catch (error) {
+        console.error('Error fetching token prices:', error);
+        res.status(500).json({ message: 'Error fetching token prices' });
+      }
+    });
 
     // All other routes handled by Next.js
     app.get('*', (req, res) => {

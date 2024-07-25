@@ -523,11 +523,28 @@ const Home = () => {
     }
   };
 
+  const fetchTokenPrices = async () => {
+    try {
+      const response = await fetch('/api/token-prices');
+      if (!response.ok) {
+        throw new Error('Failed to fetch token prices');
+      }
+      const data = await response.json();
+      return data.reduce((acc, token) => {
+        acc[token.symbol] = token.current_price;
+        return acc;
+      }, {});
+    } catch (error) {
+      console.error('Error fetching token prices:', error);
+      setErrorMessage(error.message);
+    }
+  };
+
   const toggleDashboard = async (e, dashboardType) => {
     if (e) e.preventDefault();
     console.log("toggleDashboard called with dashboard type:", dashboardType);
     setIsDashboardVisible(dashboardType);
-  
+
     if (dashboardType === 'balance') {
       try {
         const response = await fetch(`/api/balance/${wallets[0].address}`);
@@ -535,13 +552,17 @@ const Home = () => {
           throw new Error('Failed to fetch balance');
         }
         const data = await response.json();
-        setBalance(data);
+        const tokenPrices = await fetchTokenPrices();
+        setBalance(data.map(bal => ({
+          ...bal,
+          usdValue: (bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 18)) * tokenPrices[bal.symbol.toLowerCase()]
+        })));
       } catch (error) {
         console.error('Error fetching balance:', error);
         setErrorMessage(error.message);
       }
     }
-  };  
+  };
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
@@ -641,7 +662,8 @@ const Home = () => {
                   {balance.map((bal, index) => (
                     <li key={index}>
                       <strong>Token:</strong> {tokenNameMap[bal.token] || bal.token}<br />
-                      <strong>Balance:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}
+                      <strong>Balance:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}<br />
+                      <strong>USD Value:</strong> ${bal.usdValue.toFixed(2)}
                     </li>
                   ))}
                 </ul>
