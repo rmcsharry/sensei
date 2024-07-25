@@ -19,7 +19,7 @@ const Home = () => {
   const [systemPrompt, setSystemPrompt] = useState(''); // Track the system prompt
   const [contacts, setContacts] = useState({}); // Track the contacts
   const [intentions, setIntentions] = useState([]);
-  const [balance, setBalance] = useState(null);
+  const [balance, setBalance] = useState([]);
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -615,16 +615,17 @@ const Home = () => {
           {isDashboardVisible === 'balance' && (
             <div>
               <h3>Balance Dashboard</h3>
-              {balance ? (
+              {balance.length > 0 ? (
                 <ul>
-                  {Object.keys(balance).map(token => (
-                    <li key={token}>
-                      <strong>{token}:</strong> {balance[token]}
+                  {balance.map((bal, index) => (
+                    <li key={index}>
+                      <strong>Token:</strong> {bal.token}<br />
+                      <strong>Balance:</strong> {bal.balance}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p>Loading balance...</p>
+                <p>No balance data available.</p>
               )}
             </div>
           )}
