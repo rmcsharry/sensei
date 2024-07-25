@@ -509,7 +509,7 @@ const Home = () => {
   
     if (dashboardType === 'balance') {
       try {
-        const response = await fetch(`/api/balance?address=${wallets[0].address}`);
+        const response = await fetch(`/api/balance/${wallets[0].address}`);
         if (!response.ok) {
           throw new Error('Failed to fetch balance');
         }
