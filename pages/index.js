@@ -19,6 +19,7 @@ const Home = () => {
   const [systemPrompt, setSystemPrompt] = useState(''); // Track the system prompt
   const [contacts, setContacts] = useState({}); // Track the contacts
   const [intentions, setIntentions] = useState([]);
+  const [balance, setBalance] = useState(null);
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -501,11 +502,25 @@ const Home = () => {
     }
   };
 
-  const toggleDashboard = (e, dashboardType) => {
+  const toggleDashboard = async (e, dashboardType) => {
     if (e) e.preventDefault();
     console.log("toggleDashboard called with dashboard type:", dashboardType);
     setIsDashboardVisible(dashboardType);
-  };
+  
+    if (dashboardType === 'balance') {
+      try {
+        const response = await fetch(`/api/balance?address=${wallets[0].address}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch balance');
+        }
+        const data = await response.json();
+        setBalance(data);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        setErrorMessage(error.message);
+      }
+    }
+  };  
 
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
@@ -597,7 +612,22 @@ const Home = () => {
               </ul>
             </div>
           )}
-          {isDashboardVisible === 'balance' && <div>Balance Dashboard</div>}
+          {isDashboardVisible === 'balance' && (
+            <div>
+              <h3>Balance Dashboard</h3>
+              {balance ? (
+                <ul>
+                  {Object.keys(balance).map(token => (
+                    <li key={token}>
+                      <strong>{token}:</strong> {balance[token]}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Loading balance...</p>
+              )}
+            </div>
+          )}
           {isDashboardVisible === 'goals' && <div>Goals Dashboard</div>}
         </div>
       )}

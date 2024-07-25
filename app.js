@@ -721,6 +721,23 @@ async function main() {
       }
     });
 
+    app.get('/api/balance', async (req, res) => {
+      const { address } = req.query;
+
+      if (!address) {
+        return res.status(400).json({ message: 'Address is required' });
+      }
+
+      try {
+        const response = await fetch(`${process.env.OYA_API_SERVER}/balance/${address}`);
+        const data = await response.json();
+        res.status(200).json(data);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+        res.status(500).json({ message: 'Server error' });
+      }
+    });
+
     // All other routes handled by Next.js
     app.get('*', (req, res) => {
       return handle(req, res);
