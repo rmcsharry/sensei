@@ -4,6 +4,7 @@ require('dotenv').config();
 // Core modules
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 // External dependencies
 const express = require('express');
