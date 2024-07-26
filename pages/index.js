@@ -558,7 +558,7 @@ const Home = () => {
     if (e) e.preventDefault();
     setIsDashboardVisible(dashboardType);
   
-    if (dashboardType === 'balance') {
+    if (dashboardType === 'balance' || dashboardType === 'rewards') {
       try {
         const response = await fetch(`/api/balance/${wallets[0].address}`);
         if (!response.ok) {
@@ -732,7 +732,25 @@ const Home = () => {
             </div>
           )}
           {isDashboardVisible === 'goals' && <div>Goals Dashboard</div>}
-          {isDashboardVisible === 'rewards' && <div>Rewards Dashboard</div>}
+          {isDashboardVisible === 'rewards' && (
+            <div>
+              <h3>Rewards Dashboard</h3>
+              {balance.length > 0 && balance.find(bal => bal.token === "0x0000000000000000000000000000000000000001") ? (
+                <div className={styles.balanceItem}>
+                  {balance.map((bal, index) => (
+                    bal.token === "0x0000000000000000000000000000000000000001" && (
+                      <div key={index}>
+                        <strong>Oya Token Balance:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}<br />
+                        <strong>Oya Token USD Value:</strong> ${bal.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    )
+                  ))}
+                </div>
+              ) : (
+                <p>No Oya token balance data available.</p>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
