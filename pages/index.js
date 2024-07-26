@@ -589,6 +589,10 @@ const Home = () => {
               // USDC is pegged to USD, so its value is the balance itself divided by the decimals
               const usdValue = bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 6);
               return { ...bal, usdValue };
+            } else if (tokenSymbol === 'oya') {
+              // OYA test tokens set to a value of $1
+              const usdValue = bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 18);
+              return { ...bal, usdValue };
             } else {
               return { ...bal, usdValue: 0 };
             }
