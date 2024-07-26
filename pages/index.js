@@ -48,6 +48,7 @@ const Home = () => {
   const [contacts, setContacts] = useState({}); // Track the contacts
   const [intentions, setIntentions] = useState([]);
   const [balance, setBalance] = useState([]);
+  const [tokenPrices, setTokenPrices] = useState({});
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -542,6 +543,7 @@ const Home = () => {
         return acc;
       }, {});
       console.log('Fetched Token Prices:', tokenPrices);
+      setTokenPrices(tokenPrices);
       return tokenPrices;
     } catch (error) {
       console.error('Error fetching token prices:', error);
@@ -711,7 +713,8 @@ const Home = () => {
                   {balance.map((bal, index) => (
                     <div key={index} className={styles.balanceItem}>
                       <strong>Token:</strong> {tokenNameMap[bal.token] || bal.token}<br />
-                      <strong>Balance:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}<br />
+                      <strong>Quantity:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}<br />
+                      <strong>Token Price:</strong> ${tokenPrices[tokenAddressToSymbol[bal.token]]?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br />
                       <strong>USD Value:</strong> ${bal.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   ))}
