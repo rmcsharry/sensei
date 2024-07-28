@@ -582,18 +582,14 @@ const Home = () => {
             return { ...bal, usdValue: 0 };
           }
   
-          const tokenPrice = tokenPrices[tokenSymbol];
+          let tokenPrice = tokenPrices[tokenSymbol];
           if (!tokenPrice) {
-            console.error('Missing token price for:', tokenSymbol);
             if (tokenSymbol === 'usdc') {
-              // USDC is pegged to USD, so its value is the balance itself divided by the decimals
-              const usdValue = bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 6);
-              return { ...bal, usdValue };
+              tokenPrice = 1; // USDC is pegged to USD
             } else if (tokenSymbol === 'oya') {
-              // OYA test tokens set to a value of $1
-              const usdValue = bal.balance / Math.pow(10, tokenDecimalMap[bal.token] || 18);
-              return { ...bal, usdValue };
+              tokenPrice = 1; // OYA test tokens set to a value of $1
             } else {
+              console.error('Missing token price for:', tokenSymbol);
               return { ...bal, usdValue: 0 };
             }
           }
@@ -604,6 +600,7 @@ const Home = () => {
   
           return {
             ...bal,
+            tokenPrice,
             usdValue
           };
         });
@@ -616,7 +613,7 @@ const Home = () => {
         setErrorMessage(error.message);
       }
     }
-  };
+  };  
   
   const displayTextResponse = (text) => {
     const responseElement = document.createElement("div");
@@ -721,7 +718,7 @@ const Home = () => {
                     <div key={index} className={styles.balanceItem}>
                       <strong>Token:</strong> {tokenNameMap[bal.token] || bal.token}<br />
                       <strong>Quantity:</strong> {formatBalance(bal.balance, tokenDecimalMap[bal.token] || 18)}<br />
-                      <strong>Token Price:</strong> ${tokenPrices[tokenAddressToSymbol[bal.token]]?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br />
+                      <strong>Token Price:</strong> ${bal.tokenPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br />
                       <strong>USD Value:</strong> ${bal.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   ))}
