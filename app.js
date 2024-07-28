@@ -179,7 +179,7 @@ async function main() {
         // Call OpenAI's TTS API
         const ttsResponse = await openai.audio.speech.create({
           model: "tts-1-hd",
-          voice: "alloy",
+          voice: "nova",
           input: result.content,
         });
 
