@@ -649,55 +649,63 @@ const Home = () => {
         <link rel="stylesheet" href="/style.css" />
       </Head>
 
-      <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
-
-      <div id="threadContainer" ref={threadContainerRef}>
-        {messages.map((message, index) => (
-          <div key={index} className={styles.chatBox}>
-            <div className={styles.chatRole}>{message.role}</div>
-            <div className={styles.chatContent} dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(message.content) }}></div>
-            {message.audioUrl && <audio src={message.audioUrl} controls />}
-          </div>
-        ))}
-      </div>
-
-        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-
-        <div id="audioRecordingSection">
-          <h3>Record your prompt</h3>
-          <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
-          <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
+      {!authenticated ? (
+        <div className={styles.loginContainer}>
+          <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>
+            Log in with Privy
+          </button>
         </div>
+      ) : (
+        <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
 
-        <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
-          <label htmlFor="prompt">Enter your prompt:</label>
-          <textarea id="prompt" name="prompt" rows="10" cols="60" value={prompt} onChange={(e) => setPrompt(e.target.value)}></textarea>
-          <button type="submit">Send</button>
-        </form>
+          <div id="threadContainer" ref={threadContainerRef}>
+            {messages.map((message, index) => (
+              <div key={index} className={styles.chatBox}>
+                <div className={styles.chatRole}>{message.role}</div>
+                <div className={styles.chatContent} dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(message.content) }}></div>
+                {message.audioUrl && <audio src={message.audioUrl} controls />}
+              </div>
+            ))}
+          </div>
 
-        <form id="registerForm" className={visibleForm === 'register' ? '' : styles.hidden} onSubmit={handleRegister}>
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button type="submit">Register</button>
-        </form>
+          {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
-        <form id="loginForm" className={visibleForm === 'login' ? '' : styles.hidden} onSubmit={handleLogin}>
-          <label htmlFor="username">Username:</label>
-          <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button type="submit">Log in</button>
-        </form>
+          <div id="audioRecordingSection">
+            <h3>Record your prompt</h3>
+            <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
+            <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
+          </div>
 
-        <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
-        <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
-        <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
-        <button type="button" onClick={() => showForm('chat')}>Vibe Check</button>
-      </div>
+          <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
+            <label htmlFor="prompt">Enter your prompt:</label>
+            <textarea id="prompt" name="prompt" rows="10" cols="60" value={prompt} onChange={(e) => setPrompt(e.target.value)}></textarea>
+            <button type="submit">Send</button>
+          </form>
 
-      {isDashboardVisible && (
+          <form id="registerForm" className={visibleForm === 'register' ? '' : styles.hidden} onSubmit={handleRegister}>
+            <label htmlFor="username">Username:</label>
+            <input type="text" id="registerUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+            <label htmlFor="password">Password:</label>
+            <input type="password" id="registerPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <button type="submit">Register</button>
+          </form>
+
+          <form id="loginForm" className={visibleForm === 'login' ? '' : styles.hidden} onSubmit={handleLogin}>
+            <label htmlFor="username">Username:</label>
+            <input type="text" id="loginUsername" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+            <label htmlFor="password">Password:</label>
+            <input type="password" id="loginPassword" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <button type="submit">Log in</button>
+          </form>
+
+          <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
+          <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
+          <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
+          <button type="button" onClick={() => showForm('chat')}>Vibe Check</button>
+        </div>
+      )}
+
+      {isDashboardVisible && authenticated && (
         <div className={styles.dashboard}>
           {isDashboardVisible === 'contacts' && (
             <div>
