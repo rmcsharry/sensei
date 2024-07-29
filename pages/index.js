@@ -724,7 +724,7 @@ const Home = () => {
                 <ul>
                   {intentions.map((intention, index) => (
                     <li key={index}>
-                      <strong>Intention:</strong>
+                      <strong>Intention:</strong><br></br>
                       <pre className={styles.intentionMessage}>{JSON.stringify(intention.message, null, 2)}</pre>
                       <br />
                       <strong>Status:</strong> {intention.status}
