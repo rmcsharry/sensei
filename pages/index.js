@@ -657,14 +657,6 @@ const Home = () => {
       </Head>
 
       <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
-        <div id="audioRecordingSection">
-          <h3>Record your prompt</h3>
-          <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
-          <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
-          {audioPromptUrl && (
-            <audio ref={audioPromptRef} src={audioPromptUrl} controls />
-          )}
-        </div>
 
         <div id="threadContainer" ref={threadContainerRef}>
           {messages.map((message, index) => (
@@ -677,6 +669,15 @@ const Home = () => {
         </div>
 
         {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+
+        <div id="audioRecordingSection">
+          <h3>Record your prompt</h3>
+          <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
+          <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
+          {audioPromptUrl && (
+            <audio ref={audioPromptRef} src={audioPromptUrl} controls />
+          )}
+        </div>
 
         <form id="chatForm" className={visibleForm === 'chat' ? '' : styles.hidden} onSubmit={handleSubmitPrompt}>
           <label htmlFor="prompt">Enter your prompt:</label>
