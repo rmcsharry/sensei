@@ -260,13 +260,6 @@ const Home = () => {
     }
   };
 
-  // Wrapper function to randomly select an action and call handleSignMessage
-  const handleRandomSignMessage = (e) => {
-    const actions = [transferAction, swapAction];
-    const randomAction = actions[Math.floor(Math.random() * actions.length)];
-    handleSignMessage(e, randomAction, wallets);
-  };
-
   // Function to sign an intention with the embedded Privy wallet
   const handleSignMessage = async (e, action, wallets) => {
     if (e) e.preventDefault();
@@ -701,7 +694,7 @@ const Home = () => {
         <button type="button" onClick={() => showForm('chat')}>Show Chat Form</button>
         <button type="button" disabled={!ready || (ready && authenticated)} onClick={handlePrivyLogin}>Log in with Privy</button>
         <button type="button" disabled={!ready || (ready && !authenticated)} onClick={handlePrivyLogout}>Log out with Privy</button>
-        <button type="button" onClick={handleRandomSignMessage}>Sign Message</button>
+        <button type="button" onClick={() => showForm('chat')}>Vibe Check</button>
       </div>
 
       {isDashboardVisible && (
