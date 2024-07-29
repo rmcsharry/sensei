@@ -720,15 +720,18 @@ const Home = () => {
           {isDashboardVisible === 'intentions' && (
             <div>
               <h3>Intentions Dashboard</h3>
-              <ul>
-                {intentions.map((intention, index) => (
-                  <li key={index}>
-                    <strong>Intention:</strong> <pre>{JSON.stringify(intention.message, null, 2)}</pre>
-                    <br />
-                    <strong>Status:</strong> {intention.status}
-                  </li>
-                ))}
-              </ul>
+              <div className={styles.intentionsContainer}>
+                <ul>
+                  {intentions.map((intention, index) => (
+                    <li key={index}>
+                      <strong>Intention:</strong>
+                      <pre className={styles.intentionMessage}>{JSON.stringify(intention.message, null, 2)}</pre>
+                      <br />
+                      <strong>Status:</strong> {intention.status}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
           {isDashboardVisible === 'balance' && (
@@ -776,6 +779,7 @@ const Home = () => {
           )}
         </div>
       )}
+
     </div>
   );
 };

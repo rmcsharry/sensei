@@ -162,3 +162,14 @@
   height: 100vh; /* Full viewport height */
   width: 100vw; /* Full viewport width */
 }
+
+.intentionsContainer {
+  overflow-x: auto;
+  white-space: nowrap; /* Prevent line breaks */
+}
+
+.intentionMessage {
+  display: inline-block; /* Prevent the intention object from spilling over */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
