@@ -1,5 +1,9 @@
 /* styles/Home.module.css */
 
+#chatForm {
+  margin-top: 20px;
+}
+
 .jsonResponse {
   white-space: pre-wrap;
   word-wrap: break-word;
