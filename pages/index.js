@@ -52,6 +52,7 @@ const Home = () => {
   const [intentions, setIntentions] = useState([]);
   const [balance, setBalance] = useState([]);
   const [tokenPrices, setTokenPrices] = useState({});
+  const [messages, setMessages] = useState([]); // Track all messages with audio
   const audioPromptRef = useRef();
   const audioResponseRef = useRef();
   const threadContainerRef = useRef();
@@ -140,7 +141,14 @@ const Home = () => {
 
   const handleSubmitPrompt = async (e) => {
     e.preventDefault();
-    displayPrompt(prompt);
+    const newMessage = {
+      role: 'companion',
+      content: prompt,
+      audioUrl: audioPromptUrl
+    };
+    setMessages(prevMessages => [...prevMessages, newMessage]);
+    setAudioPromptUrl('');
+    setPrompt('');
     try {
       const response = await fetch('/prompt', {
         method: 'POST',
@@ -401,7 +409,12 @@ const Home = () => {
   };
 
   const handleTranscriptionResult = (data) => {
-    displayPrompt(data.data.transcription);
+    const newMessage = {
+      role: 'companion',
+      content: data.data.transcription,
+      audioUrl: audioPromptUrl
+    };
+    setMessages(prevMessages => [...prevMessages, newMessage]);
     sendPromptToBackend(data.data.transcription);
   };
 
@@ -446,10 +459,11 @@ const Home = () => {
   };
 
   const displayPrompt = (prompt) => {
-    const promptElement = document.createElement("div");
-    promptElement.classList.add(styles.chatBox);
-    promptElement.innerHTML = `<div class="${styles.chatRole}">Companion</div><div class="${styles.chatContent}">${convertMarkdownToHtml(prompt)}</div>`;
-    threadContainerRef.current.appendChild(promptElement);
+    const newMessage = {
+      role: 'companion',
+      content: prompt
+    };
+    setMessages(prevMessages => [...prevMessages, newMessage]);
     threadContainerRef.current.scrollTop = threadContainerRef.current.scrollHeight;
   };
 
@@ -473,6 +487,13 @@ const Home = () => {
 
   const handleGuideResponse = (data) => {
     if (data.data && data.data.role && data.data.content) {
+      const newMessage = {
+        role: 'oya-guide',
+        content: data.data.content,
+        audioUrl: data.data.audioUrl
+      };
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+
       const matchedPattern = regexPatterns.find(pattern => {
         const match = data.data.content.match(pattern.regex);
         return match;
@@ -500,11 +521,6 @@ const Home = () => {
               if (typeof window[functionName] === 'function') {
                 console.log("Calling function:", functionName, "with input:", parsedObject);
                 window[functionName](null, parsedObject);
-                displayTextResponse(data.data.content);
-
-                if (data.data.audioUrl) {
-                  playAudioFromURL(data.data.audioUrl);
-                }
               } else {
                 console.error(`Function ${functionName} not found.`);
               }
@@ -524,10 +540,6 @@ const Home = () => {
         }
       } else {
         console.error("No matching pattern found in the content that would trigger a function call. Returning guide response.");
-        displayTextResponse(data.data.content);
-        if (data.data.audioUrl) {
-          playAudioFromURL(data.data.audioUrl);
-        }
       }
     } else {
       console.error("Unexpected data structure from backend:", data);
@@ -616,10 +628,11 @@ const Home = () => {
   };  
   
   const displayTextResponse = (text) => {
-    const responseElement = document.createElement("div");
-    responseElement.classList.add(styles.chatBox);
-    responseElement.innerHTML = `<div class="${styles.chatRole}">Oya Guide</div><div class="${styles.chatContent}">${convertMarkdownToHtml(text)}</div>`;
-    threadContainerRef.current.appendChild(responseElement);
+    const newMessage = {
+      role: 'oya-guide',
+      content: text
+    };
+    setMessages(prevMessages => [...prevMessages, newMessage]);
     threadContainerRef.current.scrollTop = threadContainerRef.current.scrollHeight;
   };
 
@@ -635,19 +648,15 @@ const Home = () => {
       </Head>
 
       <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
-        <div id="audioRecordingSection">
-          <h3>Record your prompt</h3>
-          <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
-          <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
-          {audioPromptUrl && (
-            <audio ref={audioPromptRef} src={audioPromptUrl} controls hidden={!audioPromptUrl} />
-          )}
-          {audioResponseUrl && (
-            <audio ref={audioResponseRef} src={audioResponseUrl} controls hidden={!audioResponseUrl} />
-          )}
+        <div id="threadContainer" ref={threadContainerRef}>
+          {messages.map((message, index) => (
+            <div key={index} className={styles.chatBox}>
+              <div className={styles.chatRole}>{message.role}</div>
+              <div className={styles.chatContent} dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(message.content) }}></div>
+              {message.audioUrl && <audio src={message.audioUrl} controls />}
+            </div>
+          ))}
         </div>
-
-        <div id="threadContainer" ref={threadContainerRef}></div>
 
         {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
@@ -752,7 +761,6 @@ const Home = () => {
       )}
     </div>
   );
-
 };
 
 export default Home;
