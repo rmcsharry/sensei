@@ -92,6 +92,16 @@ const Home = () => {
     window.toggleDashboard = (e, dashboardType) => toggleDashboard(e, dashboardType);
   }, [wallets]);
 
+  const handleStopRecording = () => {
+    if (recorderRef.current) {
+      recorderRef.current.stop();
+    }
+    if (audioStreamRef.current) {
+      audioStreamRef.current.getTracks().forEach(track => track.stop());
+    }
+    setIsRecording(false);
+  };
+  
   const handleStartRecording = async () => {
     const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(audioStream);
@@ -106,6 +116,13 @@ const Home = () => {
       const audioUrl = URL.createObjectURL(audioBlob);
       setAudioPromptUrl(audioUrl);
   
+      const newMessage = {
+        role: 'Companion',
+        content: '',
+        audioUrl: audioUrl
+      };
+      setMessages(prevMessages => [...prevMessages, newMessage]); // Add the message to the thread immediately
+  
       const formData = new FormData();
       formData.append("audioFile", audioBlob, "audio.mp3");
   
@@ -117,14 +134,6 @@ const Home = () => {
         const data = await response.json();
         if (data.requestId) {
           pollStatus(data.requestId, handleTranscriptionResult, handleError);
-        } else {
-          // Display the audio input immediately in the thread
-          const newMessage = {
-            role: 'Companion',
-            content: '',
-            audioUrl: audioUrl
-          };
-          setMessages(prevMessages => [...prevMessages, newMessage]);
         }
       } catch (error) {
         console.error("Error uploading audio: ", error);
@@ -135,16 +144,6 @@ const Home = () => {
     recorderRef.current = recorder;
     audioStreamRef.current = audioStream;
     setIsRecording(true);
-  };
-  
-  const handleStopRecording = () => {
-    if (recorderRef.current) {
-      recorderRef.current.stop();
-    }
-    if (audioStreamRef.current) {
-      audioStreamRef.current.getTracks().forEach(track => track.stop());
-    }
-    setIsRecording(false);
   };  
 
   const handleSubmitPrompt = async (e) => {
@@ -418,14 +417,15 @@ const Home = () => {
   };
 
   const handleTranscriptionResult = (data) => {
-    const newMessage = {
-      role: 'Companion',
-      content: data.data.transcription,
-      audioUrl: audioPromptUrl
-    };
-    setMessages(prevMessages => [...prevMessages, newMessage]);
+    setMessages(prevMessages => {
+      const updatedMessages = [...prevMessages];
+      const lastMessageIndex = updatedMessages.length - 1;
+      if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].role === 'Companion') {
+        updatedMessages[lastMessageIndex].content = data.data.transcription;
+      }
+      return updatedMessages;
+    });
     sendPromptToBackend(data.data.transcription);
-    setAudioPromptUrl(''); // Clear the audio URL after using it
   };  
 
   // Custom function to convert basic Markdown to HTML, this should be improved
