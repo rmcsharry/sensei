@@ -142,7 +142,7 @@ const Home = () => {
   const handleSubmitPrompt = async (e) => {
     e.preventDefault();
     const newMessage = {
-      role: 'companion',
+      role: 'Companion',
       content: prompt,
       audioUrl: audioPromptUrl
     };
@@ -410,7 +410,7 @@ const Home = () => {
 
   const handleTranscriptionResult = (data) => {
     const newMessage = {
-      role: 'companion',
+      role: 'Companion',
       content: data.data.transcription,
       audioUrl: audioPromptUrl
     };
@@ -460,7 +460,7 @@ const Home = () => {
 
   const displayPrompt = (prompt) => {
     const newMessage = {
-      role: 'companion',
+      role: 'Companion',
       content: prompt
     };
     setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -487,13 +487,6 @@ const Home = () => {
 
   const handleGuideResponse = (data) => {
     if (data.data && data.data.role && data.data.content) {
-      const newMessage = {
-        role: 'oya-guide',
-        content: data.data.content,
-        audioUrl: data.data.audioUrl
-      };
-      setMessages(prevMessages => [...prevMessages, newMessage]);
-
       const matchedPattern = regexPatterns.find(pattern => {
         const match = data.data.content.match(pattern.regex);
         return match;
@@ -540,6 +533,12 @@ const Home = () => {
         }
       } else {
         console.error("No matching pattern found in the content that would trigger a function call. Returning guide response.");
+        const newMessage = {
+          role: 'Oya Guide',
+          content: data.data.content,
+          audioUrl: data.data.audioUrl
+        };
+        setMessages(prevMessages => [...prevMessages, newMessage]);
       }
     } else {
       console.error("Unexpected data structure from backend:", data);
@@ -629,7 +628,7 @@ const Home = () => {
   
   const displayTextResponse = (text) => {
     const newMessage = {
-      role: 'oya-guide',
+      role: 'Oya Guide',
       content: text
     };
     setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -648,6 +647,15 @@ const Home = () => {
       </Head>
 
       <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
+        <div id="audioRecordingSection">
+          <h3>Record your prompt</h3>
+          <button type="button" onClick={handleStartRecording} disabled={isRecording}>Start Recording</button>
+          <button type="button" onClick={handleStopRecording} disabled={!isRecording}>Stop Recording</button>
+          {audioPromptUrl && (
+            <audio ref={audioPromptRef} src={audioPromptUrl} controls />
+          )}
+        </div>
+
         <div id="threadContainer" ref={threadContainerRef}>
           {messages.map((message, index) => (
             <div key={index} className={styles.chatBox}>
