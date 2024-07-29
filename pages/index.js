@@ -96,19 +96,19 @@ const Home = () => {
     const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(audioStream);
     let audioChunks = [];
-
+  
     recorder.ondataavailable = e => {
       audioChunks.push(e.data);
     };
-
+  
     recorder.onstop = async () => {
       const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
       const audioUrl = URL.createObjectURL(audioBlob);
       setAudioPromptUrl(audioUrl);
-
+  
       const formData = new FormData();
       formData.append("audioFile", audioBlob, "audio.mp3");
-
+  
       try {
         const response = await fetch("/upload-audio", {
           method: "POST",
@@ -122,13 +122,13 @@ const Home = () => {
         console.error("Error uploading audio: ", error);
       }
     };
-
+  
     recorder.start();
     recorderRef.current = recorder;
     audioStreamRef.current = audioStream;
     setIsRecording(true);
   };
-
+  
   const handleStopRecording = () => {
     if (recorderRef.current) {
       recorderRef.current.stop();
@@ -137,18 +137,19 @@ const Home = () => {
       audioStreamRef.current.getTracks().forEach(track => track.stop());
     }
     setIsRecording(false);
-  };
+  };  
 
   const handleSubmitPrompt = async (e) => {
     e.preventDefault();
     const newMessage = {
       role: 'Companion',
       content: prompt,
-      audioUrl: audioPromptUrl
+      audioUrl: audioPromptUrl || ''
     };
     setMessages(prevMessages => [...prevMessages, newMessage]);
-    setAudioPromptUrl('');
-    setPrompt('');
+    setAudioPromptUrl(''); // Reset audio URL after submission
+    setPrompt(''); // Clear the prompt after submission
+  
     try {
       const response = await fetch('/prompt', {
         method: 'POST',
@@ -164,7 +165,7 @@ const Home = () => {
     } catch (error) {
       console.error('Error sending prompt:', error);
     }
-  };
+  };  
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -416,7 +417,8 @@ const Home = () => {
     };
     setMessages(prevMessages => [...prevMessages, newMessage]);
     sendPromptToBackend(data.data.transcription);
-  };
+    setAudioPromptUrl(''); // Clear the audio URL after using it
+  };  
 
   // Custom function to convert basic Markdown to HTML, this should be improved
   const convertMarkdownToHtml = (markdown) => {
