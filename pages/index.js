@@ -601,7 +601,7 @@ const Home = () => {
             if (tokenSymbol === 'usdc') {
               tokenPrice = 1; // USDC is pegged to USD
             } else if (tokenSymbol === 'oya') {
-              tokenPrice = 1; // OYA test tokens set to a value of $1
+              tokenPrice = 1.337; // OYA test tokens set to a value of $1.33
             } else {
               console.error('Missing token price for:', tokenSymbol);
               return { ...bal, usdValue: 0 };
