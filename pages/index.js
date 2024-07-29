@@ -151,7 +151,7 @@ const Home = () => {
     const newMessage = {
       role: 'Companion',
       content: prompt,
-      audioUrl: audioPromptUrl ? audioPromptUrl : null
+      audioUrl: null
     };
     setMessages(prevMessages => [...prevMessages, newMessage]);
     setAudioPromptUrl(''); // Reset audio URL after submission
@@ -420,13 +420,13 @@ const Home = () => {
     setMessages(prevMessages => {
       const updatedMessages = [...prevMessages];
       const lastMessageIndex = updatedMessages.length - 1;
-      if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].role === 'Companion') {
+      if (lastMessageIndex >= 0 && updatedMessages[lastMessageIndex].role === 'Companion' && updatedMessages[lastMessageIndex].audioUrl) {
         updatedMessages[lastMessageIndex].content = data.data.transcription;
       }
       return updatedMessages;
     });
     sendPromptToBackend(data.data.transcription);
-  };  
+  };   
 
   // Custom function to convert basic Markdown to HTML, this should be improved
   const convertMarkdownToHtml = (markdown) => {
@@ -658,15 +658,15 @@ const Home = () => {
 
       <div className={isDashboardVisible ? styles.mainContentWithDashboard : styles.mainContent}>
 
-        <div id="threadContainer" ref={threadContainerRef}>
-          {messages.map((message, index) => (
-            <div key={index} className={styles.chatBox}>
-              <div className={styles.chatRole}>{message.role}</div>
-              <div className={styles.chatContent} dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(message.content) }}></div>
-              {message.audioUrl && <audio src={message.audioUrl} controls />}
-            </div>
-          ))}
-        </div>
+      <div id="threadContainer" ref={threadContainerRef}>
+        {messages.map((message, index) => (
+          <div key={index} className={styles.chatBox}>
+            <div className={styles.chatRole}>{message.role}</div>
+            <div className={styles.chatContent} dangerouslySetInnerHTML={{ __html: convertMarkdownToHtml(message.content) }}></div>
+            {message.audioUrl && <audio src={message.audioUrl} controls />}
+          </div>
+        ))}
+      </div>
 
         {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
