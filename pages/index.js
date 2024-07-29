@@ -117,6 +117,14 @@ const Home = () => {
         const data = await response.json();
         if (data.requestId) {
           pollStatus(data.requestId, handleTranscriptionResult, handleError);
+        } else {
+          // Display the audio input immediately in the thread
+          const newMessage = {
+            role: 'Companion',
+            content: '',
+            audioUrl: audioUrl
+          };
+          setMessages(prevMessages => [...prevMessages, newMessage]);
         }
       } catch (error) {
         console.error("Error uploading audio: ", error);
@@ -144,7 +152,7 @@ const Home = () => {
     const newMessage = {
       role: 'Companion',
       content: prompt,
-      audioUrl: audioPromptUrl || ''
+      audioUrl: audioPromptUrl ? audioPromptUrl : null
     };
     setMessages(prevMessages => [...prevMessages, newMessage]);
     setAudioPromptUrl(''); // Reset audio URL after submission
